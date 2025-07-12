@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kato Mine</title>
+    <title>Kato Mine - Claim</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -12,6 +12,7 @@
             --accent-color: #00ffcc;
             --text-color: #ffffff;
             --background-dark: #222;
+            --active-nav-bg: rgba(0, 123, 255, 0.2); /* Active navigation background */
         }
 
         * {
@@ -167,6 +168,11 @@
         footer a:active {
             background: rgba(0, 0, 0, 0.1);
             transform: scale(0.95);
+        }
+
+        footer a.active {
+            background: var(--active-nav-bg);
+            color: var(--primary-color);
         }
 
         .ad-modal {
@@ -610,20 +616,31 @@
                 startMining();
             });
 
-            // নেভিগেশন লিংকগুলোর জন্য ইভেন্ট লিসেনার
+            // নেভিগেশন লিংকগুলোর জন্য ইভেন্ট লিসেনার এবং অ্যাকটিভ ক্লাস
             const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach(link => {
                 link.addEventListener('click', (event) => {
                     event.preventDefault();
                     const href = link.getAttribute('href');
-                    try {
-                        window.location.href = href;
-                    } catch (error) {
-                        console.error('Navigation error:', error);
-                        document.getElementById('timerDisplay').textContent = 'Error navigating to page. Please try again.';
-                        document.getElementById('progressTimer').textContent = 'Error navigating to page. Please try again.';
+                    if (href) {
+                        try {
+                            window.location.href = href;
+                        } catch (error) {
+                            console.error('Navigation error:', error);
+                            document.getElementById('timerDisplay').textContent = `Failed to navigate to ${href}. Please check if the page exists.`;
+                            document.getElementById('progressTimer').textContent = `Failed to navigate to ${href}. Please check if the page exists.`;
+                        }
+                    } else {
+                        console.error('No href attribute found for link:', link);
+                        document.getElementById('timerDisplay').textContent = 'Navigation error: Invalid link.';
+                        document.getElementById('progressTimer').textContent = 'Navigation error: Invalid link.';
                     }
                 });
+
+                // অ্যাকটিভ পেজ হাইলাইট (Claim পেজের জন্য)
+                if (link.getAttribute('href') === './claim.html') {
+                    link.classList.add('active');
+                }
             });
         } catch (error) {
             console.error('Error initializing Firebase:', error);
