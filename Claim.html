@@ -184,11 +184,11 @@
 
         .ad-content {
             background: #ffffff;
-            padding: clamp(0.5rem, 2vw, 0.8rem); /* Reduced padding for smaller modal */
+            padding: clamp(0.5rem, 2vw, 0.8rem);
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: min(90%, 200px); /* Adjusted width for smaller modal */
+            width: min(90%, 200px);
         }
 
         .ad-content button {
@@ -257,7 +257,7 @@
                 font-size: clamp(0.9rem, 2.8vw, 1.1rem);
             }
             .ad-content {
-                width: min(90%, 180px); /* Adjusted for smaller screens */
+                width: min(90%, 180px);
                 padding: clamp(0.4rem, 1.5vw, 0.6rem);
             }
         }
@@ -311,10 +311,10 @@
         </div>
     </div>
     <footer>
-        <a href="/index.html" aria-label="Go to Home"><i class="fas fa-home"></i> Home</a>
-        <a href="/claim.html" aria-label="Go to Claim"><i class="fas fa-gift"></i> Claim</a>
-        <a href="/invite.html" aria-label="Go to Invite"><i class="fas fa-user-plus"></i> Invite</a>
-        <a href="/wallet.html" aria-label="Go to Wallet"><i class="fas fa-wallet"></i> Wallet</a>
+        <a href="./index.html" aria-label="Go to Home" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        <a href="./claim.html" aria-label="Go to Claim" class="nav-link"><i class="fas fa-gift"></i> Claim</a>
+        <a href="./invite.html" aria-label="Go to Invite" class="nav-link"><i class="fas fa-user-plus"></i> Invite</a>
+        <a href="./wallet.html" aria-label="Go to Wallet" class="nav-link"><i class="fas fa-wallet"></i> Wallet</a>
     </footer>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -608,6 +608,22 @@
             closeAdButton.addEventListener('click', () => {
                 adModal.style.display = 'none';
                 startMining();
+            });
+
+            // নেভিগেশন লিংকগুলোর জন্য ইভেন্ট লিসেনার
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const href = link.getAttribute('href');
+                    try {
+                        window.location.href = href;
+                    } catch (error) {
+                        console.error('Navigation error:', error);
+                        document.getElementById('timerDisplay').textContent = 'Error navigating to page. Please try again.';
+                        document.getElementById('progressTimer').textContent = 'Error navigating to page. Please try again.';
+                    }
+                });
             });
         } catch (error) {
             console.error('Error initializing Firebase:', error);
