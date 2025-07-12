@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Katomine - Invite</title>
+    <title>Katomine - Wallet</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         body {
@@ -19,100 +19,49 @@
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
             color: #ffffff;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: auto;
-            padding: 20px;
+            justify-content: space-between;
+            align-items: flex-start;
+            height: 30vh;
+            text-align: center;
+            padding: 10px;
             position: relative;
             overflow: hidden;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
-        .referral-code {
-            font-size: clamp(12px, 2.5vw, 14px);
+        .top-section h2 {
+            font-size: clamp(20px, 5vw, 26px);
+            padding: 15px 25px;
+            margin: 0;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+        .top-section h2:hover {
+            transform: scale(1.1);
+        }
+        .balance {
+            font-size: clamp(48px, 10vw, 56px);
             font-weight: 600;
-            width: 110px;
-            height: 40px;
+            width: 400px;
+            height: 120px;
             background: linear-gradient(45deg, #3b82f6, #1e40af);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 8px 12px;
+            padding: 24px 36px;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
             z-index: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #ffffff;
             transition: all 0.3s ease;
-            cursor: pointer;
             position: absolute;
-            top: 10px;
-            left: 10px;
-        }
-        .referral-code:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(45deg, #60a5fa, #2563eb);
-        }
-        .referral-code .tooltip {
-            visibility: hidden;
-            background-color: #ffffff;
-            color: #1e40af;
-            text-align: center;
-            border-radius: 6px;
-            padding: 6px 12px;
-            position: absolute;
-            z-index: 2;
-            bottom: 100%;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            transition: opacity 0.3s ease;
+            transform: translate(-50%, -50%);
         }
-        .referral-code.copied .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-        .referral-input {
-            margin-top: 60px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #1e40af;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            width: clamp(200px, 60vw, 300px);
-        }
-        .referral-input input {
-            padding: 8px;
-            font-size: clamp(12px, 2.5vw, 14px);
-            border: 1px solid #ffffff;
-            border-radius: 5px;
-            width: 100%;
-            margin-bottom: 10px;
-            background: #ffffff;
-            color: #1e40af;
-        }
-        .referral-input button {
-            background: #ffffff;
-            color: #1e40af;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: clamp(12px, 2.5vw, 14px);
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .referral-input button:hover {
-            background: #e0e7ff;
-            color: #2563eb;
-        }
-        .referral-input button:disabled {
-            background: #cccccc;
-            color: #666666;
-            cursor: not-allowed;
+        .balance:hover {
+            transform: translate(-50%, -53%);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(45deg, #60a5fa, #2563eb);
         }
         .bottom-section {
             background: #ffffff;
@@ -126,14 +75,8 @@
             color: #1e40af;
             box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.05);
         }
-        .referral-count {
-            font-size: clamp(16px, 3.5vw, 18px);
-            font-weight: 600;
-            color: #1e40af;
-            margin-bottom: 20px;
-        }
         .message-display {
-            font-size: clamp(14px, 3vw, 16px);
+            font-size: clamp(21px, 4.5vw, 24px);
             color: #1e40af;
             margin-top: 20px;
             text-align: center;
@@ -177,31 +120,20 @@
         }
         @media (max-width: 600px) {
             .top-section {
-                padding: 15px;
+                height: 28vh;
             }
-            .referral-code {
-                font-size: clamp(10px, 2vw, 12px);
-                width: 90px;
-                height: 35px;
-                padding: 6px 10px;
+            .top-section h2 {
+                font-size: clamp(18px, 4vw, 22px);
+                padding: 10px 20px;
             }
-            .referral-input {
-                margin-top: 50px;
-                width: clamp(150px, 50vw, 200px);
-                padding: 10px;
-            }
-            .referral-input input {
-                font-size: clamp(10px, 2vw, 12px);
-            }
-            .referral-input button {
-                font-size: clamp(10px, 2vw, 12px);
-                padding: 6px 12px;
-            }
-            .referral-count {
-                font-size: clamp(14px, 3vw, 16px);
+            .balance {
+                font-size: clamp(36px, 8vw, 44px);
+                width: 320px;
+                height: 100px;
+                padding: 20px 30px;
             }
             .message-display {
-                font-size: clamp(12px, 2.5vw, 14px);
+                font-size: clamp(18px, 3.75vw, 21px);
             }
             footer {
                 padding: 6px 0;
@@ -215,27 +147,18 @@
             }
         }
         @media (max-width: 360px) {
-            .referral-code {
-                font-size: clamp(10px, 2vw, 11px);
-                width: 80px;
-                height: 32px;
-                padding: 5px 8px;
+            .top-section h2 {
+                font-size: clamp(16px, 3.5vw, 20px);
+                padding: 8px 15px;
             }
-            .referral-input {
-                width: clamp(120px, 45vw, 180px);
-            }
-            .referral-input input {
-                font-size: clamp(9px, 1.8vw, 11px);
-            }
-            .referral-input button {
-                font-size: clamp(9px, 1.8vw, 11px);
-                padding: 5px 10px;
-            }
-            .referral-count {
-                font-size: clamp(12px, 2.5vw, 14px);
+            .balance {
+                font-size: clamp(32px, 7vw, 40px);
+                width: 280px;
+                height: 90px;
+                padding: 18px 25px;
             }
             .message-display {
-                font-size: clamp(11px, 2vw, 13px);
+                font-size: clamp(16px, 3.5vw, 19px);
             }
             footer a {
                 font-size: clamp(0.65rem, 2vw, 0.8rem);
@@ -249,15 +172,11 @@
 </head>
 <body>
     <div class="top-section">
-        <span class="referral-code" id="referralCode">ID: Loading...<span class="tooltip">Copied!</span></span>
-        <div class="referral-input">
-            <input type="text" id="referralInput" placeholder="Enter Referral ID" />
-            <button id="submitReferral">Submit Referral</button>
-        </div>
+        <h2></h2>
+        <span class="balance" id="balance">Balance: 0</span>
     </div>
     <div class="bottom-section">
-        <div class="referral-count" id="referralCount">Total Referrals: Loading...</div>
-        <div class="message-display" id="messageDisplay"></div>
+        <div class="message-display" id="messageDisplay">Wallet update in progress. More features coming soon.</div>
     </div>
     <footer>
         <a href="https://katomineconnect.github.io/KatoMine.com/index.html" aria-label="Go to Home" class="nav-link"><i class="fas fa-home"></i> Home</a>
@@ -266,175 +185,56 @@
         <a href="https://katomineconnect.github.io/KatoMine.com/wallet.html" aria-label="Go to Wallet" class="nav-link"><i class="fas fa-wallet"></i> Wallet</a>
     </footer>
     <script type="module">
-        // Firebase SDK ইম্পোর্ট
+        // Firebase SDK import
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-        import { getDatabase, ref, onValue, update, get, query } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getDatabase, ref, onValue, get } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
         import { firebaseConfig } from './config.js';
 
         try {
-            // Firebase ইনিশিয়ালাইজ
+            // Initialize Firebase
             const app = initializeApp(firebaseConfig);
             const database = getDatabase(app);
             console.log('Firebase initialized successfully');
 
             let userID = localStorage.getItem('userID');
-            const referralCodeElement = document.getElementById('referralCode');
-            const referralInput = document.getElementById('referralInput');
-            const submitReferralButton = document.getElementById('submitReferral');
+            const balanceElement = document.getElementById('balance');
             const messageDisplay = document.getElementById('messageDisplay');
-            const referralCountElement = document.getElementById('referralCount');
 
-            async function initializeInvitePage() {
+            async function initializeWalletPage() {
                 if (!userID) {
-                    messageDisplay.textContent = 'Please visit the Home page to initialize your account.';
-                    referralCodeElement.textContent = 'ID: Not Found';
-                    referralCountElement.textContent = 'Total Referrals: 0';
-                    submitReferralButton.disabled = true;
+                    messageDisplay.textContent = 'Wallet update in progress. More features coming soon.';
+                    balanceElement.textContent = 'Balance: 0';
                     return;
                 }
 
-                referralCodeElement.textContent = `ID: ${userID}`;
                 const userRef = ref(database, 'users/' + userID);
                 const snapshot = await get(userRef);
                 if (!snapshot.exists()) {
                     console.error('No user data found for ID:', userID);
-                    messageDisplay.textContent = 'User data not found. Please return to Home page to initialize.';
-                    referralCountElement.textContent = 'Total Referrals: 0';
-                    submitReferralButton.disabled = true;
+                    messageDisplay.textContent = 'Wallet update in progress. More features coming soon.';
+                    balanceElement.textContent = 'Balance: 0';
                     return;
                 }
 
                 onValue(userRef, (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        // Display total referrals
-                        const referralCount = data.referrals ? data.referrals.length : 0;
-                        referralCountElement.textContent = `Total Referrals: ${referralCount}`;
-                        
-                        if (data.referrerID) {
-                            messageDisplay.textContent = 'You have already set a referrer.';
-                            submitReferralButton.disabled = true;
-                        } else {
-                            submitReferralButton.disabled = false;
-                        }
+                        balanceElement.textContent = `Balance: ${data.balance || 0}`;
                     } else {
                         console.error('No user data found for ID:', userID);
-                        messageDisplay.textContent = 'User data not found. Please return to Home page.';
-                        referralCountElement.textContent = 'Total Referrals: 0';
-                        submitReferralButton.disabled = true;
+                        messageDisplay.textContent = 'Wallet update in progress. More features coming soon.';
+                        balanceElement.textContent = 'Balance: 0';
                     }
                 }, {
                     onlyOnce: false,
                     error: (error) => {
                         console.error('Error fetching user data:', error);
-                        messageDisplay.textContent = 'Error fetching user data. Please try again later.';
-                        referralCountElement.textContent = 'Total Referrals: 0';
-                        submitReferralButton.disabled = true;
+                        messageDisplay.textContent = 'Wallet update in progress. More features coming soon.';
                     }
                 });
             }
 
-            initializeInvitePage();
-
-            // রেফারেল কোড কপি ফাংশনালিটি
-            referralCodeElement.addEventListener('click', () => {
-                if (!userID) {
-                    messageDisplay.textContent = 'Please visit the Home page to get your referral ID.';
-                    return;
-                }
-                const referralLink = `${window.location.origin}/index.html?ref=${userID}`;
-                navigator.clipboard.writeText(referralLink).then(() => {
-                    referralCodeElement.classList.add('copied');
-                    setTimeout(() => {
-                        referralCodeElement.classList.remove('copied');
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy:', err);
-                    messageDisplay.textContent = 'Failed to copy referral link. Please try again.';
-                });
-            });
-
-            // রেফারেল সাবমিট ফাংশনালিটি
-            submitReferralButton.addEventListener('click', async () => {
-                if (!userID) {
-                    messageDisplay.textContent = 'Please visit the Home page to initialize your account.';
-                    return;
-                }
-                const referrerID = referralInput.value.trim();
-                if (!referrerID) {
-                    messageDisplay.textContent = 'Please enter a referral ID.';
-                    return;
-                }
-                if (referrerID === userID) {
-                    messageDisplay.textContent = 'You cannot refer yourself.';
-                    return;
-                }
-                if (!/^[0-9]{8}$/.test(referrerID)) {
-                    messageDisplay.textContent = 'Please enter a valid 8-digit referral ID.';
-                    return;
-                }
-
-                const userRef = ref(database, 'users/' + userID);
-                const userSnapshot = await get(userRef);
-                if (!userSnapshot.exists()) {
-                    messageDisplay.textContent = 'User data not found. Please return to Home page.';
-                    return;
-                }
-                if (userSnapshot.val().referrerID) {
-                    messageDisplay.textContent = 'You have already set a referrer.';
-                    submitReferralButton.disabled = true;
-                    return;
-                }
-
-                const referrerRef = ref(database, 'users/' + referrerID);
-                const referrerSnapshot = await get(referrerRef);
-                if (!referrerSnapshot.exists()) {
-                    messageDisplay.textContent = 'Invalid referral ID. Please check and try again.';
-                    return;
-                }
-
-                // Check if the referrerID has been used by any other user
-                const allUsersRef = ref(database, 'users');
-                const allUsersSnapshot = await get(query(allUsersRef));
-                let isReferrerUsed = false;
-                if (allUsersSnapshot.exists()) {
-                    allUsersSnapshot.forEach((userSnapshot) => {
-                        const userData = userSnapshot.val();
-                        if (userData.referrerID === referrerID) {
-                            isReferrerUsed = true;
-                        }
-                    });
-                }
-                if (isReferrerUsed) {
-                    messageDisplay.textContent = 'This referral ID has already been used by another user.';
-                    return;
-                }
-
-                const referrerData = referrerSnapshot.val();
-                const referralCount = referrerData.referrals ? referrerData.referrals.length : 0;
-                if (referralCount >= 10) {
-                    messageDisplay.textContent = 'This referrer has reached the maximum limit of 10 referrals.';
-                    return;
-                }
-
-                try {
-                    const newBalance = (referrerData.balance || 0) + 15;
-                    await update(ref(database, 'users/' + referrerID), {
-                        balance: newBalance,
-                        referrals: [...(referrerData.referrals || []), userID]
-                    });
-                    await update(ref(database, 'users/' + userID), {
-                        referrerID: referrerID
-                    });
-                    messageDisplay.textContent = 'Referral submitted successfully! Referrer rewarded 15 tokens.';
-                    submitReferralButton.disabled = true;
-                    console.log(`Referrer ${referrerID} rewarded 15 tokens, new balance: ${newBalance}`);
-                } catch (error) {
-                    console.error('Error submitting referral:', error);
-                    messageDisplay.textContent = 'Error submitting referral. Please try again later.';
-                }
-                referralInput.value = '';
-            });
+            initializeWalletPage();
 
             // নেভিগেশন লিংকগুলোর জন্য ইভেন্ট লিসেনার
             const navLinks = document.querySelectorAll('.nav-link');
@@ -452,9 +252,7 @@
             });
         } catch (error) {
             console.error('Error initializing Firebase:', error);
-            document.getElementById('messageDisplay').textContent = 'Failed to connect to server. Please try again later.';
-            document.getElementById('referralCount').textContent = 'Total Referrals: 0';
-            document.getElementById('submitReferral').disabled = true;
+            document.getElementById('messageDisplay').textContent = 'Wallet update in progress. More features coming soon.';
         }
     </script>
 </body>
