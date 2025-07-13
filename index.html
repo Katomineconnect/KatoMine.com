@@ -109,6 +109,31 @@
             visibility: visible;
             opacity: 1;
         }
+        .profile {
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: 600;
+            width: 110px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 8px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+        }
+        .profile:hover {
+            transform: translateY(-3px) translateX(-50%);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
         .balance {
             font-size: clamp(14px, 3vw, 16px);
             font-weight: 600;
@@ -133,6 +158,28 @@
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
+        .welcome-message {
+            font-size: clamp(16px, 3.5vw, 20px);
+            font-weight: 600;
+            color: var(--accent-color); /* সাদার পরিবর্তে accent color */
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+            z-index: 2;
+            position: absolute;
+            top: 60px; /* Profile বাটনের নিচে */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        .message-display {
+            font-size: clamp(14px, 3vw, 16px);
+            color: var(--accent-color); /* সাদার পরিবর্তে accent color */
+            position: absolute;
+            top: 90px; /* welcome-message এর নিচে */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 2;
+        }
         .bottom-section {
             background: #ffffff;
             padding: 10px 20px;
@@ -151,18 +198,53 @@
         .task {
             font-size: clamp(20px, 5vw, 28px);
             font-weight: 600;
-            margin: 0 0 20px 0;
+            margin: 20px 0;
             color: #1e40af;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
             z-index: 2;
         }
-        .message-display {
-            font-size: clamp(14px, 3vw, 16px);
-            color: #1e40af;
-            position: relative;
-            z-index: 2;
-            margin-top: 20px;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .modal-content button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            background: var(--accent-color);
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .modal-content button:hover {
+            background: #009acd;
         }
         footer {
             position: fixed;
@@ -224,6 +306,13 @@
                 padding: 8px;
                 border-radius: 9px;
             }
+            .profile {
+                font-size: clamp(13px, 2.8vw, 15px);
+                width: 100px;
+                height: 38px;
+                padding: 8px;
+                border-radius: 9px;
+            }
             .balance {
                 font-size: clamp(13px, 2.8vw, 15px);
                 width: 100px;
@@ -231,12 +320,21 @@
                 padding: 8px;
                 border-radius: 9px;
             }
-            .task {
-                font-size: clamp(18px, 4vw, 24px);
-                margin: 0 0 15px 0;
+            .welcome-message {
+                font-size: clamp(14px, 3vw, 18px);
+                top: 55px; /* Profile বাটনের নিচে */
             }
             .message-display {
                 font-size: clamp(12px, 2.5vw, 14px);
+                top: 80px; /* welcome-message এর নিচে */
+            }
+            .task {
+                font-size: clamp(18px, 4vw, 24px);
+                margin: 15px 0;
+            }
+            .modal-content {
+                width: 95%;
+                padding: 15px;
             }
             footer {
                 padding: 6px 0;
@@ -265,11 +363,25 @@
                 height: 36px;
                 padding: 6px;
             }
+            .profile {
+                font-size: clamp(12px, 2.5vw, 14px);
+                width: 90px;
+                height: 36px;
+                padding: 6px;
+            }
             .balance {
                 font-size: clamp(12px, 2.5vw, 14px);
                 width: 90px;
                 height: 36px;
                 padding: 6px;
+            }
+            .welcome-message {
+                font-size: clamp(12px, 2.8vw, 16px);
+                top: 50px; /* Profile বাটনের নিচে */
+            }
+            .message-display {
+                font-size: clamp(11px, 2.3vw, 13px);
+                top: 70px; /* welcome-message এর নিচে */
             }
             .task {
                 font-size: clamp(16px, 3.5vw, 20px);
@@ -292,11 +404,22 @@
     </div>
     <div class="top-section">
         <span class="referral-code" id="referralCode">ID: Loading...<span class="tooltip">Copied!</span></span>
+        <span class="profile" id="profile">Profile</span>
         <span class="balance" id="balance">Balance: 0.00</span>
+        <span class="welcome-message" id="welcomeMessage" style="display: none;">Please set up your profile</span>
+        <div class="message-display" id="messageDisplay"></div>
     </div>
     <div class="bottom-section">
-        <span class="task">Task</span>
-        <div class="message-display" id="messageDisplay"></div>
+        <span class="task" id="task">Task</span>
+    </div>
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Set up your profile</h2>
+            <input type="email" id="recoveryEmail" placeholder="Enter recovery email" style="display: none;">
+            <input type="text" id="username" placeholder="Enter username" style="display: none;">
+            <button id="saveButton">Save</button>
+            <button id="recoveryButton" style="display: none;">Recovery</button>
+        </div>
     </div>
     <footer>
         <a href="https://katomineconnect.github.io/KatoMine.com/index.html" aria-label="Go to Home" class="nav-link"><i class="fas fa-home"></i> Home</a>
@@ -308,12 +431,14 @@
         // Firebase SDK ইম্পোর্ট
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
         import { getDatabase, ref, set, get, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getAuth, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
         import { firebaseConfig } from './config.js';
 
         try {
             // Firebase ইনিশিয়ালাইজ
             const app = initializeApp(firebaseConfig);
             const database = getDatabase(app);
+            const auth = getAuth(app);
             console.log('Firebase initialized successfully');
 
             // ইউনিক আইডি জেনারেট করা
@@ -321,7 +446,7 @@
                 let id;
                 let isUnique = false;
                 let retries = 0;
-                const maxRetries = 100; // সর্বোচ্চ চেষ্টার সীমা
+                const maxRetries = 100;
                 while (!isUnique && retries < maxRetries) {
                     id = Math.floor(10000000 + Math.random() * 90000000).toString();
                     const userRef = ref(database, 'users/' + id);
@@ -345,7 +470,10 @@
                     await set(ref(database, 'users/' + userID), {
                         balance: 0.00,
                         referrerID: referrerID,
-                        referrals: []
+                        referrals: [],
+                        profileSetup: false,
+                        recoveryEmail: null,
+                        username: null
                     });
                     console.log('User data initialized for ID:', userID);
                     if (referrerID) {
@@ -378,11 +506,31 @@
                 const referralCodeElement = document.getElementById('referralCode');
                 const balanceElement = document.getElementById('balance');
                 const messageDisplay = document.getElementById('messageDisplay');
+                const welcomeMessageElement = document.getElementById('welcomeMessage');
+                const taskElement = document.getElementById('task');
+                const profileModal = document.getElementById('profileModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const recoveryEmailInput = document.getElementById('recoveryEmail');
+                const usernameInput = document.getElementById('username');
+                const saveButton = document.getElementById('saveButton');
+                const recoveryButton = document.getElementById('recoveryButton');
 
                 if (!userID) {
                     userID = await generateUniqueID();
                     localStorage.setItem('userID', userID);
                     await initializeUserData(userID, referrerID);
+                    welcomeMessageElement.style.display = 'block';
+                    taskElement.style.display = 'block';
+                } else {
+                    const userRef = ref(database, 'users/' + userID);
+                    const snapshot = await get(userRef);
+                    if (snapshot.exists() && !snapshot.val().profileSetup) {
+                        welcomeMessageElement.style.display = 'block';
+                        taskElement.style.display = 'block';
+                    } else {
+                        welcomeMessageElement.style.display = 'none';
+                        taskElement.style.display = 'block';
+                    }
                 }
 
                 const userRef = ref(database, 'users/' + userID);
@@ -390,14 +538,103 @@
                 if (!snapshot.exists()) {
                     console.log('No user data found, initializing...');
                     await initializeUserData(userID, referrerID);
+                    welcomeMessageElement.style.display = 'block';
+                    taskElement.style.display = 'block';
                 }
 
                 referralCodeElement.textContent = `ID: ${userID}`;
                 balanceElement.textContent = `Balance: 0.00`;
+
+                // প্রোফাইল মডাল কন্ট্রোল
+                const profileElement = document.getElementById('profile');
+                profileElement.addEventListener('click', async () => {
+                    const userRef = ref(database, 'users/' + userID);
+                    const snapshot = await get(userRef);
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        if (!userData.recoveryEmail) {
+                            modalTitle.textContent = 'Set up your recovery email';
+                            recoveryEmailInput.style.display = 'block';
+                            usernameInput.style.display = 'none';
+                            recoveryButton.style.display = 'none';
+                        } else {
+                            modalTitle.textContent = 'Set up your username';
+                            recoveryEmailInput.style.display = 'none';
+                            usernameInput.style.display = 'block';
+                            recoveryButton.style.display = 'block';
+                            usernameInput.value = userData.username || '';
+                        }
+                    }
+                    profileModal.style.display = 'flex';
+                });
+
+                // সেভ বাটন ফাংশনালিটি
+                saveButton.addEventListener('click', async () => {
+                    const userRef = ref(database, 'users/' + userID);
+                    const snapshot = await get(userRef);
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        if (!userData.recoveryEmail) {
+                            const email = recoveryEmailInput.value.trim();
+                            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                                messageDisplay.textContent = 'Please enter a valid Gmail address.';
+                                return;
+                            }
+                            await set(ref(database, 'users/' + userID), {
+                                ...userData,
+                                recoveryEmail: email
+                            });
+                            modalTitle.textContent = 'Set up your username';
+                            recoveryEmailInput.style.display = 'none';
+                            usernameInput.style.display = 'block';
+                            recoveryButton.style.display = 'block';
+                            messageDisplay.textContent = 'Recovery email saved successfully!';
+                        } else {
+                            const username = usernameInput.value.trim();
+                            if (!username || username.length < 3) {
+                                messageDisplay.textContent = 'Username must be at least 3 characters long.';
+                                return;
+                            }
+                            await set(ref(database, 'users/' + userID), {
+                                ...userData,
+                                username: username,
+                                profileSetup: true
+                            });
+                            profileModal.style.display = 'none';
+                            welcomeMessageElement.style.display = 'none';
+                            messageDisplay.textContent = 'Profile setup completed!';
+                        }
+                    }
+                });
+
+                // রিকভারি বাটন ফাংশনালিটি
+                recoveryButton.addEventListener('click', async () => {
+                    const email = prompt('Enter your Gmail address for recovery:');
+                    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        try {
+                            await sendPasswordResetEmail(auth, email);
+                            messageDisplay.textContent = 'A password reset email has been sent to your Gmail.';
+                            profileModal.style.display = 'none';
+                        } catch (error) {
+                            console.error('Error sending password reset email:', error);
+                            messageDisplay.textContent = 'No account found with this email or an error occurred.';
+                        }
+                    } else {
+                        messageDisplay.textContent = 'Please enter a valid Gmail address.';
+                    }
+                });
+
                 onValue(userRef, (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
                         balanceElement.textContent = `Balance: ${data.balance || 0.00}`;
+                        if (data.profileSetup) {
+                            welcomeMessageElement.style.display = 'none';
+                            taskElement.style.display = 'block';
+                        } else {
+                            welcomeMessageElement.style.display = 'block';
+                            taskElement.style.display = 'block';
+                        }
                     } else {
                         console.error('No user data found for ID:', userID);
                         messageDisplay.textContent = 'User data not found. Please return to Home page.';
@@ -425,6 +662,13 @@
                     console.error('Failed to copy:', err);
                     document.getElementById('messageDisplay').textContent = 'Failed to copy referral link.';
                 });
+            });
+
+            // মডাল বন্ধ করার জন্য ক্লিক ইভেন্ট
+            profileModal.addEventListener('click', (e) => {
+                if (e.target === profileModal) {
+                    profileModal.style.display = 'none';
+                }
             });
 
             // নেভিগেশন লিংকগুলোর জন্য ইভেন্ট লিসেনার
