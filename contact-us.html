@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Contact Us | Kato Mine</title>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init("xXY4-X6Yck0j0UQ35"); // EmailJS Public Key
+        })();
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" type="text/css">
+    <style>
+        :root {
+            --primary-color: #ffd700;
+            --secondary-color: #d3d3d3;
+            --background-color: #0d1b2a;
+            --accent-color: #00bfff;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: var(--secondary-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .contact-container {
+            max-width: 600px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 40px 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            position: relative;
+        }
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        .back-btn i {
+            font-size: 16px;
+        }
+        .back-btn:hover {
+            background: var(--accent-color);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: clamp(1.8em, 5vw, 2.2em);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: var(--secondary-color);
+            font-size: clamp(14px, 3vw, 16px);
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--secondary-color);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--secondary-color);
+            font-size: clamp(14px, 3vw, 16px);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: clamp(14px, 3vw, 16px);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #009acd;
+        }
+        .info {
+            margin-top: 20px;
+            color: var(--secondary-color);
+            font-size: clamp(12px, 2.8vw, 14px);
+            text-align: center;
+        }
+        .footer-links {
+            margin-top: 20px;
+            text-align: center;
+            font-size: clamp(12px, 2.8vw, 14px);
+            color: var(--secondary-color);
+        }
+        .footer-links a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: #009acd;
+            text-decoration: underline;
+        }
+        .developer-only {
+            display: none; /* Hidden for users, accessible to devs */
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            .contact-container {
+                padding: 30px 15px;
+            }
+            .back-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            .back-btn i {
+                font-size: 14px;
+            }
+            h2 {
+                font-size: clamp(1.6em, 4.5vw, 2em);
+            }
+            label, input, textarea, button {
+                font-size: clamp(12px, 2.8vw, 14px);
+            }
+            .info, .footer-links {
+                font-size: clamp(11px, 2.5vw, 13px);
+            }
+        }
+        @media (max-width: 400px) {
+            body {
+                padding: 10px;
+            }
+            .contact-container {
+                padding: 25px 10px;
+            }
+            .back-btn {
+                padding: 5px 10px;
+                font-size: 11px;
+            }
+            .back-btn i {
+                font-size: 12px;
+            }
+            h2 {
+                font-size: clamp(1.4em, 4vw, 1.8em);
+            }
+            label, input, textarea, button {
+                font-size: clamp(11px, 2.5vw, 13px);
+            }
+            .info, .footer-links {
+                font-size: clamp(10px, 2.3vw, 12px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-container">
+        <button class="back-btn" onclick="window.location.href='https://katomineconnect.github.io/KatoMine.com/index.html'">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <h2>Contact Us</h2>
+        <form id="contactForm">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Your Email</label>
+            <input type="email" id="email" name="email" required>
+            <label for="message">Your Message</label>
+            <textarea id="message" name="message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+        <div class="info">
+            <!-- Developer accessible email -->
+            <span class="developer-only" data-email="ainetworkmining22@gmail.com"></span>
+            Use the form above to send us a message.
+        </div>
+        <div class="footer-links">
+            <a href="https://katomineconnect.github.io/KatoMine.com/privacy-policy.html" target="_blank">Privacy Policy</a>
+            <a href="https://katomineconnect.github.io/KatoMine.com/terms-of-service.html" target="_blank">Terms of Service</a>
+            <a href="https://katomineconnect.github.io/KatoMine.com/about-us.html" target="_blank">About Us</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            };
+            emailjs.send('service_ogacydi', 'template_8b8s4u9', formData)
+                .then(function(response) {
+                    alert('Message sent successfully!');
+                    document.getElementById('contactForm').reset();
+                }, function(error) {
+                    alert('Failed to send message: ' + JSON.stringify(error));
+                });
+        });
+
+        // Developer access for debugging
+        console.log("Developer Email: " + document.querySelector('.developer-only').getAttribute('data-email'));
+    </script>
+</body>
+</html>
