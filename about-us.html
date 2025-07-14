@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>About Us - Kato Mine</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" type="text/css">
+    <style>
+        :root {
+            --primary-color: #ffd700;
+            --secondary-color: #d3d3d3;
+            --background-color: #0d1b2a;
+            --accent-color: #00bfff;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: var(--secondary-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 40px 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            position: relative;
+            color: var(--secondary-color);
+        }
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        .back-btn i {
+            font-size: 16px;
+        }
+        .back-btn:hover {
+            background: var(--accent-color);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: clamp(1.8em, 5vw, 2.2em);
+        }
+        p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                padding: 30px 15px;
+            }
+            .back-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            .back-btn i {
+                font-size: 14px;
+            }
+            h1 {
+                font-size: clamp(1.6em, 4.5vw, 2em);
+            }
+            p {
+                font-size: clamp(12px, 2.8vw, 14px);
+            }
+        }
+        @media (max-width: 400px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 25px 10px;
+            }
+            .back-btn {
+                padding: 5px 10px;
+                font-size: 11px;
+            }
+            .back-btn i {
+                font-size: 12px;
+            }
+            h1 {
+                font-size: clamp(1.4em, 4vw, 1.8em);
+            }
+            p {
+                font-size: clamp(11px, 2.5vw, 13px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="window.location.href='https://katomineconnect.github.io/KatoMine.com/index.html'">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <h1>About Us</h1>
+        <p>Kato Mine is a secure mining platform designed to make earning easy for everyone by allowing users to earn through mining, completing tasks, and inviting others.</p>
+        <p>We aim to create a simple, user-friendly, and secure environment for earning online while maintaining the highest standards of user privacy and security.</p>
+        <p>Our mission is to empower users with accessible earning opportunities in a trusted and safe environment, providing clear systems and fair practices to benefit all.</p>
+        <p>Join Kato Mine today and start your secure and simple mining journey with us.</p>
+    </div>
+</body>
+</html>
