@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>Katomine</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" type="text/css">
     <style>
         :root {
             --primary-color: #ffd700;
@@ -34,6 +34,7 @@
             width: 100vw;
             margin: 0;
             text-align: center;
+            z-index: 1;
         }
         .logo {
             font-size: 3em;
@@ -57,15 +58,16 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 40vh;
+            height: 50vh;
             padding: 20px;
             position: relative;
             overflow: hidden;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             width: 100vw;
             margin: 0;
+            z-index: 2;
         }
-        .referral-code {
+        .referral-code, .verify, .balance, .roadmap, .extra-reward {
             font-size: clamp(14px, 3vw, 16px);
             font-weight: 600;
             width: 110px;
@@ -81,13 +83,22 @@
             color: #ffffff;
             transition: all 0.3s ease;
             position: absolute;
-            top: 15px;
-            left: 15px;
             cursor: pointer;
         }
-        .referral-code:hover {
+        .referral-code:hover, .verify:hover, .roadmap:hover, .extra-reward:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        .balance {
+            cursor: default;
+            pointer-events: none;
+        }
+        .balance:hover {
+            transform: translateY(-3px);
+        }
+        .referral-code {
+            top: 15px;
+            left: 15px;
         }
         .referral-code .tooltip {
             visibility: hidden;
@@ -110,53 +121,23 @@
             opacity: 1;
         }
         .verify {
-            font-size: clamp(14px, 3vw, 16px);
-            font-weight: 600;
-            width: 110px;
-            height: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 8px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            transition: all 0.3s ease;
-            position: absolute;
             top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            cursor: pointer;
-        }
-        .verify:hover {
-            transform: translateY(-3px) translateX(-50%);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
         .balance {
-            font-size: clamp(14px, 3vw, 16px);
-            font-weight: 600;
-            width: 110px;
-            height: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 8px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            transition: all 0.3s ease;
-            position: absolute;
             top: 15px;
             right: 15px;
-            cursor: default;
         }
-        .balance:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        .roadmap {
+            top: 60px;
+            left: 33.33%;
+            transform: translateX(-50%);
+        }
+        .extra-reward {
+            top: 60px;
+            left: 66.66%;
+            transform: translateX(-50%);
         }
         .welcome-message {
             font-size: clamp(16px, 3.5vw, 20px);
@@ -165,7 +146,7 @@
             text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
             z-index: 2;
             position: absolute;
-            top: 60px;
+            top: 90px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
@@ -174,11 +155,38 @@
             font-size: clamp(14px, 3vw, 16px);
             color: var(--accent-color);
             position: absolute;
-            top: 90px;
+            top: 120px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
             z-index: 2;
+        }
+        .extra-reward-info {
+            width: 90vw;
+            margin: 5px auto;
+            padding: 15px;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        .extra-reward-info h2 {
+            font-size: clamp(2.5em, 6vw, 3em);
+            font-weight: bold;
+            color: var(--primary-color);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .extra-reward-info p {
+            font-size: clamp(1.4em, 3.5vw, 1.6em);
+            color: var(--secondary-color);
+            margin-top: 5px;
         }
         .bottom-section {
             background: #ffffff;
@@ -193,15 +201,62 @@
             width: 100vw;
             margin: 0;
             flex-grow: 1;
-            margin-bottom: 60px;
+            padding-bottom: 30px;
+            margin-bottom: 10px;
         }
-        .task {
-            font-size: clamp(20px, 5vw, 28px);
-            font-weight: 600;
-            margin: 20px 0;
-            color: #1e40af;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
-            z-index: 2;
+        .secondary-footer {
+            background: #f0f0f0;
+            padding: 15px 0;
+            box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .footer-links {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 0;
+            padding: 0 15px;
+            gap: 15px;
+        }
+        .footer-link {
+            flex: 1;
+            padding: 10px 0;
+            font-size: 14px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            text-align: center;
+            box-sizing: border-box;
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        .footer-link:hover,
+        .footer-link:focus {
+            color: #009acd;
+            background-color: rgba(0, 123, 255, 0.15);
+            outline: none;
+        }
+        .secondary-footer p {
+            font-size: 12px;
+            color: var(--secondary-color);
+            margin: 15px 0 0;
+            padding: 0 15px;
+            width: 100%;
+            text-align: center;
+            display: block;
+            line-height: 1.6;
         }
         .modal {
             display: none;
@@ -214,6 +269,7 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            box-sizing: border-box;
         }
         .modal-content {
             background: #ffffff;
@@ -224,6 +280,8 @@
             text-align: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             position: relative;
+            box-sizing: border-box;
+            overflow: auto;
         }
         .modal-content input {
             width: 100%;
@@ -243,6 +301,7 @@
             font-size: 16px;
             cursor: pointer;
             transition: background 0.3s ease;
+            type: button;
         }
         .modal-content button:hover {
             background: #009acd;
@@ -254,21 +313,22 @@
             font-size: 20px;
             cursor: pointer;
             color: #1e40af;
+            aria-label: "Close modal";
         }
         .toast {
             visibility: hidden;
-            min-width: 250px;
-            margin-left: -125px;
+            min-width: 200px;
+            margin-left: -100px;
             background-color: #333;
             color: #fff;
             text-align: center;
             border-radius: 5px;
-            padding: 16px;
+            padding: 8px;
             position: fixed;
             z-index: 1001;
             left: 50%;
-            bottom: 30px;
-            font-size: 16px;
+            bottom: 15px;
+            font-size: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .toast.show {
@@ -277,10 +337,10 @@
         }
         @keyframes fadein {
             from {bottom: 0; opacity: 0;}
-            to {bottom: 30px; opacity: 1;}
+            to {bottom: 15px; opacity: 1;}
         }
         @keyframes fadeout {
-            from {bottom: 30px; opacity: 1;}
+            from {bottom: 15px; opacity: 1;}
             to {bottom: 0; opacity: 0;}
         }
         footer {
@@ -293,7 +353,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: clamp(8px, 2vw, 10px) 0;
+            padding: clamp(5px, 1.2vw, 7px) 0;
             box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.1);
             z-index: 999;
         }
@@ -302,7 +362,7 @@
             text-decoration: none;
             font-weight: 500;
             font-size: clamp(0.8rem, 2.5vw, 1rem);
-            padding: clamp(6px, 1.5vw, 8px);
+            padding: clamp(3px, 1vw, 5px);
             border-radius: 6px;
             transition: all 0.2s ease;
             display: flex;
@@ -334,23 +394,9 @@
                 font-size: 0.95em;
             }
             .top-section {
-                height: 35vh;
+                height: 45vh;
             }
-            .referral-code {
-                font-size: clamp(13px, 2.8vw, 15px);
-                width: 100px;
-                height: 38px;
-                padding: 8px;
-                border-radius: 9px;
-            }
-            .verify {
-                font-size: clamp(13px, 2.8vw, 15px);
-                width: 100px;
-                height: 38px;
-                padding: 8px;
-                border-radius: 9px;
-            }
-            .balance {
+            .referral-code, .verify, .balance, .roadmap, .extra-reward {
                 font-size: clamp(13px, 2.8vw, 15px);
                 width: 100px;
                 height: 38px;
@@ -359,32 +405,69 @@
             }
             .welcome-message {
                 font-size: clamp(14px, 3vw, 18px);
-                top: 55px;
+                top: 85px;
             }
             .message-display {
                 font-size: clamp(12px, 2.5vw, 14px);
-                top: 80px;
+                top: 110px;
             }
-            .task {
-                font-size: clamp(18px, 4vw, 24px);
-                margin: 15px 0;
+            .extra-reward-info {
+                width: 95vw;
+                padding: 12px;
+                top: 140px;
+                margin: 5px auto;
+            }
+            .extra-reward-info h2 {
+                font-size: clamp(2em, 4.5vw, 2.2em);
+                margin-bottom: 6px;
+            }
+            .extra-reward-info p {
+                font-size: clamp(1.2em, 3vw, 1.3em);
+                margin-top: 4px;
+            }
+            .bottom-section {
+                margin-bottom: 15px;
+                padding-bottom: 35px;
+            }
+            .secondary-footer {
+                padding: 12px 0;
+            }
+            .footer-links {
+                padding: 0 10px;
+                gap: 10px;
+            }
+            .footer-link {
+                font-size: 12px;
+                padding: 8px 0;
+                border-radius: 3px;
+            }
+            .secondary-footer p {
+                font-size: 11px;
+                margin: 12px 0 0;
+                padding: 0 10px;
             }
             .modal-content {
                 width: 95%;
                 padding: 15px;
             }
             footer {
-                padding: 6px 0;
+                padding: 3px 0;
             }
             footer a {
                 font-size: clamp(0.7rem, 2.2vw, 0.9rem);
-                padding: clamp(4px, 1.2vw, 6px);
+                padding: clamp(2px, 0.8vw, 4px);
             }
             footer a i {
                 font-size: clamp(0.9rem, 2.8vw, 1.1rem);
             }
+            .toast {
+                font-size: 12px;
+                padding: 8px;
+                min-width: 180px;
+                margin-left: -90px;
+            }
         }
-        @media (max-width: 360px) {
+        @media (max-width: 400px) {
             .logo {
                 font-size: 1.8em;
             }
@@ -394,19 +477,7 @@
             .tagline {
                 font-size: 0.9em;
             }
-            .referral-code {
-                font-size: clamp(12px, 2.5vw, 14px);
-                width: 90px;
-                height: 36px;
-                padding: 6px;
-            }
-            .verify {
-                font-size: clamp(12px, 2.5vw, 14px);
-                width: 90px;
-                height: 36px;
-                padding: 6px;
-            }
-            .balance {
+            .referral-code, .verify, .balance, .roadmap, .extra-reward {
                 font-size: clamp(12px, 2.5vw, 14px);
                 width: 90px;
                 height: 36px;
@@ -414,18 +485,50 @@
             }
             .welcome-message {
                 font-size: clamp(12px, 2.8vw, 16px);
-                top: 50px;
+                top: 80px;
             }
             .message-display {
                 font-size: clamp(11px, 2.3vw, 13px);
-                top: 70px;
+                top: 100px;
             }
-            .task {
-                font-size: clamp(16px, 3.5vw, 20px);
+            .extra-reward-info {
+                width: 95vw;
+                padding: 10px;
+                top: 130px;
+                margin: 5px auto;
+            }
+            .extra-reward-info h2 {
+                font-size: clamp(1.8em, 4vw, 2em);
+                margin-bottom: 5px;
+            }
+            .extra-reward-info p {
+                font-size: clamp(1.1em, 2.8vw, 1.2em);
+                margin-top: 3px;
+            }
+            .bottom-section {
+                margin-bottom: 10px;
+                padding-bottom: 30px;
+            }
+            .secondary-footer {
+                padding: 10px 0;
+            }
+            .footer-links {
+                padding: 0 8px;
+                gap: 8px;
+            }
+            .footer-link {
+                font-size: 11px;
+                padding: 6px 0;
+                border-radius: 2px;
+            }
+            .secondary-footer p {
+                font-size: 10px;
+                margin: 10px 0 0;
+                padding: 0 8px;
             }
             footer a {
                 font-size: clamp(0.65rem, 2vw, 0.8rem);
-                padding: 4px;
+                padding: 2px;
             }
             footer a i {
                 font-size: clamp(0.8rem, 2.5vw, 1rem);
@@ -443,23 +546,37 @@
         <span class="referral-code" id="referralCode">ID: Loading...<span class="tooltip">Copied!</span></span>
         <span class="verify" id="verify">Verify</span>
         <span class="balance" id="balance">Balance: 0.00</span>
+        <span class="roadmap" id="roadmap">Roadmap</span>
+        <span class="extra-reward" id="extraReward">Extra Reward</span>
         <span class="welcome-message" id="welcomeMessage" style="display: none;">Please verify your account</span>
         <div class="message-display" id="messageDisplay"></div>
+        <div class="extra-reward-info" id="extraRewardInfo">
+            <h2>Earn Extra Rewards</h2>
+            <p>Tap the Extra Reward option, complete simple tasks, and instantly earn extra Kato tokens.</p>
+        </div>
     </div>
     <div class="bottom-section">
-        <span class="task" id="task">Task</span>
+        <footer class="secondary-footer">
+            <div class="footer-links">
+                <a href="/privacy-policy.html" class="footer-link">Privacy Policy</a>
+                <a href="/terms-of-service.html" class="footer-link">Terms of Service</a>
+                <a href="/about-us.html" class="footer-link">About Us</a>
+                <a href="/contact-us.html" class="footer-link">Contact Us</a>
+            </div>
+            <p>© 2025 Kato Mine. All rights reserved.</p>
+        </footer>
     </div>
     <!-- Verify Modal -->
-    <div class="modal" id="verifyModal">
+    <div class="modal" id="verifyModal" role="dialog" aria-modal="true">
         <div class="modal-content">
-            <span class="close-btn" onclick="document.getElementById('verifyModal').style.display='none'">×</span>
+            <span class="close-btn" onclick="document.getElementById('verifyModal').style.display='none'" aria-label="Close modal">×</span>
             <h2 id="modalTitle">Verify your account</h2>
             <input type="text" id="username" placeholder="Enter username" aria-label="Username">
-            <button id="saveButton">Save</button>
-            <button id="recoveryAccountButton">Recovery Account</button>
+            <button id="saveButton" type="button">Save</button>
+            <button id="recoveryAccountButton" type="button">Recovery Account</button>
             <input type="text" id="recoveryUsername" placeholder="Enter username for recovery" style="display: none;" aria-label="Recovery Username">
             <input type="text" id="recoveryID" placeholder="Enter ID for recovery" style="display: none;" aria-label="Recovery ID">
-            <button id="recoveryButton" style="display: none;">Recover</button>
+            <button id="recoveryButton" style="display: none;" type="button">Recover</button>
         </div>
     </div>
     <!-- Toast Notification -->
@@ -471,25 +588,59 @@
         <a href="https://katomineconnect.github.io/KatoMine.com/wallet.html" aria-label="Go to Wallet" class="nav-link"><i class="fas fa-wallet"></i> Wallet</a>
     </footer>
     <script type="module">
+        // Debug log to check if script is running
+        console.log('Script loaded at', new Date().toLocaleString());
+
+        // Import Firebase dependencies
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
         import { getDatabase, ref, set, get, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
         import { firebaseConfig } from './config.js';
 
-        try {
-            // Firebase Initialize
-            const app = initializeApp(firebaseConfig);
-            const database = getDatabase(app);
-            console.log('Firebase initialized successfully');
+        // Utility to check localStorage availability
+        function isLocalStorageAvailable() {
+            try {
+                const test = '__test__';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
 
-            // Toast Notification
-            function showToast(message) {
-                const toast = document.getElementById('toast');
+        // Sanitize input to prevent invalid characters
+        function sanitizeInput(input) {
+            return input.replace(/[^a-zA-Z0-9_-]/g, '').substring(0, 50);
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            if (toast) {
                 toast.textContent = message;
                 toast.className = 'toast show';
                 setTimeout(() => {
                     toast.className = 'toast';
                 }, 3000);
+            } else {
+                console.error('Toast element not found');
             }
+        }
+
+        try {
+            // Check if firebaseConfig is defined
+            if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                console.error('Firebase configuration is missing or invalid');
+                showToast('Failed to load Firebase configuration. Please check config.js.');
+                throw new Error('Firebase configuration is missing or invalid');
+            } else {
+                console.log('Firebase config loaded successfully:', firebaseConfig);
+            }
+
+            // Firebase Initialize
+            const app = initializeApp(firebaseConfig);
+            const database = getDatabase(app);
+            console.log('Firebase initialized successfully');
 
             // Generate Unique ID
             async function generateUniqueID() {
@@ -507,7 +658,8 @@
                     retries++;
                 }
                 if (!isUnique) {
-                    throw new Error('ID generation failed');
+                    showToast('Unable to generate unique ID. Please try again.');
+                    throw new Error('ID generation failed after max retries');
                 }
                 return id;
             }
@@ -546,148 +698,190 @@
             }
 
             // Initialize User
-            let userID = localStorage.getItem('userID');
+            let userID = isLocalStorageAvailable() ? localStorage.getItem('userID') : null;
             async function initializeUser() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const referrerID = urlParams.get('ref') || null;
-                const referralCodeElement = document.getElementById('referralCode');
-                const balanceElement = document.getElementById('balance');
-                const welcomeMessageElement = document.getElementById('welcomeMessage');
-                const taskElement = document.getElementById('task');
-                const verifyModal = document.getElementById('verifyModal');
-                const modalTitle = document.getElementById('modalTitle');
-                const usernameInput = document.getElementById('username');
-                const saveButton = document.getElementById('saveButton');
-                const recoveryAccountButton = document.getElementById('recoveryAccountButton');
-                const recoveryUsernameInput = document.getElementById('recoveryUsername');
-                const recoveryIDInput = document.getElementById('recoveryID');
-                const recoveryButton = document.getElementById('recoveryButton');
+                try {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const referrerID = urlParams.get('ref') || null;
+                    const referralCodeElement = document.getElementById('referralCode');
+                    const balanceElement = document.getElementById('balance');
+                    const welcomeMessageElement = document.getElementById('welcomeMessage');
+                    const verifyModal = document.getElementById('verifyModal');
+                    const modalTitle = document.getElementById('modalTitle');
+                    const usernameInput = document.getElementById('username');
+                    const saveButton = document.getElementById('saveButton');
+                    const recoveryAccountButton = document.getElementById('recoveryAccountButton');
+                    const recoveryUsernameInput = document.getElementById('recoveryUsername');
+                    const recoveryIDInput = document.getElementById('recoveryID');
+                    const recoveryButton = document.getElementById('recoveryButton');
+                    const roadmapElement = document.getElementById('roadmap');
+                    const extraRewardElement = document.getElementById('extraReward');
+                    const extraRewardInfoElement = document.getElementById('extraRewardInfo');
 
-                if (!userID) {
-                    referralCodeElement.textContent = `ID: Not Set`;
-                } else {
-                    const userRef = ref(database, 'users/' + userID);
-                    const snapshot = await get(userRef);
-                    if (snapshot.exists() && snapshot.val().profileSetup) {
-                        welcomeMessageElement.style.display = 'none';
-                        taskElement.style.display = 'block';
-                    } else {
-                        welcomeMessageElement.style.display = 'block';
-                        taskElement.style.display = 'block';
-                    }
-                    referralCodeElement.textContent = `ID: ${userID}`;
-                }
-
-                balanceElement.textContent = `Balance: 0.00`;
-
-                // Verify Modal Control
-                const verifyElement = document.getElementById('verify');
-                verifyElement.addEventListener('click', () => {
-                    modalTitle.textContent = 'Verify your account';
-                    usernameInput.style.display = 'block';
-                    recoveryAccountButton.style.display = 'block';
-                    recoveryUsernameInput.style.display = 'none';
-                    recoveryIDInput.style.display = 'none';
-                    recoveryButton.style.display = 'none';
-                    verifyModal.style.display = 'flex';
-                });
-
-                // Save Button Functionality
-                saveButton.addEventListener('click', async () => {
-                    const username = usernameInput.value.trim();
-                    if (!username || username.length < 3) {
-                        showToast('Username must be at least 3 characters long.');
+                    // Check if elements exist
+                    if (!referralCodeElement || !balanceElement || !welcomeMessageElement || !verifyModal ||
+                        !modalTitle || !usernameInput || !saveButton || !recoveryAccountButton ||
+                        !recoveryUsernameInput || !recoveryIDInput || !recoveryButton ||
+                        !roadmapElement || !extraRewardElement || !extraRewardInfoElement) {
+                        console.error('One or more DOM elements not found');
+                        showToast('Initialization error: Missing elements');
                         return;
                     }
+
                     if (!userID) {
-                        userID = await generateUniqueID();
-                        localStorage.setItem('userID', userID);
+                        referralCodeElement.textContent = `ID: Not Set`;
+                    } else {
+                        const userRef = ref(database, 'users/' + userID);
+                        const snapshot = await get(userRef);
+                        if (snapshot.exists() && snapshot.val().profileSetup) {
+                            welcomeMessageElement.style.display = 'none';
+                        } else {
+                            welcomeMessageElement.style.display = 'block';
+                        }
                         referralCodeElement.textContent = `ID: ${userID}`;
                     }
-                    const userRef = ref(database, 'users/' + userID);
-                    const snapshot = await get(userRef);
-                    if (!snapshot.exists()) {
-                        await initializeUserData(userID, username, referrerID);
-                        verifyModal.style.display = 'none';
-                        welcomeMessageElement.style.display = 'none';
-                        showToast('Account verified successfully!');
-                    } else {
-                        showToast('User already exists.');
-                    }
-                });
 
-                // Recovery Account Button Functionality
-                recoveryAccountButton.addEventListener('click', () => {
-                    modalTitle.textContent = 'Recover Account';
-                    usernameInput.style.display = 'none';
-                    recoveryAccountButton.style.display = 'none';
-                    recoveryUsernameInput.style.display = 'block';
-                    recoveryIDInput.style.display = 'block';
-                    recoveryButton.style.display = 'block';
-                });
+                    balanceElement.textContent = `Balance: 0.00`;
 
-                // Recovery Button Functionality
-                recoveryButton.addEventListener('click', async () => {
-                    const recoveryUsername = recoveryUsernameInput.value.trim();
-                    const recoveryID = recoveryIDInput.value.trim();
-                    if (!recoveryUsername || !recoveryID) {
-                        showToast('Please enter both username and ID.');
-                        return;
-                    }
-                    const usersRef = ref(database, 'users');
-                    const snapshot = await get(usersRef);
-                    if (snapshot.exists()) {
-                        let found = false;
-                        snapshot.forEach((childSnapshot) => {
-                            const userData = childSnapshot.val();
-                            if (userData.username === recoveryUsername && childSnapshot.key === recoveryID) {
-                                found = true;
-                                userID = recoveryID;
-                                localStorage.setItem('userID', userID);
-                                referralCodeElement.textContent = `ID: ${userID}`;
-                                verifyModal.style.display = 'none';
-                                welcomeMessageElement.style.display = 'none';
-                                showToast('Account recovered successfully!');
-                            }
-                        });
-                        if (!found) {
-                            showToast('Invalid username or ID.');
+                    // Verify Modal Control
+                    const verifyElement = document.getElementById('verify');
+                    verifyElement.addEventListener('click', () => {
+                        modalTitle.textContent = 'Verify your account';
+                        usernameInput.style.display = 'block';
+                        recoveryAccountButton.style.display = 'block';
+                        recoveryUsernameInput.style.display = 'none';
+                        recoveryIDInput.style.display = 'none';
+                        recoveryButton.style.display = 'none';
+                        verifyModal.style.display = 'flex';
+                    });
+
+                    // Save Button Functionality
+                    saveButton.addEventListener('click', async () => {
+                        const username = sanitizeInput(usernameInput.value.trim());
+                        if (!username || username.length < 3) {
+                            showToast('Username must be at least 3 characters long and contain only letters, numbers, underscores, or hyphens.');
+                            return;
                         }
-                    } else {
-                        showToast('No users found in the database.');
-                    }
-                });
+                        if (!userID) {
+                            userID = await generateUniqueID();
+                            if (isLocalStorageAvailable()) {
+                                localStorage.setItem('userID', userID);
+                            }
+                            referralCodeElement.textContent = `ID: ${userID}`;
+                        }
+                        const userRef = ref(database, 'users/' + userID);
+                        const snapshot = await get(userRef);
+                        if (!snapshot.exists()) {
+                            await initializeUserData(userID, username, referrerID);
+                            verifyModal.style.display = 'none';
+                            welcomeMessageElement.style.display = 'none';
+                            showToast('Account verified successfully!');
+                        } else {
+                            showToast('User already exists.');
+                        }
+                    });
 
-                // Modal Close on Outside Click
-                verifyModal.addEventListener('click', (e) => {
-                    if (e.target === verifyModal) {
-                        verifyModal.style.display = 'none';
-                    }
-                });
+                    // Recovery Account Button Functionality
+                    recoveryAccountButton.addEventListener('click', () => {
+                        modalTitle.textContent = 'Recover Account';
+                        usernameInput.style.display = 'none';
+                        recoveryAccountButton.style.display = 'none';
+                        recoveryUsernameInput.style.display = 'block';
+                        recoveryIDInput.style.display = 'block';
+                        recoveryButton.style.display = 'block';
+                    });
 
-                // Real-time User Data Update
-                if (userID) {
-                    const userRef = ref(database, 'users/' + userID);
-                    onValue(userRef, (snapshot) => {
-                        const data = snapshot.val();
-                        if (data) {
-                            balanceElement.textContent = `Balance: ${data.balance || 0.00}`;
-                            if (data.profileSetup) {
-                                welcomeMessageElement.style.display = 'none';
-                                taskElement.style.display = 'block';
-                            } else {
-                                welcomeMessageElement.style.display = 'block';
-                                taskElement.style.display = 'block';
+                    // Recovery Button Functionality
+                    recoveryButton.addEventListener('click', async () => {
+                        const recoveryUsername = sanitizeInput(recoveryUsernameInput.value.trim());
+                        const recoveryID = recoveryIDInput.value.trim();
+                        if (!recoveryUsername || !recoveryID) {
+                            showToast('Please enter both username and ID.');
+                            return;
+                        }
+                        const usersRef = ref(database, 'users');
+                        const snapshot = await get(usersRef);
+                        if (snapshot.exists()) {
+                            let found = false;
+                            snapshot.forEach((childSnapshot) => {
+                                const userData = childSnapshot.val();
+                                if (userData.username === recoveryUsername && childSnapshot.key === recoveryID) {
+                                    found = true;
+                                    userID = recoveryID;
+                                    if (isLocalStorageAvailable()) {
+                                        localStorage.setItem('userID', userID);
+                                    }
+                                    referralCodeElement.textContent = `ID: ${userID}`;
+                                    verifyModal.style.display = 'none';
+                                    welcomeMessageElement.style.display = 'none';
+                                    showToast('Account recovered successfully!');
+                                }
+                            });
+                            if (!found) {
+                                showToast('Invalid username or ID.');
                             }
                         } else {
-                            console.error('No user data found for ID:', userID);
-                            showToast('User data not found. Please return to Home page.');
-                            balanceElement.textContent = `Balance: 0.00`;
+                            showToast('No users found in the database.');
                         }
-                    }, (error) => {
-                        console.error('Error fetching user data:', error);
-                        showToast('Error fetching user data. Please try again later.');
                     });
+
+                    // Modal Close on Outside Click
+                    verifyModal.addEventListener('click', (e) => {
+                        if (e.target === verifyModal) {
+                            verifyModal.style.display = 'none';
+                        }
+                    });
+
+                    // Roadmap Button Functionality
+                    roadmapElement.addEventListener('click', () => {
+                        try {
+                            window.location.href = 'https://katomineconnect.github.io/KatoMine.com/roadmap.html';
+                        } catch (error) {
+                            console.error('Navigation error:', error);
+                            showToast('Error navigating to Roadmap page. Please try again.');
+                        }
+                    });
+
+                    // Extra Reward Button Functionality
+                    extraRewardElement.addEventListener('click', () => {
+                        try {
+                            window.location.href = 'https://katomineconnect.github.io/KatoMine.com/extrareward.html';
+                        } catch (error) {
+                            console.error('Navigation error:', error);
+                            showToast('Error navigating to Extra Reward page. Please try again.');
+                        }
+                    });
+
+                    // Real-time User Data Update
+                    if (userID) {
+                        const userRef = ref(database, 'users/' + userID);
+                        const unsubscribe = onValue(userRef, (snapshot) => {
+                            const data = snapshot.val();
+                            if (data) {
+                                balanceElement.textContent = `Balance: ${data.balance || 0.00}`;
+                                if (data.profileSetup) {
+                                    welcomeMessageElement.style.display = 'none';
+                                } else {
+                                    welcomeMessageElement.style.display = 'block';
+                                }
+                            } else {
+                                console.error('No user data found for ID:', userID);
+                                showToast('User data not found. Please return to Home page.');
+                                balanceElement.textContent = `Balance: 0.00`;
+                            }
+                        }, (error) => {
+                            console.error('Error fetching user data:', error);
+                            showToast('Error fetching user data. Please try again later.');
+                        });
+
+                        // Cleanup listener on page unload
+                        window.addEventListener('unload', () => {
+                            unsubscribe();
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error during user initialization:', error);
+                    showToast('Initialization error. Please refresh the page.');
                 }
             }
 
@@ -696,41 +890,52 @@
 
             // Referral Code Copy
             const referralCodeElement = document.getElementById('referralCode');
-            referralCodeElement.addEventListener('click', () => {
-                if (!userID) {
-                    showToast('Please verify your account first.');
-                    return;
-                }
-                const referralLink = `${window.location.origin}/index.html?ref=${userID}`;
-                navigator.clipboard.writeText(referralLink).then(() => {
-                    referralCodeElement.classList.add('copied');
-                    showToast('Referral link copied!');
-                    setTimeout(() => {
-                        referralCodeElement.classList.remove('copied');
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy:', err);
-                    showToast('Failed to copy referral link.');
+            if (referralCodeElement) {
+                referralCodeElement.addEventListener('click', () => {
+                    if (!userID) {
+                        showToast('Please verify your account first.');
+                        return;
+                    }
+                    const origin = window.location.origin || `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
+                    const referralLink = `${origin}/index.html?ref=${userID}`;
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(referralLink).then(() => {
+                            referralCodeElement.classList.add('copied');
+                            showToast('Referral link copied!');
+                            setTimeout(() => {
+                                referralCodeElement.classList.remove('copied');
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('Failed to copy:', err);
+                            showToast('Failed to copy referral link.');
+                        });
+                    } else {
+                        showToast('Copying is not supported in this browser.');
+                    }
                 });
-            });
+            }
 
-            // Navigation Links
-            const navLinks = document.querySelectorAll('.nav-link');
+            // Navigation Links (Existing Footer and New Secondary Footer)
+            const navLinks = document.querySelectorAll('.nav-link, .footer-link');
             navLinks.forEach(link => {
                 link.addEventListener('click', (event) => {
                     event.preventDefault();
                     const href = link.getAttribute('href');
-                    try {
-                        window.location.href = href;
-                    } catch (error) {
-                        console.error('Navigation error:', error);
-                        showToast('Error navigating to page. Please try again.');
+                    if (href && href !== '#') {
+                        try {
+                            window.location.href = href;
+                        } catch (error) {
+                            console.error('Navigation error:', error);
+                            showToast('Error navigating to page. Please try again.');
+                        }
+                    } else {
+                        showToast('Invalid link destination.');
                     }
                 });
             });
         } catch (error) {
             console.error('Error initializing Firebase:', error);
-            showToast('Failed to connect to server. Please try again later.');
+            showToast('Failed to connect to server. Please check your configuration and try again.');
         }
     </script>
 </body>
