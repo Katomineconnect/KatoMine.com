@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Terms of Service - Kato Mine</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" type="text/css">
+    <style>
+        :root {
+            --primary-color: #ffd700;
+            --secondary-color: #d3d3d3;
+            --background-color: #0d1b2a;
+            --accent-color: #00bfff;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: var(--secondary-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 40px 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            position: relative;
+            color: var(--secondary-color);
+        }
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        .back-btn i {
+            font-size: 16px;
+        }
+        .back-btn:hover {
+            background: var(--accent-color);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: clamp(1.8em, 5vw, 2.2em);
+        }
+        h2 {
+            font-size: clamp(1.4em, 4vw, 1.6em);
+        }
+        p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                padding: 30px 15px;
+            }
+            .back-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            .back-btn i {
+                font-size: 14px;
+            }
+            h1 {
+                font-size: clamp(1.6em, 4.5vw, 2em);
+            }
+            h2 {
+                font-size: clamp(1.2em, 3.5vw, 1.4em);
+            }
+            p {
+                font-size: clamp(12px, 2.8vw, 14px);
+            }
+        }
+        @media (max-width: 400px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 25px 10px;
+            }
+            .back-btn {
+                padding: 5px 10px;
+                font-size: 11px;
+            }
+            .back-btn i {
+                font-size: 12px;
+            }
+            h1 {
+                font-size: clamp(1.4em, 4vw, 1.8em);
+            }
+            h2 {
+                font-size: clamp(1.1em, 3vw, 1.3em);
+            }
+            p {
+                font-size: clamp(11px, 2.5vw, 13px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="window.location.href='https://katomineconnect.github.io/KatoMine.com/index.html'">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <h1>Terms of Service</h1>
+        <p>By using Kato Mine, you agree to these terms:</p>
+        <h2>1. Use of Service</h2>
+        <p>Kato Mine allows users to earn by mining, completing tasks, and inviting others. Users are responsible for maintaining the confidentiality of their recovery codes.</p>
+        <h2>2. User Responsibilities</h2>
+        <p>Users must provide accurate username information and not engage in spam or illegal activities.</p>
+        <h2>3. Account Recovery</h2>
+        <p>Users need their 8-digit Recovery Code for account recovery. If lost, users must contact support for verification.</p>
+        <h2>4. Modification of Service</h2>
+        <p>Kato Mine reserves the right to modify or discontinue services with or without notice.</p>
+        <h2>5. Limitation of Liability</h2>
+        <p>Kato Mine is not responsible for any losses or damages resulting from using the platform.</p>
+        <h2>6. Changes to Terms</h2>
+        <p>We may update these terms periodically, and continued use of the site signifies acceptance of these updates.</p>
+        <p></p>
+    </div>
+</body>
+</html>
