@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টাস্ক সেকশন</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .task-container {
+            max-width: 500px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        .task-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            background: #e3f2fd;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            transition: background 0.3s;
+        }
+        .task-item:hover {
+            background: #bbdefb;
+        }
+        .task-item img {
+            width: 35px;
+            height: 35px;
+            border-radius: 5px;
+            margin-right: 12px;
+        }
+        .task-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        @media (max-width: 480px) {
+            .task-title {
+                font-size: 20px;
+            }
+            .task-text {
+                font-size: 15px;
+            }
+            .task-item img {
+                width: 30px;
+                height: 30px;
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="task-container">
+        <div class="task-title">🔥 টাস্ক সম্পন্ন করুন</div>
+
+        <a class="task-item" href="https://www.youtube.com/channel/YOUR_CHANNEL" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube">
+            <div class="task-text">ইউটিউবে আমাদের চ্যানেল সাবস্ক্রাইব করুন</div>
+        </a>
+
+        <a class="task-item" href="https://t.me/YOUR_TELEGRAM" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram">
+            <div class="task-text">টেলিগ্রাম চ্যানেলে জয়েন করুন</div>
+        </a>
+
+        <a class="task-item" href="https://x.com/YOUR_X_ACCOUNT" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg" alt="X">
+            <div class="task-text">X (Twitter) ফলো করুন</div>
+        </a>
+    </div>
+</body>
+</html>
