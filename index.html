@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="description" content="Katomine - Your Digital Gold Rush. Earn tokens every hour with our innovative mining system.">
     <meta name="theme-color" content="#0d1b2a">
-    <title>Katomine - Digital Gold Rush</title>
+    <title>Kato Mine - Digital Gold Rush</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" type="text/css">
     <link rel="manifest" href="manifest.json">
     <style>
@@ -531,6 +531,28 @@
             background: var(--accent-color);
         }
 
+        /* Ad Modal Styles */
+        .ad-modal-content {
+            background: var(--background-color);
+            border: 2px solid var(--accent-color);
+            border-radius: 20px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        #adContainer {
+            margin-bottom: 15px;
+        }
+
+        .ad-timer {
+            font-size: 1.2em;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+
         /* Footer */
         .footer {
             background: var(--glass-bg);
@@ -727,7 +749,7 @@
                 </button>
                 <button class="mine-btn" id="claimBtn" style="display: none;">
                     <i class="fas fa-hand-holding-usd"></i>
-                    <span>Claim Reward</span>
+                    <span>Claim</span>
                 </button>
             </div>
         </section>
@@ -790,6 +812,30 @@
                     <button class="btn btn-secondary" id="backToVerifyBtn">Back</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Ad Modal -->
+    <div class="modal" id="adModal" role="dialog" aria-modal="true">
+        <div class="ad-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Advertisement</h2>
+                <button class="close-btn" id="closeAdModal" disabled>×</button>
+            </div>
+            <div id="adContainer">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key': 'eb117daf94e120e0ae0e6f682c2e34f5',
+                        'format': 'iframe',
+                        'height': 50,
+                        'width': 320,
+                        'params': {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js"></script>
+            </div>
+            <div class="ad-timer" id="adTimer">Closing in 5 seconds...</div>
+            <button class="btn btn-primary" id="skipAdBtn" disabled>Close Ad</button>
         </div>
     </div>
 
@@ -862,7 +908,7 @@
             username: null,
             balance: 0,
             totalMined: 0,
-            miningRate: 1.00, // 1 token per hour, so 2 tokens per 2 hours
+            miningRate: 1.00,
             miningHours: 0,
             referrals: [],
             dailyStreak: 0,
@@ -871,6 +917,10 @@
             profileSetup: false,
             level: 1
         };
+
+        // Mining variables
+        let miningInterval = null;
+        let miningTimeLeft = 7200; // 2 hours in seconds
 
         // Utility Functions
         function isLocalStorageAvailable() {
@@ -944,22 +994,49 @@
             if (dailyStreak) dailyStreak.textContent = userData.dailyStreak;
         }
 
+        // Ad Modal Functions
+        function showAdModal(callback) {
+            const adModal = document.getElementById('adModal');
+            const adTimer = document.getElementById('adTimer');
+            const skipAdBtn = document.getElementById('skipAdBtn');
+            const closeAdModal = document.getElementById('closeAdModal');
+
+            if (!adModal || !adTimer || !skipAdBtn || !closeAdModal) {
+                showNotification('Error: Ad modal elements missing.', 'error');
+                return;
+            }
+
+            adModal.style.display = 'flex';
+            let adTimeLeft = 5; // 5 seconds ad duration
+            adTimer.textContent = `Closing in ${adTimeLeft} seconds...`;
+
+            skipAdBtn.disabled = true;
+            closeAdModal.disabled = true;
+
+            const adInterval = setInterval(() => {
+                adTimeLeft--;
+                adTimer.textContent = `Closing in ${adTimeLeft} seconds...`;
+                if (adTimeLeft <= 0) {
+                    clearInterval(adInterval);
+                    skipAdBtn.disabled = false;
+                    closeAdModal.disabled = false;
+                }
+            }, 1000);
+
+            const closeAd = () => {
+                clearInterval(adInterval);
+                adModal.style.display = 'none';
+                if (callback) callback();
+            };
+
+            skipAdBtn.removeEventListener('click', closeAd);
+            closeAdModal.removeEventListener('click', closeAd);
+            skipAdBtn.addEventListener('click', closeAd);
+            closeAdModal.addEventListener('click', closeAd);
+        }
+
         // Mining System
-        let miningInterval;
-        let miningTimeLeft = 7200; // 2 hours in seconds
-
-        function startMining() {
-            if (!userData.profileSetup) {
-                showNotification('Please verify your account first.', 'warning');
-                return;
-            }
-            if (userData.miningStartTime) {
-                showNotification('Mining already in progress!', 'warning');
-                return;
-            }
-
-            userData.miningStartTime = Date.now();
-            miningTimeLeft = 7200; // 2 hours
+        function resumeMining(elapsed) {
             const miningButton = document.getElementById('startMiningBtn');
             const claimButton = document.getElementById('claimBtn');
             const progressBar = document.getElementById('progressBar');
@@ -971,9 +1048,24 @@
                 return;
             }
 
+            miningTimeLeft = 7200 - elapsed;
+            if (miningTimeLeft <= 0) {
+                completeMining();
+                return;
+            }
+
             miningButton.innerHTML = '<i class="fas fa-pause"></i><span>Mining...</span>';
             miningButton.classList.add('mining');
             miningStatus.textContent = 'Mining Active';
+            claimButton.style.display = 'none';
+            miningButton.style.display = 'block';
+
+            const progress = ((7200 - miningTimeLeft) / 7200) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressBar.textContent = `${Math.round(progress)}%`;
+            timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
+
+            if (miningInterval) clearInterval(miningInterval);
             miningInterval = setInterval(() => {
                 miningTimeLeft--;
                 const progress = ((7200 - miningTimeLeft) / 7200) * 100;
@@ -982,10 +1074,55 @@
                 timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
                 if (miningTimeLeft <= 0) {
                     completeMining();
-                    claimButton.style.display = 'block';
-                    miningButton.style.display = 'none';
                 }
             }, 1000);
+        }
+
+        function startMining() {
+            if (!userData.profileSetup) {
+                showNotification('Please verify your account first.', 'warning');
+                return;
+            }
+
+            if (userData.miningStartTime && miningInterval) {
+                showNotification('Mining already in progress!', 'warning');
+                return;
+            }
+
+            showAdModal(() => {
+                userData.miningStartTime = Date.now();
+                updateUserData();
+
+                miningTimeLeft = 7200;
+                const miningButton = document.getElementById('startMiningBtn');
+                const claimButton = document.getElementById('claimBtn');
+                const progressBar = document.getElementById('progressBar');
+                const timeDisplay = document.getElementById('nextReward');
+                const miningStatus = document.getElementById('miningStatus');
+
+                if (!miningButton || !claimButton || !progressBar || !timeDisplay || !miningStatus) {
+                    showNotification('Error: Mining UI elements missing.', 'error');
+                    return;
+                }
+
+                miningButton.innerHTML = '<i class="fas fa-pause"></i><span>Mining...</span>';
+                miningButton.classList.add('mining');
+                miningStatus.textContent = 'Mining Active';
+                claimButton.style.display = 'none';
+                miningButton.style.display = 'block';
+
+                if (miningInterval) clearInterval(miningInterval);
+                miningInterval = setInterval(() => {
+                    miningTimeLeft--;
+                    const progress = ((7200 - miningTimeLeft) / 7200) * 100;
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.textContent = `${Math.round(progress)}%`;
+                    timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
+                    if (miningTimeLeft <= 0) {
+                        completeMining();
+                    }
+                }, 1000);
+            });
         }
 
         function completeMining() {
@@ -993,18 +1130,31 @@
                 clearInterval(miningInterval);
                 miningInterval = null;
             }
-            const minedAmount = userData.miningRate * 2; // 2 tokens for 2 hours
-            userData.balance += minedAmount;
-            userData.totalMined += minedAmount;
-            userData.miningHours += 2; // Increment by 2 hours
             userData.miningStartTime = null;
-            updateUI();
             updateUserData();
-            showNotification(`Mining complete! Earned ${minedAmount.toFixed(2)} KATO`, 'success');
+            const miningButton = document.getElementById('startMiningBtn');
+            const claimButton = document.getElementById('claimBtn');
+            const miningStatus = document.getElementById('miningStatus');
+            const progressBar = document.getElementById('progressBar');
+            const timeDisplay = document.getElementById('nextReward');
+
+            if (miningButton && claimButton && miningStatus && progressBar && timeDisplay) {
+                miningButton.style.display = 'none';
+                claimButton.style.display = 'block';
+                miningStatus.textContent = 'Claim';
+                progressBar.style.width = '100%';
+                progressBar.textContent = '100%';
+                timeDisplay.textContent = 'Mining Complete!';
+                showNotification(`Mining complete! Ready to claim ${userData.miningRate * 2} KATO`, 'success');
+            }
         }
 
         function claimReward() {
-            const minedAmount = userData.miningRate * 2; // 2 tokens for 2 hours
+            const minedAmount = userData.miningRate * 2;
+            userData.balance += minedAmount;
+            userData.totalMined += minedAmount;
+            userData.miningHours += 2;
+            userData.miningStartTime = null;
             updateUI();
             updateUserData();
             showNotification(`Reward claimed! +${minedAmount.toFixed(2)} KATO`, 'success');
@@ -1020,6 +1170,8 @@
                 progressBar.style.width = '0%';
                 progressBar.textContent = '0%';
                 timeDisplay.textContent = 'Next reward in: 120:00';
+                miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
+                miningButton.classList.remove('mining');
             }
         }
 
@@ -1027,18 +1179,24 @@
             if (miningInterval) {
                 clearInterval(miningInterval);
                 miningInterval = null;
-                userData.miningStartTime = null;
-                const miningButton = document.getElementById('startMiningBtn');
-                const claimButton = document.getElementById('claimBtn');
-                const miningStatus = document.getElementById('miningStatus');
-                if (miningButton && claimButton && miningStatus) {
-                    miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
-                    miningButton.classList.remove('mining');
-                    miningStatus.textContent = 'Ready to Mine';
-                    claimButton.style.display = 'none';
-                    miningButton.style.display = 'block';
-                    showNotification('Mining stopped', 'info');
-                }
+            }
+            userData.miningStartTime = null;
+            updateUserData();
+            const miningButton = document.getElementById('startMiningBtn');
+            const claimButton = document.getElementById('claimBtn');
+            const miningStatus = document.getElementById('miningStatus');
+            const progressBar = document.getElementById('progressBar');
+            const timeDisplay = document.getElementById('nextReward');
+            if (miningButton && claimButton && miningStatus && progressBar && timeDisplay) {
+                miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
+                miningButton.classList.remove('mining');
+                miningStatus.textContent = 'Ready to Mine';
+                claimButton.style.display = 'none';
+                miningButton.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressBar.textContent = '0%';
+                timeDisplay.textContent = 'Next reward in: 120:00';
+                showNotification('Mining stopped', 'info');
             }
         }
 
@@ -1055,16 +1213,16 @@
                 return;
             }
 
-            // Define daily rewards based on streak
-            const dailyRewards = [0.5, 1, 3, 5, 7, 8, 10];
-            const reward = userData.dailyStreak < 7 ? dailyRewards[userData.dailyStreak] : 10;
-
-            userData.balance += reward;
-            userData.dailyStreak += 1;
-            userData.lastDailyReward = today;
-            updateUI();
-            updateUserData();
-            showNotification(`Daily reward claimed! +${reward.toFixed(2)} KATO`, 'success');
+            showAdModal(() => {
+                const dailyRewards = [0.5, 1, 3, 5, 7, 8, 10];
+                const reward = userData.dailyStreak < 7 ? dailyRewards[userData.dailyStreak] : 10;
+                userData.balance += reward;
+                userData.dailyStreak += 1;
+                userData.lastDailyReward = today;
+                updateUI();
+                updateUserData();
+                showNotification(`Daily reward claimed! +${reward.toFixed(2)} KATO`, 'success');
+            });
         }
 
         // Update Firebase
@@ -1135,11 +1293,12 @@
                     profileSetup: true,
                     username: username,
                     totalMined: 0,
-                    miningRate: 1.00, // 1 token per hour
+                    miningRate: 1.00,
                     miningHours: 0,
                     dailyStreak: 0,
                     lastDailyReward: null,
-                    level: 1
+                    level: 1,
+                    miningStartTime: null
                 });
                 if (referrerID) {
                     const referrerRef = ref(database, 'users/' + referrerID);
@@ -1172,11 +1331,11 @@
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
 
-            // Check all required DOM elements
             const requiredElements = [
                 'userIdBtn', 'balanceBtn', 'verifyBtn', 'roadmapBtn', 'rewardsBtn', 'dailyRewardBtn',
                 'startMiningBtn', 'claimBtn', 'verifyModal', 'verifyContent', 'recoveryContent',
-                'usernameInput', 'saveBtn', 'recoveryBtn', 'recoverBtn', 'backToVerifyBtn', 'closeModal'
+                'usernameInput', 'saveBtn', 'recoveryBtn', 'recoverBtn', 'backToVerifyBtn', 'closeModal',
+                'adModal', 'closeAdModal', 'skipAdBtn', 'adTimer'
             ];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
@@ -1211,6 +1370,16 @@
                     if (snapshot.exists() && snapshot.val().profileSetup) {
                         userData = { ...userData, ...snapshot.val(), userID };
                         updateUI();
+                        if (userData.miningStartTime) {
+                            const elapsed = Math.floor((Date.now() - userData.miningStartTime) / 1000);
+                            if (elapsed >= 7200) {
+                                userData.miningStartTime = null;
+                                updateUserData();
+                                completeMining();
+                            } else {
+                                resumeMining(elapsed);
+                            }
+                        }
                     } else {
                         showNotification('Please verify your account.', 'warning');
                     }
@@ -1226,7 +1395,6 @@
             updateUI();
             if (loadingOverlay) loadingOverlay.style.display = 'none';
 
-            // Modal Controls
             function openModal(modalId) {
                 const modal = document.getElementById(modalId);
                 if (modal) modal.style.display = 'flex';
@@ -1252,7 +1420,6 @@
                 }
             });
 
-            // Save Button
             saveBtn.addEventListener('click', async () => {
                 setButtonLoading(saveBtn, true);
                 const username = sanitizeInput(usernameInput.value.trim());
@@ -1296,7 +1463,6 @@
                 setButtonLoading(saveBtn, false);
             });
 
-            // Recovery Button
             recoveryBtn.addEventListener('click', () => {
                 verifyContent.classList.add('hidden');
                 recoveryContent.classList.remove('hidden');
@@ -1351,7 +1517,6 @@
                 setButtonLoading(recoverBtn, false);
             });
 
-            // Mining Button
             startMiningBtn.addEventListener('click', () => {
                 if (startMiningBtn.classList.contains('mining')) {
                     stopMining();
@@ -1360,13 +1525,10 @@
                 }
             });
 
-            // Claim Button
             claimBtn.addEventListener('click', claimReward);
 
-            // Daily Reward Button
             dailyRewardBtn.addEventListener('click', claimDailyReward);
 
-            // Roadmap Button
             roadmapBtn.addEventListener('click', () => {
                 try {
                     window.location.href = 'https://katomineconnect.github.io/KatoMine.com/roadmap.html';
@@ -1376,7 +1538,6 @@
                 }
             });
 
-            // Rewards Button
             rewardsBtn.addEventListener('click', () => {
                 try {
                     window.location.href = 'https://katomineconnect.github.io/KatoMine.com/extrareward.html';
@@ -1386,7 +1547,6 @@
                 }
             });
 
-            // User ID Copy
             userIdBtn.addEventListener('click', () => {
                 if (!userID) {
                     showNotification('Please verify your account first.', 'warning');
@@ -1410,13 +1570,22 @@
                 }
             });
 
-            // Real-time User Data Update
             if (userID && database) {
                 const userRef = ref(database, 'users/' + userID);
                 const unsubscribe = onValue(userRef, (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
                         userData = { ...userData, ...data, userID };
+                        if (data.miningStartTime && !miningInterval) {
+                            const elapsed = Math.floor((Date.now() - data.miningStartTime) / 1000);
+                            if (elapsed >= 7200) {
+                                userData.miningStartTime = null;
+                                updateUserData();
+                                completeMining();
+                            } else {
+                                resumeMining(elapsed);
+                            }
+                        }
                         updateUI();
                     } else {
                         console.error('No user data found for ID:', userID);
@@ -1430,12 +1599,15 @@
                 });
 
                 window.addEventListener('unload', () => {
+                    if (miningInterval) {
+                        clearInterval(miningInterval);
+                        miningInterval = null;
+                    }
                     unsubscribe();
                 });
             }
         }
 
-        // Initialize User
         if (database) {
             initializeUser();
         } else {
@@ -1445,7 +1617,6 @@
             if (loadingOverlay) loadingOverlay.style.display = 'none';
         }
 
-        // Navigation Links
         const navLinks = document.querySelectorAll('.nav-item, .footer-section a');
         navLinks.forEach(link => {
             link.addEventListener('click', (event) => {
