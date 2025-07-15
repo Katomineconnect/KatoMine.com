@@ -1,66 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Roadmap - Kato Mine</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" type="text/css">
 <style>
-#adContainer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    max-width: 100%;
-    height: 60px;
-    background: #fff;
-    border-top: 1px solid #ddd;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
-    z-index: 9999;
-    text-align: center;
-    overflow: hidden;
+:root {
+    --primary-color: #ffd700;
+    --secondary-color: #d3d3d3;
+    --background-color: #0d1b2a;
+    --accent-color: #00bfff;
 }
-#adInner {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0d1b2a, #1b263b);
+    color: var(--secondary-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 40px 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
     position: relative;
-    width: 100%;
-    height: 100%;
+    color: var(--secondary-color);
 }
-#adCloseBtn {
+.back-btn {
     position: absolute;
-    top: 4px;
-    right: 8px;
-    background: rgba(255,0,0,0.8);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    font-size: 16px;
+    top: 10px;
+    left: 10px;
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    z-index: 10000;
-    line-height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
 }
-iframe {
-    max-width: 100% !important;
-    height: 60px !important;
+.back-btn i {
+    font-size: 16px;
+}
+.back-btn:hover {
+    background: var(--accent-color);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+h1 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: clamp(1.8em, 5vw, 2.2em);
+}
+p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-size: clamp(14px, 3vw, 16px);
+    color: var(--secondary-color);
+}
+@media (max-width: 600px) {
+    body { padding: 15px; }
+    .container { padding: 30px 15px; }
+    .back-btn { padding: 6px 12px; font-size: 12px; }
+    .back-btn i { font-size: 14px; }
+    h1 { font-size: clamp(1.6em, 4.5vw, 2em); }
 }
 </style>
-
-<div id="adContainer">
-    <div id="adInner">
-        <button id="adCloseBtn">&times;</button>
-        <div id="adContent">
-            <!-- Replace with your ad script -->
-            <script type="text/javascript">
-                atOptions = {
-                    'key' : '78ade24182729fceea8e45203dad915b',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            </script>
-            <script type="text/javascript" src="//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js"></script>
-        </div>
-    </div>
+</head>
+<body>
+<div class="container">
+    <button class="back-btn" onclick="window.location.href='https://katomineconnect.github.io/KatoMine.com/index.html'">
+        <i class="fas fa-arrow-left"></i> Back
+    </button>
+    <h1>Kato Mine Roadmap</h1>
+    <p>We recently made our Kato Mine website public, and we are actively working on its various features. We promise to prepare and share a complete roadmap after refining and updating it as needed.</p>
+    <p>We plan to release our roadmap based on our specific active user base to ensure it truly serves our community. In the future, we aim to launch Kato Mine on Google Play Store and other platforms.</p>
+    <p>Thank you for staying with us. We promise to honor your trust.</p>
 </div>
-
-<script>
-// ক্লোজ বাটন ফাংশন
-document.getElementById('adCloseBtn').addEventListener('click', function(){
-    document.getElementById('adContainer').style.display = 'none';
-});
-</script>
+</body>
+</html>
