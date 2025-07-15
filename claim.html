@@ -245,7 +245,9 @@
             border: 2px solid var(--primary-color);
             text-align: center;
             box-shadow: var(--shadow-dark);
-            width: min(90%, 200px);
+            width: min(90%, 350px);
+            max-height: 90vh;
+            overflow: auto;
         }
 
         .ad-content button {
@@ -259,6 +261,7 @@
             font-weight: 600;
             width: 100%;
             transition: all 0.3s ease;
+            margin-top: 10px;
         }
 
         .ad-content button:hover {
@@ -268,6 +271,12 @@
 
         .ad-content button:active {
             transform: scale(0.95);
+        }
+
+        .ad-iframe {
+            border: none;
+            margin: 0 auto;
+            display: block;
         }
 
         /* Footer */
@@ -392,7 +401,7 @@
                 font-size: clamp(0.9rem, 2.8vw, 1.1rem);
             }
             .ad-content {
-                width: min(90%, 180px);
+                width: min(90%, 300px);
                 padding: clamp(0.4rem, 1.5vw, 0.6rem);
             }
         }
@@ -412,7 +421,7 @@
                 font-size: clamp(0.8rem, 2.5vw, 1rem);
             }
             .ad-content {
-                width: min(90%, 160px);
+                width: min(90%, 280px);
                 padding: clamp(0.3rem, 1vw, 0.5rem);
             }
         }
@@ -449,6 +458,7 @@
     <!-- Ad Modal -->
     <div class="ad-modal" id="adModal">
         <div class="ad-content">
+            <div id="adContainer"></div>
             <button id="closeAd" role="button" aria-label="Close ad and start mining">Close Ad</button>
         </div>
     </div>
@@ -505,6 +515,57 @@
             referrals: [],
             profileSetup: false
         };
+
+        // Ad configurations
+        const adOptions = [
+            {
+                type: 'iframe',
+                key: 'eb117daf94e120e0ae0e6f682c2e34f5',
+                format: 'iframe',
+                height: 50,
+                width: 320,
+                src: '//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js'
+            },
+            {
+                type: 'script',
+                src: '//pl26881571.profitableratecpm.com/946391b8e10827404b7dd26a5817e31c/invoke.js',
+                containerId: 'container-946391b8e10827404b7dd26a5817e31c'
+            },
+            {
+                type: 'iframe',
+                key: '0e76a0edb900a6f53aa1a75d1b26bd27',
+                format: 'iframe',
+                height: 250,
+                width: 300,
+                src: '//www.highperformanceformat.com/0e76a0edb900a6f53aa1a75d1b26bd27/invoke.js'
+            },
+            {
+                type: 'script',
+                src: 'https://www.profitableratecpm.com/czy8uk6k?key=352af86bd860aff1b2109611320beef7',
+                containerId: null
+            },
+            {
+                type: 'iframe',
+                key: '78ade24182729fceea8e45203dad915b',
+                format: 'iframe',
+                height: 50,
+                width: 320,
+                src: '//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js'
+            },
+            {
+                type: 'script',
+                src: '//pl26881693.profitableratecpm.com/94a74f5c823398a73034078c56abca9c/invoke.js',
+                containerId: 'container-94a74f5c823398a73034078c56abca9c'
+            },
+            {
+                type: 'iframe',
+                key: 'c620af328467e6de19dc04af696ee0fb',
+                format: 'iframe',
+                height: 250,
+                width: 300,
+                src: '//www.highperformanceformat.com/c620af328467e6de19dc04af696ee0fb/invoke.js'
+            }
+        ];
 
         // Utility Functions
         function isLocalStorageAvailable() {
@@ -623,16 +684,60 @@
             }
         }
 
+        // Show Random Ad
+        function showAd() {
+            console.log('Showing ad modal');
+            const adModal = document.getElementById('adModal');
+            const adContainer = document.getElementById('adContainer');
+            if (adModal && adContainer) {
+                // Clear previous ad
+                adContainer.innerHTML = '';
+
+                // Select a random ad
+                const randomAd = adOptions[Math.floor(Math.random() * adOptions.length)];
+
+                if (randomAd.type === 'iframe') {
+                    // Create iframe ad
+                    const iframe = document.createElement('iframe');
+                    iframe.className = 'ad-iframe';
+                    iframe.width = randomAd.width;
+                    iframe.height = randomAd.height;
+                    iframe.src = randomAd.src;
+                    adContainer.appendChild(iframe);
+
+                    // Inject atOptions for iframe
+                    const script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.text = `atOptions = {
+                        'key': '${randomAd.key}',
+                        'format': '${randomAd.format}',
+                        'height': ${randomAd.height},
+                        'width': ${randomAd.width},
+                        'params': {}
+                    };`;
+                    adContainer.appendChild(script);
+                } else if (randomAd.type === 'script') {
+                    // Create script-based ad
+                    if (randomAd.containerId) {
+                        const div = document.createElement('div');
+                        div.id = randomAd.containerId;
+                        adContainer.appendChild(div);
+                    }
+                    const script = document.createElement('script');
+                    script.async = true;
+                    script.setAttribute('data-cfasync', 'false');
+                    script.src = randomAd.src;
+                    adContainer.appendChild(script);
+                }
+
+                adModal.style.display = 'flex';
+            }
+        }
+
         // Mining System
         const EIGHT_HOURS = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
         const TOKENS_PER_MINING = 8; // 8 tokens per 8 hours
         let timerInterval = null;
-
-        function showAd() {
-            console.log('Showing ad modal');
-            const adModal = document.getElementById('adModal');
-            if (adModal) adModal.style.display = 'flex';
-        }
 
         function updateTimerDisplay(remainingTime) {
             const seconds = Math.floor(remainingTime / 1000);
