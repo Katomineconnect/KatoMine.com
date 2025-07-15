@@ -13,11 +13,9 @@
     overflow: hidden;
     border-radius: 6px;
 }
-
 #adContainer.show {
     right: 10px;
 }
-
 #adCloseBtn {
     position: absolute;
     top: 2px;
@@ -36,80 +34,33 @@
 
 <div id="adContainer">
     <button id="adCloseBtn">&times;</button>
-    <!-- Replace with your ad scripts -->
+    <!-- Ad Content -->
     <div id="adContent" style="text-align:center;">
-        <!-- First Ad (eb117daf94e120e0ae0e6f682c2e34f5) -->
+        <!-- Example: 320x50 ad -->
         <script type="text/javascript">
             atOptions = {
-                'key' : 'eb117daf94e120e0ae0e6f682c2e34f5',
+                'key' : '78ade24182729fceea8e45203dad915b',
                 'format' : 'iframe',
                 'height' : 50,
                 'width' : 320,
                 'params' : {}
             };
         </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js"></script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js"></script>
     </div>
 </div>
 
 <script>
 let adContainer = document.getElementById('adContainer');
 let adCloseBtn = document.getElementById('adCloseBtn');
-let ads = [
-    `
-    <script type="text/javascript">
-        atOptions = {
-            'key' : 'eb117daf94e120e0ae0e6f682c2e34f5',
-            'format' : 'iframe',
-            'height' : 50,
-            'width' : 320,
-            'params' : {}
-        };
-    </script>
-    <script type="text/javascript" src="//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js"></script>
-    `,
-    `
-    <script async="async" data-cfasync="false" src="//pl26881693.profitableratecpm.com/94a74f5c823398a73034078c56abca9c/invoke.js"></script>
-    <div id="container-94a74f5c823398a73034078c56abca9c"></div>
-    `,
-    `
-    <script type="text/javascript">
-        atOptions = {
-            'key' : '78ade24182729fceea8e45203dad915b',
-            'format' : 'iframe',
-            'height' : 50,
-            'width' : 320,
-            'params' : {}
-        };
-    </script>
-    <script type="text/javascript" src="//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js"></script>
-    `
-];
 
-let currentAd = 0;
-
-function showAd() {
-    document.getElementById('adContent').innerHTML = ads[currentAd];
+// শো হবে পেজ লোডের ৫ সেকেন্ড পরে
+setTimeout(() => {
     adContainer.classList.add('show');
-}
+}, 5000);
 
-function nextAd() {
-    adContainer.classList.remove('show');
-    setTimeout(() => {
-        currentAd = (currentAd + 1) % ads.length;
-        showAd();
-    }, 5000); // 5 সেকেন্ড বিরতির পর পরবর্তী অ্যাড দেখাবে
-}
-
+// ক্লোজ বাটন ফাংশন
 adCloseBtn.addEventListener('click', () => {
     adContainer.classList.remove('show');
-    setTimeout(() => {
-        nextAd();
-    }, 5000);
 });
-
-// প্রথমে 5 সেকেন্ড পর শো করবে
-setTimeout(() => {
-    showAd();
-}, 5000);
 </script>
