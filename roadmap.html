@@ -1,61 +1,115 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>রোডম্যাপ</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f4f8;
-            margin: 0;
-            padding: 0;
-        }
-        .roadmap-container {
-            max-width: 500px;
-            margin: 20px auto;
-            padding: 15px;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
-        }
-        .roadmap-title {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .step {
-            background: #e0f7fa;
-            margin: 10px 0;
-            padding: 12px;
-            border-left: 5px solid #00796b;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        @media (max-width: 480px) {
-            .roadmap-container {
-                margin: 10px;
-                padding: 10px;
-            }
-            .roadmap-title {
-                font-size: 20px;
-            }
-            .step {
-                font-size: 15px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="roadmap-container">
-        <div class="roadmap-title">📍 রোডম্যাপ</div>
-        <div class="step">✅ ধাপ ১: ওয়েবসাইট তৈরি ও প্রকাশ</div>
-        <div class="step">✅ ধাপ ২: সোশ্যাল মিডিয়ায় পেজ খোলা</div>
-        <div class="step">✅ ধাপ ৩: ইউজার রেজিস্ট্রেশন সিস্টেম যুক্ত করা</div>
-        <div class="step">✅ ধাপ ৪: টাস্ক এবং রিওয়ার্ড সিস্টেম চালু</div>
-        <div class="step">✅ ধাপ ৫: মাইনিং/অ্যাপ ফিচার ইন্টিগ্রেশন</div>
-        <div class="step">✅ ধাপ ৬: প্লে স্টোরে রিলিজ এবং সম্প্রসারণ</div>
+<style>
+#adContainer {
+    position: fixed;
+    bottom: 10px;
+    right: -350px;
+    width: 320px;
+    height: 60px;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transition: right 0.5s ease;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+#adContainer.show {
+    right: 10px;
+}
+
+#adCloseBtn {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    background: #ff4d4d;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 10000;
+}
+</style>
+
+<div id="adContainer">
+    <button id="adCloseBtn">&times;</button>
+    <!-- Replace with your ad scripts -->
+    <div id="adContent" style="text-align:center;">
+        <!-- First Ad (eb117daf94e120e0ae0e6f682c2e34f5) -->
+        <script type="text/javascript">
+            atOptions = {
+                'key' : 'eb117daf94e120e0ae0e6f682c2e34f5',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js"></script>
     </div>
-</body>
-</html>
+</div>
+
+<script>
+let adContainer = document.getElementById('adContainer');
+let adCloseBtn = document.getElementById('adCloseBtn');
+let ads = [
+    `
+    <script type="text/javascript">
+        atOptions = {
+            'key' : 'eb117daf94e120e0ae0e6f682c2e34f5',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+        };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js"></script>
+    `,
+    `
+    <script async="async" data-cfasync="false" src="//pl26881693.profitableratecpm.com/94a74f5c823398a73034078c56abca9c/invoke.js"></script>
+    <div id="container-94a74f5c823398a73034078c56abca9c"></div>
+    `,
+    `
+    <script type="text/javascript">
+        atOptions = {
+            'key' : '78ade24182729fceea8e45203dad915b',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+        };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js"></script>
+    `
+];
+
+let currentAd = 0;
+
+function showAd() {
+    document.getElementById('adContent').innerHTML = ads[currentAd];
+    adContainer.classList.add('show');
+}
+
+function nextAd() {
+    adContainer.classList.remove('show');
+    setTimeout(() => {
+        currentAd = (currentAd + 1) % ads.length;
+        showAd();
+    }, 5000); // 5 সেকেন্ড বিরতির পর পরবর্তী অ্যাড দেখাবে
+}
+
+adCloseBtn.addEventListener('click', () => {
+    adContainer.classList.remove('show');
+    setTimeout(() => {
+        nextAd();
+    }, 5000);
+});
+
+// প্রথমে 5 সেকেন্ড পর শো করবে
+setTimeout(() => {
+    showAd();
+}, 5000);
+</script>
