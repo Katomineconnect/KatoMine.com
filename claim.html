@@ -3,15 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kato Mine</title>
+    <meta name="description" content="Katomine - Your Digital Gold Rush. Earn tokens every 8 hours with our innovative mining system.">
+    <meta name="theme-color" content="#0d1b2a">
+    <title>Kato Mine - Claim</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
     <style>
         :root {
-            --primary-color: #007bff;
-            --secondary-color: #0056b3;
-            --accent-color: #00ffcc;
-            --text-color: #ffffff;
-            --background-dark: #222;
+            --primary-color: #ffd700;
+            --secondary-color: #d3d3d3;
+            --background-color: #0d1b2a;
+            --accent-color: #00bfff;
+            --success-color: #00ff88;
+            --warning-color: #ff6b35;
+            --error-color: #ff4757;
+            --gradient-1: linear-gradient(135deg, #0d1b2a, #1b263b);
+            --gradient-2: linear-gradient(135deg, #ffd700, #ffed4a);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-dark: 0 8px 25px rgba(0,0,0,0.3);
         }
 
         * {
@@ -22,16 +33,98 @@
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(to bottom, #0049b7, #1a1a1a);
-            color: var(--text-color);
-            text-align: center;
+            background: var(--gradient-1);
+            color: var(--primary-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             overflow-x: hidden;
+            position: relative;
         }
 
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--secondary-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--shadow-dark);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .logo {
+            font-size: clamp(2.5em, 6vw, 4em);
+            letter-spacing: 4px;
+            font-weight: bold;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            to { text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
+        }
+
+        .slogan {
+            font-size: clamp(1.2em, 3vw, 1.4em);
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            font-size: clamp(1em, 2.5vw, 1.2em);
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        /* Container */
         .container {
             padding: clamp(1rem, 5vw, 1.5rem);
             max-width: 100%;
@@ -53,57 +146,58 @@
             margin: 0.3rem 0;
         }
 
-        .big-text {
-            font-size: clamp(3rem, 8vw, 5rem);
-            font-weight: 700;
-            margin: 0.3rem 0;
-            animation: pulse 2s infinite;
-        }
-
-        .reward-text {
-            font-size: clamp(1.5rem, 5vw, 2rem);
-            margin: 0.3rem 0;
-        }
-
         .button {
-            background-color: var(--primary-color);
+            background: var(--gradient-2);
             border: none;
-            color: var(--text-color);
+            color: var(--background-color);
             padding: clamp(1rem, 4vw, 1.2rem) clamp(2rem, 6vw, 2.5rem);
             font-size: clamp(1.1rem, 3.5vw, 1.4rem);
             border-radius: 10px;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: all 0.3s ease;
             margin: 1rem auto;
             width: min(95%, 350px);
-            touch-action: manipulation;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-dark);
         }
 
         .button:active {
-            background-color: var(--secondary-color);
             transform: scale(0.95);
         }
 
-        .button:focus {
-            outline: 2px solid var(--accent-color);
-            outline-offset: 2px;
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .progress-container {
-            background: var(--background-dark);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
             padding: clamp(0.8rem, 2.5vw, 1rem);
             border-radius: 18px;
             width: min(95%, 450px);
             margin: 1rem auto;
+            border: 2px solid var(--primary-color);
         }
 
         .progress-bar {
-            background: var(--accent-color);
+            background: var(--gradient-2);
             padding: clamp(0.7rem, 2.5vw, 0.9rem);
             border-radius: 12px;
             position: relative;
             overflow: hidden;
             font-size: clamp(1rem, 3vw, 1.2rem);
+            color: var(--background-color);
+            text-align: center;
+            transition: width 0.3s ease;
         }
 
         .progress-bar::before {
@@ -124,27 +218,76 @@
 
         .timer-display {
             font-size: clamp(1rem, 3.5vw, 1.3rem);
-            color: var(--text-color);
+            color: var(--secondary-color);
             margin: 0.5rem 0;
         }
 
-        footer {
+        /* Ad Modal */
+        .ad-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .ad-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: clamp(0.5rem, 2vw, 0.8rem);
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+            text-align: center;
+            box-shadow: var(--shadow-dark);
+            width: min(90%, 200px);
+        }
+
+        .ad-content button {
+            background: var(--gradient-2);
+            color: var(--background-color);
+            border: none;
+            padding: clamp(8px, 2.5vw, 10px) clamp(15px, 4vw, 20px);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .ad-content button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .ad-content button:active {
+            transform: scale(0.95);
+        }
+
+        /* Footer */
+        .footer {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: linear-gradient(90deg, #f8fafc, #e0e7ff);
-            color: #000000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-around;
             align-items: center;
             padding: clamp(8px, 2vw, 10px) 0;
-            box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.1);
+            border-top: 2px solid var(--primary-color);
             z-index: 999;
         }
 
-        footer a {
-            color: #000000;
+        .footer a {
+            color: var(--secondary-color);
             text-decoration: none;
             font-weight: 500;
             font-size: clamp(0.8rem, 2.5vw, 1rem);
@@ -157,57 +300,54 @@
             gap: 3px;
             flex: 1;
             justify-content: center;
-            touch-action: manipulation;
         }
 
-        footer a i {
+        .footer a i {
             font-size: clamp(1rem, 3vw, 1.2rem);
         }
 
-        footer a:active {
-            background: rgba(0, 0, 0, 0.1);
-            transform: scale(0.95);
+        .footer a.active,
+        .footer a:hover {
+            color: var(--primary-color);
+            background: rgba(255, 215, 0, 0.1);
         }
 
-        .ad-modal {
-            display: none;
+        /* Notification */
+        .notification {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .ad-content {
-            background: #ffffff;
-            padding: clamp(0.5rem, 2vw, 0.8rem);
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
             border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: min(90%, 200px);
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            max-width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
         }
 
-        .ad-content button {
-            background: linear-gradient(135deg, #000000, #000000);
-            color: #ffffff;
-            border: none;
-            padding: clamp(8px, 2.5vw, 10px) clamp(15px, 4vw, 20px);
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            font-weight: 600;
-            touch-action: manipulation;
-            width: 100%;
+        .notification.show {
+            transform: translateX(0);
         }
 
-        .ad-content button:active {
-            transform: scale(0.95);
+        .notification.success {
+            background: var(--success-color);
         }
 
+        .notification.error {
+            background: var(--error-color);
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
+        }
+
+        .notification.info {
+            background: var(--accent-color);
+        }
+
+        /* Animations */
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -217,6 +357,7 @@
             100% { transform: translateX(200%); }
         }
 
+        /* Responsive Design */
         @media (max-width: 600px) {
             .container {
                 padding: 0.8rem;
@@ -224,12 +365,6 @@
             }
             h1 {
                 font-size: clamp(1.8rem, 5.5vw, 2.5rem);
-            }
-            .big-text {
-                font-size: clamp(2.5rem, 7vw, 4rem);
-            }
-            .reward-text {
-                font-size: clamp(1.2rem, 4vw, 1.6rem);
             }
             .button {
                 width: min(95%, 320px);
@@ -246,14 +381,14 @@
             .timer-display {
                 font-size: clamp(0.9rem, 3vw, 1.1rem);
             }
-            footer {
+            .footer {
                 padding: 6px 0;
             }
-            footer a {
+            .footer a {
                 font-size: clamp(0.7rem, 2.2vw, 0.9rem);
                 padding: clamp(4px, 1.2vw, 6px);
             }
-            footer a i {
+            .footer a i {
                 font-size: clamp(0.9rem, 2.8vw, 1.1rem);
             }
             .ad-content {
@@ -266,20 +401,14 @@
             h1 {
                 font-size: clamp(1.5rem, 5vw, 2rem);
             }
-            .big-text {
-                font-size: clamp(2rem, 6vw, 3.5rem);
-            }
-            .reward-text {
-                font-size: clamp(1rem, 3.5vw, 1.4rem);
-            }
             .button {
                 width: min(95%, 280px);
             }
-            footer a {
+            .footer a {
                 font-size: clamp(0.65rem, 2vw, 0.8rem);
                 padding: 4px;
             }
-            footer a i {
+            .footer a i {
                 font-size: clamp(0.8rem, 2.5vw, 1rem);
             }
             .ad-content {
@@ -290,345 +419,470 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Kato Mine</h1>
-        <p>The side with more registrations per round gets more Kato to claim</p>
-        <p>Current round reward:</p>
-        <div class="big-text" aria-live="polite">100</div>
-        <p class="reward-text">Kato</p>
-        <p>Reward for previous round:</p>
-        <div class="big-text" style="color: var(--accent-color);" aria-live="polite">8 Kato</div>
-        <div class="timer-display" id="timerDisplay"></div>
-        <button class="button" id="miningButton" role="button" aria-label="Start mining or claim tokens">Start Mining</button>
-        <p>Who wins this round?</p>
-        <div class="progress-container">
-            <div class="progress-bar" id="progressTimer"></div>
-        </div>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
     </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">KATO MINE</div>
+        <div class="slogan">ONE TAP TO START, EARN EVERY 8 HOURS</div>
+        <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
+    </header>
+
+    <!-- Container -->
+    <div class="container">
+        <h1>Claim Your Rewards</h1>
+        <p>Balance: <span id="balanceText">0.00</span> KATO</p>
+        <p>Mining Rate: <span id="miningRate">1.00</span> KATO/hour</p>
+        <div class="timer-display" id="timerDisplay">Next reward in: 08:00:00</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressTimer" style="width: 0%">0%</div>
+        </div>
+        <button class="button" id="miningButton" role="button" aria-label="Start mining or claim tokens">
+            <i class="fas fa-play"></i>
+            <span>Start Mining</span>
+        </button>
+    </div>
+
+    <!-- Ad Modal -->
     <div class="ad-modal" id="adModal">
         <div class="ad-content">
             <button id="closeAd" role="button" aria-label="Close ad and start mining">Close Ad</button>
         </div>
     </div>
-    <footer>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
         <a href="https://katomineconnect.github.io/KatoMine.com/index.html" aria-label="Go to Home" class="nav-link"><i class="fas fa-home"></i> Home</a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/claim.html" aria-label="Go to Claim" class="nav-link"><i class="fas fa-gift"></i> Claim</a>
+        <a href="https://katomineconnect.github.io/KatoMine.com/claim.html" aria-label="Go to Claim" class="nav-link active"><i class="fas fa-gift"></i> Claim</a>
         <a href="https://katomineconnect.github.io/KatoMine.com/invite.html" aria-label="Go to Invite" class="nav-link"><i class="fas fa-user-plus"></i> Invite</a>
         <a href="https://katomineconnect.github.io/KatoMine.com/wallet.html" aria-label="Go to Wallet" class="nav-link"><i class="fas fa-wallet"></i> Wallet</a>
     </footer>
+
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
         import { getDatabase, ref, set, onValue, update, get } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
-        import { firebaseConfig } from './config.js';
 
+        // Firebase config (Placeholder - replace with actual config in config.js)
+        let firebaseConfig;
         try {
-            const app = initializeApp(firebaseConfig);
-            const database = getDatabase(app);
-            console.log('Firebase initialized successfully');
+            firebaseConfig = (await import('./config.js')).firebaseConfig;
+        } catch (error) {
+            console.error('Failed to load Firebase config:', error);
+            showNotification('Failed to load Firebase configuration.', 'error');
+        }
 
-            async function generateUniqueID() {
-                let id;
-                let isUnique = false;
-                while (!isUnique) {
-                    id = Math.floor(10000000 + Math.random() * 90000000).toString();
-                    const userRef = ref(database, 'users/' + id);
+        // Initialize Firebase
+        let database;
+        try {
+            if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                throw new Error('Firebase configuration is missing or invalid');
+            }
+            const app = initializeApp(firebaseConfig);
+            database = getDatabase(app);
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Error initializing Firebase:', error);
+            showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+        }
+
+        // In-memory storage
+        let userData = {
+            userID: null,
+            balance: 0,
+            miningRate: 1.00, // 1 token per hour
+            miningStartTime: null,
+            isMining: false,
+            miningBalance: 0,
+            referrerID: null,
+            referrals: [],
+            profileSetup: false
+        };
+
+        // Utility Functions
+        function isLocalStorageAvailable() {
+            try {
+                const test = '__test__';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            if (notification) {
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Generate Unique ID
+        async function generateUniqueID() {
+            let id;
+            let isUnique = false;
+            let retries = 0;
+            const maxRetries = 100;
+            while (!isUnique && retries < maxRetries) {
+                id = Math.floor(10000000 + Math.random() * 90000000).toString();
+                const userRef = ref(database, 'users/' + id);
+                try {
                     const snapshot = await get(userRef);
                     if (!snapshot.exists()) {
                         isUnique = true;
                     }
+                } catch (error) {
+                    console.error('Error checking ID uniqueness:', error);
+                    retries++;
                 }
-                return id;
             }
+            if (!isUnique) {
+                showNotification('Unable to generate unique ID. Please try again.', 'error');
+                throw new Error('ID generation failed after max retries');
+            }
+            return id;
+        }
 
-            async function initializeUserData(userID, referrerID = null) {
+        // Initialize User Data
+        async function initializeUserData(userID, referrerID = null) {
+            try {
+                await set(ref(database, 'users/' + userID), {
+                    balance: 0,
+                    miningRate: 1.00,
+                    miningStartTime: null,
+                    isMining: false,
+                    miningBalance: 0,
+                    referrerID: referrerID,
+                    referrals: [],
+                    profileSetup: false
+                });
+                console.log('User data initialized for ID:', userID);
+                if (referrerID) {
+                    const referrerRef = ref(database, 'users/' + referrerID);
+                    const snapshot = await get(referrerRef);
+                    if (snapshot.exists()) {
+                        const referrerData = snapshot.val();
+                        const newBalance = (referrerData.balance || 0) + 1;
+                        await update(ref(database, 'users/' + referrerID), {
+                            balance: newBalance,
+                            referrals: [...(referrerData.referrals || []), userID]
+                        });
+                        console.log(`Referrer ${referrerID} rewarded 1 token, new balance: ${newBalance}`);
+                    }
+                }
+                return true;
+            } catch (error) {
+                console.error('Error initializing user data:', error);
+                showNotification('Error initializing user. Please refresh.', 'error');
+                return false;
+            }
+        }
+
+        // Update UI
+        function updateUI() {
+            const balanceText = document.getElementById('balanceText');
+            const miningRate = document.getElementById('miningRate');
+            if (balanceText) balanceText.textContent = userData.balance.toFixed(2);
+            if (miningRate) miningRate.textContent = userData.miningRate.toFixed(2);
+        }
+
+        // Update Firebase
+        async function updateUserData() {
+            if (!database || !userData.userID) {
+                console.warn('Cannot update user data: database or userID missing');
+                return;
+            }
+            try {
+                await set(ref(database, 'users/' + userData.userID), {
+                    ...userData,
+                    referrals: userData.referrals || []
+                });
+            } catch (error) {
+                console.error('Error updating user data:', error);
+                showNotification('Error updating user data.', 'error');
+            }
+        }
+
+        // Mining System
+        const EIGHT_HOURS = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
+        const TOKENS_PER_MINING = 8; // 8 tokens per 8 hours
+        let timerInterval = null;
+
+        function showAd() {
+            console.log('Showing ad modal');
+            const adModal = document.getElementById('adModal');
+            if (adModal) adModal.style.display = 'flex';
+        }
+
+        function updateTimerDisplay(remainingTime) {
+            const seconds = Math.floor(remainingTime / 1000);
+            const timerText = `Next reward in: ${formatTime(seconds)}`;
+            const progress = ((EIGHT_HOURS - remainingTime) / EIGHT_HOURS) * 100;
+            const timerDisplay = document.getElementById('timerDisplay');
+            const progressTimer = document.getElementById('progressTimer');
+            if (timerDisplay) timerDisplay.textContent = timerText;
+            if (progressTimer) {
+                progressTimer.style.width = `${progress}%`;
+                progressTimer.textContent = `${Math.round(progress)}%`;
+            }
+        }
+
+        async function startMining() {
+            if (!userData.profileSetup) {
+                showNotification('Please verify your account first.', 'warning');
+                return;
+            }
+            const miningButton = document.getElementById('miningButton');
+            if (userData.isMining) {
+                showNotification('Mining already in progress!', 'warning');
+                return;
+            }
+            const miningStartTime = Date.now();
+            try {
+                await update(ref(database, 'users/' + userData.userID), {
+                    miningStartTime: miningStartTime,
+                    isMining: true,
+                    miningBalance: 0
+                });
+                userData.miningStartTime = miningStartTime;
+                userData.isMining = true;
+                console.log('Mining started, time:', new Date(miningStartTime).toLocaleString());
+                miningButton.innerHTML = '<i class="fas fa-pause"></i><span>Mining...</span>';
+                miningButton.disabled = true;
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    const timeElapsed = Date.now() - userData.miningStartTime;
+                    const remainingTime = EIGHT_HOURS - timeElapsed;
+                    if (remainingTime <= 0) {
+                        clearInterval(timerInterval);
+                        miningButton.innerHTML = '<i class="fas fa-hand-holding-usd"></i><span>Claim</span>';
+                        miningButton.disabled = false;
+                        document.getElementById('timerDisplay').textContent = 'Ready to claim!';
+                        document.getElementById('progressTimer').textContent = 'Ready to claim!';
+                        console.log('Mining complete, ready to claim');
+                    } else {
+                        updateTimerDisplay(remainingTime);
+                    }
+                }, 1000);
+            } catch (error) {
+                console.error('Error starting mining:', error);
+                showNotification('Error starting mining. Please try again.', 'error');
+                miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
+                miningButton.disabled = false;
+                document.getElementById('timerDisplay').textContent = 'Error starting mining. Please try again.';
+                document.getElementById('progressTimer').textContent = 'Error starting mining. Please try again.';
+            }
+        }
+
+        async function claimTokens() {
+            const userRef = ref(database, 'users/' + userData.userID);
+            const snapshot = await get(userRef);
+            const data = snapshot.val();
+            if (!data) {
+                console.error('No user data found during claim');
+                showNotification('User data not found. Please refresh.', 'error');
+                document.getElementById('timerDisplay').textContent = 'User data not found. Please refresh.';
+                document.getElementById('progressTimer').textContent = 'User data not found. Please refresh.';
+                return;
+            }
+            if (data.isMining && data.miningStartTime && (Date.now() - data.miningStartTime >= EIGHT_HOURS)) {
+                const newBalance = (data.balance || 0) + TOKENS_PER_MINING;
                 try {
-                    await set(ref(database, 'users/' + userID), {
-                        balance: 0,
+                    await update(ref(database, 'users/' + userData.userID), {
+                        balance: newBalance,
                         miningStartTime: null,
                         isMining: false,
-                        miningBalance: 0,
-                        referrerID: referrerID,
-                        referrals: []
+                        miningBalance: 0
                     });
-                    console.log('User data initialized for ID:', userID);
-                    if (referrerID) {
-                        const referrerRef = ref(database, 'users/' + referrerID);
-                        const snapshot = await get(referrerRef);
-                        if (snapshot.exists()) {
-                            const referrerData = snapshot.val();
-                            const newBalance = (referrerData.balance || 0) + 1;
-                            await update(ref(database, 'users/' + referrerID), {
-                                balance: newBalance,
-                                referrals: [...(referrerData.referrals || []), userID]
-                            });
-                            console.log(`Referrer ${referrerID} rewarded 1 token, new balance: ${newBalance}`);
-                        }
-                    }
-                    return true;
+                    userData.balance = newBalance;
+                    userData.miningStartTime = null;
+                    userData.isMining = false;
+                    const miningButton = document.getElementById('miningButton');
+                    miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
+                    miningButton.disabled = false;
+                    document.getElementById('timerDisplay').textContent = 'Next reward in: 08:00:00';
+                    document.getElementById('progressTimer').style.width = '0%';
+                    document.getElementById('progressTimer').textContent = '0%';
+                    if (timerInterval) clearInterval(timerInterval);
+                    updateUI();
+                    showNotification(`Tokens claimed! +${TOKENS_PER_MINING.toFixed(2)} KATO`, 'success');
+                    console.log('Tokens claimed, new balance:', newBalance);
                 } catch (error) {
-                    console.error('Error initializing user data:', error);
-                    document.getElementById('timerDisplay').textContent = 'Error initializing user. Please refresh.';
-                    document.getElementById('progressTimer').textContent = 'Error initializing user. Please refresh.';
-                    return false;
+                    console.error('Error claiming tokens:', error);
+                    showNotification('Error claiming tokens. Please try again.', 'error');
+                    document.getElementById('timerDisplay').textContent = 'Error claiming tokens. Please try again.';
+                    document.getElementById('progressTimer').textContent = 'Error claiming tokens. Please try again.';
                 }
+            } else {
+                console.error('Invalid claim attempt: not mining or time not elapsed');
+                showNotification('Cannot claim yet. Please wait.', 'warning');
+                document.getElementById('timerDisplay').textContent = 'Cannot claim yet. Please wait.';
+                document.getElementById('progressTimer').textContent = 'Cannot claim yet. Please wait.';
             }
+        }
 
-            let userID = localStorage.getItem('userID');
-            async function initializeClaimPage() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const referrerID = urlParams.get('ref') || null;
-                if (!userID) {
-                    userID = await generateUniqueID();
+        function checkMiningStatus() {
+            const userRef = ref(database, 'users/' + userData.userID);
+            onValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+                const miningButton = document.getElementById('miningButton');
+                const timerDisplay = document.getElementById('timerDisplay');
+                const progressTimer = document.getElementById('progressTimer');
+                if (!data) {
+                    console.error('No user data found for ID:', userData.userID);
+                    showNotification('User data not found. Retrying...', 'error');
+                    timerDisplay.textContent = 'User data not found. Retrying...';
+                    progressTimer.textContent = 'User data not found. Retrying...';
+                    initializeUserData(userData.userID).then(success => {
+                        if (success) checkMiningStatus();
+                    });
+                    return;
+                }
+                userData = { ...userData, ...data };
+                updateUI();
+                if (data.isMining && data.miningStartTime) {
+                    const timeElapsed = Date.now() - data.miningStartTime;
+                    if (timeElapsed >= EIGHT_HOURS) {
+                        miningButton.innerHTML = '<i class="fas fa-hand-holding-usd"></i><span>Claim</span>';
+                        miningButton.disabled = false;
+                        timerDisplay.textContent = 'Ready to claim!';
+                        progressTimer.textContent = 'Ready to claim!';
+                        progressTimer.style.width = '100%';
+                    } else {
+                        miningButton.innerHTML = '<i class="fas fa-pause"></i><span>Mining...</span>';
+                        miningButton.disabled = true;
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerInterval = setInterval(() => {
+                            const remainingTime = EIGHT_HOURS - (Date.now() - data.miningStartTime);
+                            if (remainingTime <= 0) {
+                                clearInterval(timerInterval);
+                                miningButton.innerHTML = '<i class="fas fa-hand-holding-usd"></i><span>Claim</span>';
+                                miningButton.disabled = false;
+                                timerDisplay.textContent = 'Ready to claim!';
+                                progressTimer.textContent = 'Ready to claim!';
+                                progressTimer.style.width = '100%';
+                                console.log('Mining complete, ready to claim');
+                            } else {
+                                updateTimerDisplay(remainingTime);
+                            }
+                        }, 1000);
+                    }
+                } else {
+                    miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
+                    miningButton.disabled = false;
+                    timerDisplay.textContent = 'Next reward in: 08:00:00';
+                    progressTimer.style.width = '0%';
+                    progressTimer.textContent = '0%';
+                }
+                console.log('Mining status checked:', data);
+            }, {
+                onlyOnce: false,
+                error: (error) => {
+                    console.error('Error checking mining status:', error);
+                    showNotification('Error checking status. Please try again.', 'error');
+                    document.getElementById('timerDisplay').textContent = 'Error checking status. Please try again.';
+                    document.getElementById('progressTimer').textContent = 'Error checking status. Please try again.';
+                }
+            });
+        }
+
+        // Initialize Claim Page
+        let userID = isLocalStorageAvailable() ? localStorage.getItem('userID') : null;
+        async function initializeClaimPage() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const referrerID = urlParams.get('ref') || null;
+            if (!userID) {
+                userID = await generateUniqueID();
+                if (isLocalStorageAvailable()) {
                     localStorage.setItem('userID', userID);
+                }
+                userData.userID = userID;
+                await initializeUserData(userID, referrerID);
+                checkMiningStatus();
+            } else {
+                const userRef = ref(database, 'users/' + userID);
+                const snapshot = await get(userRef);
+                if (!snapshot.exists()) {
+                    console.log('No user data found, initializing...');
                     await initializeUserData(userID, referrerID);
                     checkMiningStatus();
                 } else {
-                    const userRef = ref(database, 'users/' + userID);
-                    const snapshot = await get(userRef);
-                    if (!snapshot.exists()) {
-                        console.log('No user data found, initializing...');
-                        await initializeUserData(userID, referrerID);
-                        checkMiningStatus();
-                    } else {
-                        checkMiningStatus();
-                    }
+                    userData = { ...userData, ...snapshot.val(), userID };
+                    checkMiningStatus();
                 }
             }
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+        }
 
-            initializeClaimPage();
+        // Event Listeners
+        const miningButton = document.getElementById('miningButton');
+        const adModal = document.getElementById('adModal');
+        const closeAdButton = document.getElementById('closeAd');
 
-            const miningButton = document.getElementById('miningButton');
-            const adModal = document.getElementById('adModal');
-            const closeAdButton = document.getElementById('closeAd');
-            const timerDisplay = document.getElementById('timerDisplay');
-            const progressTimer = document.getElementById('progressTimer');
-            const EIGHT_HOURS = 8 * 60 * 60 * 1000;
-            const TOKENS_PER_MINING = 8;
-            let timerInterval = null;
-
-            function showAd() {
-                console.log('Showing ad modal');
-                adModal.style.display = 'flex';
+        miningButton.addEventListener('click', () => {
+            console.log('Mining button state:', miningButton.textContent);
+            if (miningButton.textContent.includes('Start Mining')) {
+                showAd();
+            } else if (miningButton.textContent.includes('Claim')) {
+                claimTokens();
+            } else if (miningButton.textContent.includes('Mining')) {
+                showNotification('Mining in progress. Please wait until completion.', 'warning');
             }
+        });
 
-            function updateTimerDisplay(remainingTime) {
-                const hours = Math.floor(remainingTime / (1000 * 60 * 60));
-                const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-                const timerText = `${hours}h ${minutes}m ${seconds}s`;
-                miningButton.textContent = `Mining: ${timerText}`;
-                timerDisplay.textContent = timerText;
-                progressTimer.textContent = timerText;
-            }
+        closeAdButton.addEventListener('click', () => {
+            adModal.style.display = 'none';
+            startMining();
+        });
 
-            async function startMining() {
-                const miningStartTime = Date.now();
+        // Navigation Links
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const href = link.getAttribute('href');
                 try {
-                    await update(ref(database, 'users/' + userID), {
-                        miningStartTime: miningStartTime,
-                        isMining: true,
-                        miningBalance: 0
-                    });
-                    console.log('Mining started, time:', new Date(miningStartTime).toLocaleString());
-                    miningButton.style.pointerEvents = 'none';
-                    if (timerInterval) clearInterval(timerInterval);
-                    timerInterval = setInterval(() => {
-                        const timeElapsed = Date.now() - miningStartTime;
-                        const remainingTime = EIGHT_HOURS - timeElapsed;
-                        if (remainingTime <= 0) {
-                            clearInterval(timerInterval);
-                            miningButton.textContent = 'Claim';
-                            miningButton.style.pointerEvents = 'auto';
-                            timerDisplay.textContent = 'Ready to claim!';
-                            progressTimer.textContent = 'Ready to claim!';
-                            console.log('Mining complete, ready to claim');
-                        } else {
-                            updateTimerDisplay(remainingTime);
-                        }
-                    }, 1000);
+                    window.location.href = href;
                 } catch (error) {
-                    console.error('Error starting mining:', error);
-                    miningButton.textContent = 'Start Mining';
-                    miningButton.style.pointerEvents = 'auto';
-                    timerDisplay.textContent = 'Error starting mining. Please try again.';
-                    progressTimer.textContent = 'Error starting mining. Please try again.';
-                }
-            }
-
-            async function claimTokens() {
-                const userRef = ref(database, 'users/' + userID);
-                onValue(userRef, async (snapshot) => {
-                    const data = snapshot.val();
-                    if (!data) {
-                        console.error('No user data found during claim');
-                        timerDisplay.textContent = 'User data not found. Please refresh.';
-                        progressTimer.textContent = 'User data not found. Please refresh.';
-                        return;
-                    }
-                    if (data.isMining && data.miningStartTime && (Date.now() - data.miningStartTime >= EIGHT_HOURS)) {
-                        const newBalance = (data.balance || 0) + TOKENS_PER_MINING;
-                        try {
-                            await update(ref(database, 'users/' + userID), {
-                                balance: newBalance,
-                                miningStartTime: null,
-                                isMining: false,
-                                miningBalance: 0
-                            });
-                            miningButton.textContent = 'Start Mining';
-                            miningButton.style.pointerEvents = 'auto';
-                            timerDisplay.textContent = '';
-                            progressTimer.textContent = '';
-                            if (timerInterval) clearInterval(timerInterval);
-                            console.log('Tokens claimed, new balance:', newBalance);
-                        } catch (error) {
-                            console.error('Error claiming tokens:', error);
-                            timerDisplay.textContent = 'Error claiming tokens. Please try again.';
-                            progressTimer.textContent = 'Error claiming tokens. Please try again.';
-                        }
-                    } else {
-                        console.error('Invalid claim attempt: not mining or time not elapsed');
-                        timerDisplay.textContent = 'Cannot claim yet. Please wait.';
-                        progressTimer.textContent = 'Cannot claim yet. Please wait.';
-                    }
-                }, { onlyOnce: true });
-            }
-
-            function handleMiningClick() {
-                console.log('Mining button clicked');
-                const userRef = ref(database, 'users/' + userID);
-                onValue(userRef, (snapshot) => {
-                    const data = snapshot.val();
-                    if (!data) {
-                        console.error('No user data found, retrying initialization...');
-                        initializeUserData(userID).then(success => {
-                            if (success) showAd();
-                        });
-                        return;
-                    }
-                    if (!data.isMining) {
-                        showAd();
-                    } else if (data.isMining && data.miningStartTime) {
-                        const timeElapsed = Date.now() - data.miningStartTime;
-                        if (timeElapsed < EIGHT_HOURS) {
-                            miningButton.style.pointerEvents = 'none';
-                            if (timerInterval) clearInterval(timerInterval);
-                            timerInterval = setInterval(() => {
-                                const remainingTime = EIGHT_HOURS - (Date.now() - data.miningStartTime);
-                                if (remainingTime <= 0) {
-                                    clearInterval(timerInterval);
-                                    miningButton.textContent = 'Claim';
-                                    miningButton.style.pointerEvents = 'auto';
-                                    timerDisplay.textContent = 'Ready to claim!';
-                                    progressTimer.textContent = 'Ready to claim!';
-                                    console.log('Mining complete, ready to claim');
-                                } else {
-                                    updateTimerDisplay(remainingTime);
-                                }
-                            }, 1000);
-                        } else {
-                            miningButton.textContent = 'Claim';
-                            miningButton.style.pointerEvents = 'auto';
-                            timerDisplay.textContent = 'Ready to claim!';
-                            progressTimer.textContent = 'Ready to claim!';
-                        }
-                    }
-                }, {
-                    onlyOnce: true,
-                    error: (error) => {
-                        console.error('Error fetching user data:', error);
-                        timerDisplay.textContent = 'Error fetching user data. Please try again.';
-                        progressTimer.textContent = 'Error fetching user data. Please try again.';
-                    }
-                });
-            }
-
-            function checkMiningStatus() {
-                const userRef = ref(database, 'users/' + userID);
-                onValue(userRef, (snapshot) => {
-                    const data = snapshot.val();
-                    if (!data) {
-                        console.error('No user data found for ID:', userID);
-                        timerDisplay.textContent = 'User data not found. Retrying...';
-                        progressTimer.textContent = 'User data not found. Retrying...';
-                        initializeUserData(userID).then(success => {
-                            if (success) checkMiningStatus();
-                        });
-                        return;
-                    }
-                    if (data.isMining && data.miningStartTime) {
-                        const timeElapsed = Date.now() - data.miningStartTime;
-                        if (timeElapsed >= EIGHT_HOURS) {
-                            miningButton.textContent = 'Claim';
-                            miningButton.style.pointerEvents = 'auto';
-                            timerDisplay.textContent = 'Ready to claim!';
-                            progressTimer.textContent = 'Ready to claim!';
-                        } else {
-                            miningButton.style.pointerEvents = 'none';
-                            if (timerInterval) clearInterval(timerInterval);
-                            timerInterval = setInterval(() => {
-                                const remainingTime = EIGHT_HOURS - (Date.now() - data.miningStartTime);
-                                if (remainingTime <= 0) {
-                                    clearInterval(timerInterval);
-                                    miningButton.textContent = 'Claim';
-                                    miningButton.style.pointerEvents = 'auto';
-                                    timerDisplay.textContent = 'Ready to claim!';
-                                    progressTimer.textContent = 'Ready to claim!';
-                                    console.log('Mining complete, ready to claim');
-                                } else {
-                                    updateTimerDisplay(remainingTime);
-                                }
-                            }, 1000);
-                        }
-                    } else {
-                        miningButton.textContent = 'Start Mining';
-                        miningButton.style.pointerEvents = 'auto';
-                        timerDisplay.textContent = '';
-                        progressTimer.textContent = '';
-                    }
-                    console.log('Mining status checked:', data);
-                }, {
-                    onlyOnce: false,
-                    error: (error) => {
-                        console.error('Error checking mining status:', error);
-                        timerDisplay.textContent = 'Error checking status. Please try again.';
-                        progressTimer.textContent = 'Error checking status. Please try again.';
-                    }
-                });
-            }
-
-            miningButton.addEventListener('click', () => {
-                console.log('Mining button state:', miningButton.textContent);
-                if (miningButton.textContent === 'Start Mining') {
-                    handleMiningClick();
-                } else if (miningButton.textContent === 'Claim') {
-                    claimTokens();
+                    console.error('Navigation error:', error);
+                    showNotification('Error navigating to page. Please try again.', 'error');
+                    document.getElementById('timerDisplay').textContent = 'Error navigating to page. Please try again.';
+                    document.getElementById('progressTimer').textContent = 'Error navigating to page. Please try again.';
                 }
             });
+        });
 
-            closeAdButton.addEventListener('click', () => {
-                adModal.style.display = 'none';
-                startMining();
-            });
-
-            // নেভিগেশন লিংকগুলোর জন্য ইভেন্ট লিসেনার
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    const href = link.getAttribute('href');
-                    try {
-                        window.location.href = href;
-                    } catch (error) {
-                        console.error('Navigation error:', error);
-                        document.getElementById('timerDisplay').textContent = 'Error navigating to page. Please try again.';
-                        document.getElementById('progressTimer').textContent = 'Error navigating to page. Please try again.';
-                    }
-                });
-            });
-        } catch (error) {
-            console.error('Error initializing Firebase:', error);
-            document.getElementById('timerDisplay').textContent = 'Failed to connect to server. Please try again later.';
-            document.getElementById('progressTimer').textContent = 'Failed to connect to server. Please try again later.';
+        // Initialize
+        if (database) {
+            initializeClaimPage();
+        } else {
+            console.error('Database not initialized');
+            showNotification('Failed to initialize database. Please refresh.', 'error');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
         }
     </script>
 </body>
