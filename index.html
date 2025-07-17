@@ -361,7 +361,7 @@
             letter-spacing: 1px;
         }
 
-        /* Modal Styles */
+        /* Modal Styles (for Ad Modal only) */
         .modal {
             display: none;
             position: fixed;
@@ -393,107 +393,6 @@
         @keyframes modalSlideIn {
             from { opacity: 0; transform: translateY(-50px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: clamp(1.5em, 4vw, 2em);
-            color: var(--primary-color);
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 2em;
-            color: var(--primary-color);
-            cursor: pointer;
-            padding: 0;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.3s ease;
-        }
-
-        .close-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--secondary-color);
-            font-weight: 500;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid var(--secondary-color);
-            border-radius: 10px;
-            background: var(--glass-bg);
-            color: var(--primary-color);
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .form-input::placeholder {
-            color: var(--secondary-color);
-            opacity: 0.7;
-        }
-
-        .btn {
-            padding: 15px 25px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: var(--gradient-2);
-            color: var(--background-color);
-        }
-
-        .btn-secondary {
-            background: var(--secondary-color);
-            color: var(--background-color);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-light);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
         }
 
         /* Notification */
@@ -787,10 +686,6 @@
                 <span id="userIdText">ID: Loading...</span>
                 <span class="tooltip">Copied!</span>
             </button>
-            <button class="control-btn" id="verifyBtn">
-                <i class="fas fa-user-check"></i>
-                <span>Verify</span>
-            </button>
             <div class="control-btn balance" id="balanceBtn">
                 <i class="fas fa-coins"></i>
                 <span id="balanceText">Balance: 0.00</span>
@@ -850,46 +745,6 @@
         </section>
     </main>
 
-    <!-- Verify Modal -->
-    <div class="modal" id="verifyModal" role="dialog" aria-modal="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Verify Account</h2>
-                <button class="close-btn" id="closeModal">×</button>
-            </div>
-            <div id="verifyContent">
-                <div class="form-group">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-input" id="usernameInput" placeholder="Enter username (min 3 characters)">
-                </div>
-                <div class="flex gap-10 justify-center">
-                    <button class="btn btn-primary" id="saveBtn">
-                        <span class="button-text">Save</span>
-                        <div class="spinner" style="display: none;"></div>
-                    </button>
-                    <button class="btn btn-secondary" id="recoveryBtn">Recovery</button>
-                </div>
-            </div>
-            <div id="recoveryContent" class="hidden">
-                <div class="form-group">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-input" id="recoveryUsernameInput" placeholder="Enter username">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">User ID</label>
-                    <input type="text" class="form-input" id="recoveryIdInput" placeholder="Enter user ID">
-                </div>
-                <div class="flex gap-10 justify-center">
-                    <button class="btn btn-primary" id="recoverBtn">
-                        <span class="button-text">Recover</span>
-                        <div class="spinner" style="display: none;"></div>
-                    </button>
-                    <button class="btn btn-secondary" id="backToVerifyBtn">Back</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Ad Modal -->
     <div class="modal ad-modal" id="adModal" role="dialog" aria-modal="true">
         <div class="ad-modal-content">
@@ -918,7 +773,6 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Quick Links</h3>
-                <a href="#" onclick="openModal('verifyModal')">Verify Account</a>
                 <a href="https://katomineconnect.github.io/KatoMine.com/roadmap.html">Roadmap</a>
                 <a href="https://katomineconnect.github.io/KatoMine.com/extrareward.html">Extra Rewards</a>
             </div>
@@ -976,7 +830,6 @@
         // In-memory storage
         let userData = {
             userID: null,
-            username: null,
             balance: 0,
             totalMined: 0,
             miningRate: 1.00,
@@ -985,7 +838,6 @@
             dailyStreak: 0,
             lastDailyReward: null,
             miningStartTime: null,
-            profileSetup: false,
             level: 1
         };
 
@@ -1005,10 +857,6 @@
             }
         }
 
-        function sanitizeInput(input) {
-            return input.replace(/[^a-zA-Z0-9_-]/g, '').substring(0, 50);
-        }
-
         function formatTime(seconds) {
             const hours = Math.floor(seconds / 3600);
             const mins = Math.floor((seconds % 3600) / 60);
@@ -1025,21 +873,6 @@
                 setTimeout(() => {
                     notification.classList.remove('show');
                 }, 3000);
-            }
-        }
-
-        function setButtonLoading(button, loading = true) {
-            if (!button) return;
-            const spinner = button.querySelector('.spinner');
-            const text = button.querySelector('.button-text') || button.querySelector('span');
-            if (loading) {
-                button.classList.add('loading');
-                if (spinner) spinner.style.display = 'block';
-                if (text) text.style.display = 'none';
-            } else {
-                button.classList.remove('loading');
-                if (spinner) spinner.style.display = 'none';
-                if (text) text.style.display = 'block';
             }
         }
 
@@ -1144,8 +977,9 @@
         }
 
         function startMining() {
-            if (!userData.profileSetup) {
-                showNotification('Please verify your account first.', 'warning');
+            if (!userData.userID) {
+                showNotification('Please log in to start mining.', 'warning');
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
                 return;
             }
 
@@ -1215,6 +1049,12 @@
         }
 
         function claimReward() {
+            if (!userData.userID) {
+                showNotification('Please log in to claim rewards.', 'warning');
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                return;
+            }
+
             const minedAmount = userData.miningRate * 2;
             userData.balance += minedAmount;
             userData.totalMined += minedAmount;
@@ -1267,10 +1107,12 @@
 
         // Daily Reward System
         function claimDailyReward() {
-            if (!userData.profileSetup) {
-                showNotification('Please verify your account first.', 'warning');
+            if (!userData.userID) {
+                showNotification('Please log in to claim daily rewards.', 'warning');
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
                 return;
             }
+
             const now = new Date();
             const today = now.toDateString();
             if (userData.lastDailyReward === today) {
@@ -1349,14 +1191,12 @@
         }
 
         // Initialize User Data
-        async function initializeUserData(userID, username, referrerID = null) {
+        async function initializeUserData(userID, referrerID = null) {
             try {
                 await set(ref(database, 'users/' + userID), {
                     balance: 0.00,
                     referrerID: referrerID,
                     referrals: [],
-                    profileSetup: true,
-                    username: username,
                     totalMined: 0,
                     miningRate: 1.00,
                     miningHours: 0,
@@ -1396,11 +1236,23 @@
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
 
+            // Check if user is logged in
+            if (!userID) {
+                showNotification('Please log in to access this page.', 'warning');
+                try {
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    return; // Stop further execution
+                } catch (error) {
+                    console.error('Error redirecting to login page:', error);
+                    showNotification('Error redirecting to login page. Please try again.', 'error');
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
+                }
+            }
+
             const requiredElements = [
-                'userIdBtn', 'balanceBtn', 'verifyBtn', 'roadmapBtn', 'rewardsBtn', 'dailyRewardBtn',
-                'startMiningBtn', 'claimBtn', 'verifyModal', 'verifyContent', 'recoveryContent',
-                'usernameInput', 'saveBtn', 'recoveryBtn', 'recoverBtn', 'backToVerifyBtn', 'closeModal',
-                'adModal', 'adCloseBtn', 'adTimer'
+                'userIdBtn', 'balanceBtn', 'roadmapBtn', 'rewardsBtn', 'dailyRewardBtn',
+                'startMiningBtn', 'claimBtn', 'adModal', 'adCloseBtn', 'adTimer'
             ];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
@@ -1412,27 +1264,17 @@
             }
 
             const userIdBtn = document.getElementById('userIdBtn');
-            const verifyBtn = document.getElementById('verifyBtn');
             const roadmapBtn = document.getElementById('roadmapBtn');
             const rewardsBtn = document.getElementById('rewardsBtn');
             const dailyRewardBtn = document.getElementById('dailyRewardBtn');
             const startMiningBtn = document.getElementById('startMiningBtn');
             const claimBtn = document.getElementById('claimBtn');
-            const verifyModal = document.getElementById('verifyModal');
-            const verifyContent = document.getElementById('verifyContent');
-            const recoveryContent = document.getElementById('recoveryContent');
-            const usernameInput = document.getElementById('usernameInput');
-            const saveBtn = document.getElementById('saveBtn');
-            const recoveryBtn = document.getElementById('recoveryBtn');
-            const recoverBtn = document.getElementById('recoverBtn');
-            const backToVerifyBtn = document.getElementById('backToVerifyBtn');
-            const closeModalBtn = document.getElementById('closeModal');
 
             if (userID && database) {
                 const userRef = ref(database, 'users/' + userID);
                 try {
                     const snapshot = await get(userRef);
-                    if (snapshot.exists() && snapshot.val().profileSetup) {
+                    if (snapshot.exists()) {
                         userData = { ...userData, ...snapshot.val(), userID };
                         updateUI();
                         if (userData.miningStartTime) {
@@ -1446,141 +1288,32 @@
                             }
                         }
                     } else {
-                        showNotification('Please verify your account.', 'warning');
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const referrerID = urlParams.get('ref') || null;
+                        await initializeUserData(userID, referrerID);
+                        userData = {
+                            ...userData,
+                            userID,
+                            balance: 0,
+                            totalMined: 0,
+                            miningRate: 1.00,
+                            miningHours: 0,
+                            referrals: [],
+                            dailyStreak: 0,
+                            lastDailyReward: null,
+                            level: 1
+                        };
+                        updateUI();
                     }
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                     showNotification('Error fetching user data. Please try again.', 'error');
                 }
                 userIdBtn.innerHTML = `<i class="fas fa-id-card"></i><span>ID: ${userID}</span><span class="tooltip">Copied!</span>`;
-            } else {
-                userIdBtn.innerHTML = `<i class="fas fa-id-card"></i><span>ID: Not Set</span><span class="tooltip">Copied!</span>`;
             }
 
             updateUI();
             if (loadingOverlay) loadingOverlay.style.display = 'none';
-
-            function openModal(modalId) {
-                const modal = document.getElementById(modalId);
-                if (modal) modal.style.display = 'flex';
-            }
-
-            function closeModal(modalId) {
-                const modal = document.getElementById(modalId);
-                if (modal) modal.style.display = 'none';
-            }
-
-            verifyBtn.addEventListener('click', () => {
-                openModal('verifyModal');
-                verifyContent.classList.remove('hidden');
-                recoveryContent.classList.add('hidden');
-                document.getElementById('modalTitle').textContent = 'Verify Account';
-            });
-
-            closeModalBtn.addEventListener('click', () => closeModal('verifyModal'));
-
-            verifyModal.addEventListener('click', (e) => {
-                if (e.target === verifyModal) {
-                    closeModal('verifyModal');
-                }
-            });
-
-            saveBtn.addEventListener('click', async () => {
-                setButtonLoading(saveBtn, true);
-                const username = sanitizeInput(usernameInput.value.trim());
-                if (!username || username.length < 3) {
-                    showNotification('Username must be at least 3 characters long.', 'error');
-                    setButtonLoading(saveBtn, false);
-                    return;
-                }
-                if (!userID) {
-                    try {
-                        userID = await generateUniqueID();
-                        if (isLocalStorageAvailable()) {
-                            localStorage.setItem('userID', userID);
-                        }
-                        userData.userID = userID;
-                        userIdBtn.innerHTML = `<i class="fas fa-id-card"></i><span>ID: ${userID}</span><span class="tooltip">Copied!</span>`;
-                    } catch (error) {
-                        showNotification('Error generating user ID.', 'error');
-                        setButtonLoading(saveBtn, false);
-                        return;
-                    }
-                }
-                const userRef = ref(database, 'users/' + userID);
-                try {
-                    const snapshot = await get(userRef);
-                    if (!snapshot.exists()) {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const referrerID = urlParams.get('ref') || null;
-                        await initializeUserData(userID, username, referrerID);
-                        userData = { ...userData, username, profileSetup: true };
-                        closeModal('verifyModal');
-                        updateUI();
-                        showNotification('Account verified successfully!', 'success');
-                    } else {
-                        showNotification('User already exists.', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error during user verification:', error);
-                    showNotification('Error verifying account.', 'error');
-                }
-                setButtonLoading(saveBtn, false);
-            });
-
-            recoveryBtn.addEventListener('click', () => {
-                verifyContent.classList.add('hidden');
-                recoveryContent.classList.remove('hidden');
-                document.getElementById('modalTitle').textContent = 'Recover Account';
-            });
-
-            backToVerifyBtn.addEventListener('click', () => {
-                verifyContent.classList.remove('hidden');
-                recoveryContent.classList.add('hidden');
-                document.getElementById('modalTitle').textContent = 'Verify Account';
-            });
-
-            recoverBtn.addEventListener('click', async () => {
-                setButtonLoading(recoverBtn, true);
-                const recoveryUsername = sanitizeInput(document.getElementById('recoveryUsernameInput').value.trim());
-                const recoveryID = document.getElementById('recoveryIdInput').value.trim();
-                if (!recoveryUsername || !recoveryID) {
-                    showNotification('Please enter both username and ID.', 'error');
-                    setButtonLoading(recoverBtn, false);
-                    return;
-                }
-                try {
-                    const usersRef = ref(database, 'users');
-                    const snapshot = await get(usersRef);
-                    if (snapshot.exists()) {
-                        let found = false;
-                        snapshot.forEach((childSnapshot) => {
-                            const data = childSnapshot.val();
-                            if (data.username === recoveryUsername && childSnapshot.key === recoveryID) {
-                                found = true;
-                                userID = recoveryID;
-                                if (isLocalStorageAvailable()) {
-                                    localStorage.setItem('userID', userID);
-                                }
-                                userData = { ...userData, ...data, userID };
-                                userIdBtn.innerHTML = `<i class="fas fa-id-card"></i><span>ID: ${userID}</span><span class="tooltip">Copied!</span>`;
-                                closeModal('verifyModal');
-                                updateUI();
-                                showNotification('Account recovered successfully!', 'success');
-                            }
-                        });
-                        if (!found) {
-                            showNotification('Invalid username or ID.', 'error');
-                        }
-                    } else {
-                        showNotification('No users found in the database.', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error during account recovery:', error);
-                    showNotification('Error recovering account.', 'error');
-                }
-                setButtonLoading(recoverBtn, false);
-            });
 
             startMiningBtn.addEventListener('click', () => {
                 if (startMiningBtn.classList.contains('mining')) {
@@ -1608,13 +1341,14 @@
                     window.location.href = 'https://katomineconnect.github.io/KatoMine.com/extrareward.html';
                 } catch (error) {
                     console.error('Navigation error:', error);
-                    showNotification('Error navigating to Extra Reward page. Please try again.', 'error');
+                    showNotification('Error navigating to Extra Rewards page. Please try again.', 'error');
                 }
             });
 
             userIdBtn.addEventListener('click', () => {
                 if (!userID) {
-                    showNotification('Please verify your account first.', 'warning');
+                    showNotification('Please log in to copy referral link.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
                     return;
                 }
                 const origin = window.location.origin || `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
@@ -1654,9 +1388,8 @@
                         updateUI();
                     } else {
                         console.error('No user data found for ID:', userID);
-                        showNotification('User data not found. Please return to Home page.', 'error');
-                        userData.balance = 0;
-                        updateUI();
+                        showNotification('User data not found. Please log in again.', 'error');
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
                     }
                 }, (error) => {
                     console.error('Error fetching user data:', error);
@@ -1688,6 +1421,11 @@
                 const href = link.getAttribute('href');
                 if (href && href !== '#' && !link.onclick) {
                     event.preventDefault();
+                    if (!userID) {
+                        showNotification('Please log in to access this page.', 'warning');
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                        return;
+                    }
                     try {
                         window.location.href = href;
                     } catch (error) {
