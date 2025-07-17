@@ -135,6 +135,12 @@
             transform: translateY(0);
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .link-text {
             text-align: center;
             color: var(--accent-color);
@@ -232,7 +238,7 @@
         .password-toggle {
             position: absolute;
             right: 15px;
-            top: 60%;
+            top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
             font-size: 16px;
@@ -244,16 +250,41 @@
             color: var(--primary-color);
         }
 
+        .input-group:has(label) .password-toggle {
+            top: 65%;
+        }
+
         @media (max-width: 480px) {
             .container {
                 margin: 20px;
                 padding: 30px 20px;
             }
         }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .firebase-error {
+            background-color: var(--error-color);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div id="firebase-error" class="firebase-error">
+            Firebase configuration error. Please check your setup.
+        </div>
+        
         <div id="message" class="message"></div>
 
         <!-- Login Form -->
@@ -266,13 +297,15 @@
                 <div class="input-group">
                     <label for="loginEmail">Email Address</label>
                     <input type="email" id="loginEmail" name="email" required>
+                    <div class="error-message" id="loginEmailError"></div>
                 </div>
                 <div class="input-group">
                     <label for="loginPassword">Password</label>
                     <input type="password" id="loginPassword" name="password" required>
                     <i class="fas fa-eye password-toggle" onclick="togglePassword('loginPassword', this)"></i>
+                    <div class="error-message" id="loginPasswordError"></div>
                 </div>
-                <button type="submit" class="btn">Sign In</button>
+                <button type="submit" class="btn" id="loginBtn">Sign In</button>
             </form>
             <div class="link-text" onclick="showForm('forgotForm')">Forgot your password?</div>
             <div class="link-text" onclick="showForm('registerForm')">Don't have an account? Sign up</div>
@@ -288,27 +321,31 @@
                 <div class="input-group">
                     <label for="registerName">Username</label>
                     <input type="text" id="registerName" name="name" required>
+                    <div class="error-message" id="registerNameError"></div>
                 </div>
                 <div class="input-group">
                     <label for="registerEmail">Email Address</label>
                     <input type="email" id="registerEmail" name="email" required>
+                    <div class="error-message" id="registerEmailError"></div>
                 </div>
                 <div class="input-group">
                     <label for="registerPassword">Password</label>
                     <input type="password" id="registerPassword" name="password" required>
                     <i class="fas fa-eye password-toggle" onclick="togglePassword('registerPassword', this)"></i>
                     <div id="passwordStrength" class="password-strength"></div>
+                    <div class="error-message" id="registerPasswordError"></div>
                 </div>
                 <div class="input-group">
                     <label for="confirmPassword">Confirm Password</label>
                     <input type="password" id="confirmPassword" name="confirmPassword" required>
                     <i class="fas fa-eye password-toggle" onclick="togglePassword('confirmPassword', this)"></i>
+                    <div class="error-message" id="confirmPasswordError"></div>
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" id="agreeTerms" required>
                     <label for="agreeTerms">I agree to the terms and conditions</label>
                 </div>
-                <button type="submit" class="btn">Sign Up</button>
+                <button type="submit" class="btn" id="registerBtn">Sign Up</button>
             </form>
             <div class="link-text" onclick="showForm('loginForm')">Already have an account? Sign in</div>
         </div>
@@ -323,8 +360,9 @@
                 <div class="input-group">
                     <label for="forgotEmail">Email Address</label>
                     <input type="email" id="forgotEmail" name="email" required>
+                    <div class="error-message" id="forgotEmailError"></div>
                 </div>
-                <button type="submit" class="btn">Send Reset Link</button>
+                <button type="submit" class="btn" id="forgotBtn">Send Reset Link</button>
             </form>
             <div class="link-text" onclick="showForm('loginForm')">Back to login</div>
         </div>
@@ -333,29 +371,49 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-        import { getDatabase, ref, set, get } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+        // Firebase imports
+        let firebaseApp, database, auth;
+        let isFirebaseInitialized = false;
 
-        let firebaseConfig;
-        try {
-            firebaseConfig = (await import('./config.js')).firebaseConfig;
-        } catch (error) {
-            console.error('Failed to load Firebase config:', error);
-            showMessage('Failed to load Firebase configuration. Please try again later.', 'error');
-        }
+        async function initializeFirebase() {
+            try {
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js');
+                const { getDatabase, ref, set, get } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js');
 
-        let database, auth;
-        try {
-            if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
-                throw new Error('Firebase configuration is missing or invalid');
+                // Try to load Firebase config
+                let firebaseConfig;
+                try {
+                    const configModule = await import('./config.js');
+                    firebaseConfig = configModule.firebaseConfig;
+                } catch (error) {
+                    console.error('Failed to load Firebase config:', error);
+                    document.getElementById('firebase-error').style.display = 'block';
+                    return false;
+                }
+
+                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                    throw new Error('Firebase configuration is missing or invalid');
+                }
+
+                firebaseApp = initializeApp(firebaseConfig);
+                database = getDatabase(firebaseApp);
+                auth = getAuth(firebaseApp);
+                isFirebaseInitialized = true;
+
+                // Set up auth state listener
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/index.html';
+                    }
+                });
+
+                return true;
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+                document.getElementById('firebase-error').style.display = 'block';
+                return false;
             }
-            const app = initializeApp(firebaseConfig);
-            database = getDatabase(app);
-            auth = getAuth(app);
-        } catch (error) {
-            console.error('Error initializing Firebase:', error);
-            showMessage('Failed to connect to server. Please check your configuration and try again.', 'error');
         }
 
         function showMessage(message, type = 'success') {
@@ -363,6 +421,7 @@
             messageDiv.textContent = message;
             messageDiv.className = `message ${type}`;
             messageDiv.style.display = 'block';
+            
             return new Promise(resolve => {
                 setTimeout(() => {
                     messageDiv.style.display = 'none';
@@ -379,8 +438,18 @@
             document.getElementById('loading').style.display = 'none';
         }
 
+        function setButtonLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.disabled = isLoading;
+                button.textContent = isLoading ? 'Loading...' : button.getAttribute('data-original-text') || button.textContent;
+            }
+        }
+
         function checkPasswordStrength(password) {
             const strengthDiv = document.getElementById('passwordStrength');
+            if (!strengthDiv) return;
+
             let strength = 0;
             let message = '';
 
@@ -408,6 +477,8 @@
 
         window.togglePassword = function(inputId, element) {
             const input = document.getElementById(inputId);
+            if (!input || !element) return;
+
             if (input.type === 'password') {
                 input.type = 'text';
                 element.classList.remove('fa-eye');
@@ -423,7 +494,10 @@
             document.querySelectorAll('.form-container').forEach(form => {
                 form.classList.remove('active');
             });
-            document.getElementById(formId).classList.add('active');
+            const targetForm = document.getElementById(formId);
+            if (targetForm) {
+                targetForm.classList.add('active');
+            }
         }
 
         function isValidEmail(email) {
@@ -432,38 +506,42 @@
         }
 
         function sanitizeInput(input) {
+            if (typeof input !== 'string') return '';
             return input.replace(/[^a-zA-Z0-9_-]/g, '').substring(0, 50);
         }
 
-        async function generateUniqueID() {
-            let id;
-            let isUnique = false;
-            let retries = 0;
-            const maxRetries = 100;
-            while (!isUnique && retries < maxRetries) {
-                id = Math.floor(10000000 + Math.random() * 90000000).toString();
-                const userRef = ref(database, 'users/' + id);
-                try {
-                    const snapshot = await get(userRef);
-                    isUnique = !snapshot.exists();
-                } catch (error) {
-                    console.error('Error checking ID uniqueness:', error);
-                    retries++;
-                }
-            }
-            if (!isUnique) {
-                throw new Error('ID generation failed after max retries');
-            }
-            return id;
-        }
-
         async function login(email, password) {
+            if (!isFirebaseInitialized) {
+                showMessage('Firebase not initialized. Please refresh the page.', 'error');
+                return null;
+            }
+
             try {
+                const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js');
+                const { ref, set, get } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                if (isLocalStorageAvailable()) {
-                    localStorage.setItem('userID', userCredential.user.uid);
+                const userID = userCredential.user.uid;
+                const userRef = ref(database, 'users/' + userID);
+                const snapshot = await get(userRef);
+                
+                if (!snapshot.exists()) {
+                    await set(ref(database, 'users/' + userID), {
+                        username: sanitizeInput(email.split('@')[0]),
+                        email: email,
+                        balance: 0.00,
+                        referrals: [],
+                        profileSetup: true,
+                        totalMined: 0,
+                        miningRate: 1.00,
+                        miningHours: 0,
+                        dailyStreak: 0,
+                        lastDailyReward: null,
+                        level: 1,
+                        miningStartTime: null
+                    });
                 }
-                return userCredential.user.uid;
+                return userID;
             } catch (error) {
                 console.error('Login error:', error);
                 let message = 'Invalid email or password';
@@ -471,6 +549,10 @@
                     message = 'Too many attempts. Please try again later.';
                 } else if (error.code === 'auth/network-request-failed') {
                     message = 'Network error. Please check your connection and try again.';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Invalid email address format.';
+                } else if (error.code === 'auth/user-disabled') {
+                    message = 'This account has been disabled.';
                 }
                 showMessage(message, 'error');
                 return null;
@@ -478,7 +560,15 @@
         }
 
         async function register(username, email, password) {
+            if (!isFirebaseInitialized) {
+                showMessage('Firebase not initialized. Please refresh the page.', 'error');
+                return null;
+            }
+
             try {
+                const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js');
+                const { ref, set, get } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const userID = userCredential.user.uid;
                 const urlParams = new URLSearchParams(window.location.search);
@@ -501,8 +591,8 @@
                 });
 
                 if (referrerID) {
-                    const referrerRef = ref(database, 'users/' + referrerID);
                     try {
+                        const referrerRef = ref(database, 'users/' + referrerID);
                         const snapshot = await get(referrerRef);
                         if (snapshot.exists()) {
                             const referrerData = snapshot.val();
@@ -516,10 +606,6 @@
                         console.error('Error updating referrer data:', error);
                     }
                 }
-
-                if (isLocalStorageAvailable()) {
-                    localStorage.setItem('userID', userID);
-                }
                 return userID;
             } catch (error) {
                 console.error('Registration error:', error);
@@ -527,9 +613,11 @@
                 if (error.code === 'auth/email-already-in-use') {
                     message = 'This email is already registered';
                 } else if (error.code === 'auth/weak-password') {
-                    message = 'Password is too weak';
+                    message = 'Password is too weak (minimum 6 characters)';
                 } else if (error.code === 'auth/network-request-failed') {
                     message = 'Network error. Please check your connection and try again.';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Invalid email address format.';
                 }
                 showMessage(message, 'error');
                 return null;
@@ -537,7 +625,13 @@
         }
 
         async function resetPassword(email) {
+            if (!isFirebaseInitialized) {
+                showMessage('Firebase not initialized. Please refresh the page.', 'error');
+                return false;
+            }
+
             try {
+                const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js');
                 await sendPasswordResetEmail(auth, email);
                 return true;
             } catch (error) {
@@ -547,33 +641,28 @@
                     message = 'No account found with this email';
                 } else if (error.code === 'auth/network-request-failed') {
                     message = 'Network error. Please check your connection and try again.';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Invalid email address format.';
                 }
                 showMessage(message, 'error');
                 return false;
             }
         }
 
-        function isLocalStorageAvailable() {
-            try {
-                const test = '__test__';
-                localStorage.setItem(test, test);
-                localStorage.removeItem(test);
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            if (isLocalStorageAvailable() && localStorage.getItem('userID')) {
-                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/index.html';
-            }
-
-            if (!auth || !database) {
-                showMessage('Application not initialized properly. Please try again later.', 'error');
+        // Initialize Firebase and set up event listeners
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize Firebase
+            const firebaseSuccess = await initializeFirebase();
+            if (!firebaseSuccess) {
                 return;
             }
 
+            // Store original button texts
+            document.getElementById('loginBtn').setAttribute('data-original-text', 'Sign In');
+            document.getElementById('registerBtn').setAttribute('data-original-text', 'Sign Up');
+            document.getElementById('forgotBtn').setAttribute('data-original-text', 'Send Reset Link');
+
+            // Login form handler
             document.getElementById('loginFormElement').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const email = document.getElementById('loginEmail').value.trim();
@@ -584,9 +673,14 @@
                     return;
                 }
 
-                showLoading();
+                if (!password) {
+                    showMessage('Please enter your password', 'error');
+                    return;
+                }
+
+                setButtonLoading('loginBtn', true);
                 const userID = await login(email, password);
-                hideLoading();
+                setButtonLoading('loginBtn', false);
 
                 if (userID) {
                     await showMessage('Login successful!');
@@ -594,12 +688,19 @@
                 }
             });
 
+            // Registration form handler
             document.getElementById('registerFormElement').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const username = document.getElementById('registerName').value.trim();
                 const email = document.getElementById('registerEmail').value.trim();
                 const password = document.getElementById('registerPassword').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
+                const agreeTerms = document.getElementById('agreeTerms').checked;
+
+                if (!agreeTerms) {
+                    showMessage('You must agree to the terms and conditions', 'error');
+                    return;
+                }
 
                 if (!isValidEmail(email)) {
                     showMessage('Please enter a valid email address', 'error');
@@ -611,8 +712,8 @@
                     return;
                 }
 
-                if (password.length < 8) {
-                    showMessage('Password must be at least 8 characters long', 'error');
+                if (password.length < 6) {
+                    showMessage('Password must be at least 6 characters long', 'error');
                     return;
                 }
 
@@ -621,23 +722,27 @@
                     return;
                 }
 
-                showLoading();
+                setButtonLoading('registerBtn', true);
                 try {
                     const userID = await register(username, email, password);
-                    hideLoading();
+                    setButtonLoading('registerBtn', false);
 
                     if (userID) {
                         await showMessage('Registration successful! Please login now.');
                         document.getElementById('registerFormElement').reset();
-                        document.getElementById('passwordStrength').style.display = 'none';
+                        const strengthDiv = document.getElementById('passwordStrength');
+                        if (strengthDiv) {
+                            strengthDiv.style.display = 'none';
+                        }
                         showForm('loginForm');
                     }
                 } catch (error) {
-                    hideLoading();
+                    setButtonLoading('registerBtn', false);
                     showMessage('Unexpected error during registration. Please try again.', 'error');
                 }
             });
 
+            // Forgot password form handler
             document.getElementById('forgotFormElement').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const email = document.getElementById('forgotEmail').value.trim();
@@ -647,9 +752,9 @@
                     return;
                 }
 
-                showLoading();
+                setButtonLoading('forgotBtn', true);
                 const success = await resetPassword(email);
-                hideLoading();
+                setButtonLoading('forgotBtn', false);
 
                 if (success) {
                     await showMessage('Password reset link sent to your email');
@@ -658,9 +763,13 @@
                 }
             });
 
-            document.getElementById('registerPassword').addEventListener('input', function(e) {
-                checkPasswordStrength(e.target.value);
-            });
+            // Password strength checker
+            const passwordInput = document.getElementById('registerPassword');
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function(e) {
+                    checkPasswordStrength(e.target.value);
+                });
+            }
         });
     </script>
 </body>
