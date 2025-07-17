@@ -532,25 +532,86 @@
         }
 
         /* Ad Modal Styles */
-        .ad-modal-content {
-            background: var(--background-color);
-            border: 2px solid var(--accent-color);
-            border-radius: 20px;
-            padding: 20px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            position: relative;
+        .ad-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
-        #adContainer {
-            margin-bottom: 15px;
+        .ad-modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            position: relative;
+            animation: modalFadeIn 0.5s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .ad-slot {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 15px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
         .ad-timer {
-            font-size: 1.2em;
+            font-size: clamp(1em, 2.5vw, 1.2em);
             color: var(--secondary-color);
-            margin-bottom: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .ad-close-btn {
+            position: absolute;
+            bottom: 20px;
+            background: var(--gradient-2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--background-color);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+        }
+
+        .ad-close-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-dark);
+        }
+
+        .ad-close-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Footer */
@@ -650,6 +711,10 @@
             .stats-section {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .ad-slot {
+                max-width: 100%;
+            }
         }
 
         @media (max-width: 480px) {
@@ -677,6 +742,16 @@
 
             .stats-section {
                 grid-template-columns: 1fr;
+            }
+
+            .ad-slot {
+                padding: 10px;
+            }
+
+            .ad-close-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
             }
         }
 
@@ -816,26 +891,22 @@
     </div>
 
     <!-- Ad Modal -->
-    <div class="modal" id="adModal" role="dialog" aria-modal="true">
+    <div class="modal ad-modal" id="adModal" role="dialog" aria-modal="true">
         <div class="ad-modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Advertisement</h2>
-                <button class="close-btn" id="closeAdModal" disabled>×</button>
-            </div>
-            <div id="adContainer">
+            <div class="ad-slot" id="adContainer">
                 <script type="text/javascript">
                     atOptions = {
                         'key': 'eb117daf94e120e0ae0e6f682c2e34f5',
                         'format': 'iframe',
-                        'height': 50,
-                        'width': 320,
+                        'height': 250,
+                        'width': 300,
                         'params': {}
                     };
                 </script>
                 <script type="text/javascript" src="//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js"></script>
             </div>
             <div class="ad-timer" id="adTimer">Closing in 5 seconds...</div>
-            <button class="btn btn-primary" id="skipAdBtn" disabled>Close Ad</button>
+            <button class="ad-close-btn" id="adCloseBtn" disabled><i class="fas fa-times"></i></button>
         </div>
     </div>
 
@@ -998,10 +1069,9 @@
         function showAdModal(callback) {
             const adModal = document.getElementById('adModal');
             const adTimer = document.getElementById('adTimer');
-            const skipAdBtn = document.getElementById('skipAdBtn');
-            const closeAdModal = document.getElementById('closeAdModal');
+            const adCloseBtn = document.getElementById('adCloseBtn');
 
-            if (!adModal || !adTimer || !skipAdBtn || !closeAdModal) {
+            if (!adModal || !adTimer || !adCloseBtn) {
                 showNotification('Error: Ad modal elements missing.', 'error');
                 return;
             }
@@ -1009,17 +1079,14 @@
             adModal.style.display = 'flex';
             let adTimeLeft = 5; // 5 seconds ad duration
             adTimer.textContent = `Closing in ${adTimeLeft} seconds...`;
-
-            skipAdBtn.disabled = true;
-            closeAdModal.disabled = true;
+            adCloseBtn.disabled = true;
 
             const adInterval = setInterval(() => {
                 adTimeLeft--;
                 adTimer.textContent = `Closing in ${adTimeLeft} seconds...`;
                 if (adTimeLeft <= 0) {
                     clearInterval(adInterval);
-                    skipAdBtn.disabled = false;
-                    closeAdModal.disabled = false;
+                    adCloseBtn.disabled = false;
                 }
             }, 1000);
 
@@ -1029,10 +1096,8 @@
                 if (callback) callback();
             };
 
-            skipAdBtn.removeEventListener('click', closeAd);
-            closeAdModal.removeEventListener('click', closeAd);
-            skipAdBtn.addEventListener('click', closeAd);
-            closeAdModal.addEventListener('click', closeAd);
+            adCloseBtn.removeEventListener('click', closeAd);
+            adCloseBtn.addEventListener('click', closeAd);
         }
 
         // Mining System
@@ -1335,7 +1400,7 @@
                 'userIdBtn', 'balanceBtn', 'verifyBtn', 'roadmapBtn', 'rewardsBtn', 'dailyRewardBtn',
                 'startMiningBtn', 'claimBtn', 'verifyModal', 'verifyContent', 'recoveryContent',
                 'usernameInput', 'saveBtn', 'recoveryBtn', 'recoverBtn', 'backToVerifyBtn', 'closeModal',
-                'adModal', 'closeAdModal', 'skipAdBtn', 'adTimer'
+                'adModal', 'adCloseBtn', 'adTimer'
             ];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
