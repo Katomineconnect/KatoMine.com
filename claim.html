@@ -230,53 +230,79 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            background: var(--gradient-1);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            overflow: hidden;
         }
 
-        .ad-content {
+        .ad-modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            position: relative;
+            animation: modalFadeIn 0.5s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .ad-slot {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            padding: clamp(0.5rem, 2vw, 0.8rem);
-            border-radius: 10px;
             border: 2px solid var(--primary-color);
-            text-align: center;
-            box-shadow: var(--shadow-dark);
-            width: min(90%, 350px);
-            max-height: 90vh;
-            overflow: auto;
-        }
-
-        .ad-content button {
-            background: var(--gradient-2);
-            color: var(--background-color);
-            border: none;
-            padding: clamp(8px, 2.5vw, 10px) clamp(15px, 4vw, 20px);
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            font-weight: 600;
+            border-radius: 15px;
+            padding: 15px;
             width: 100%;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            max-width: 400px;
+            box-shadow: var(--shadow-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
-        .ad-content button:hover {
-            transform: translateY(-2px);
+        .ad-timer {
+            font-size: clamp(1em, 2.5vw, 1.2em);
+            color: var(--secondary-color);
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .ad-close-btn {
+            position: absolute;
+            bottom: 20px;
+            background: var(--gradient-2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--background-color);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
             box-shadow: var(--shadow-light);
         }
 
-        .ad-content button:active {
-            transform: scale(0.95);
+        .ad-close-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-dark);
         }
 
-        .ad-iframe {
-            border: none;
-            margin: 0 auto;
-            display: block;
+        .ad-close-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Footer */
@@ -400,9 +426,13 @@
             .footer a i {
                 font-size: clamp(0.9rem, 2.8vw, 1.1rem);
             }
-            .ad-content {
-                width: min(90%, 300px);
-                padding: clamp(0.4rem, 1.5vw, 0.6rem);
+            .ad-slot {
+                max-width: 100%;
+            }
+            .ad-close-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
             }
         }
 
@@ -420,9 +450,8 @@
             .footer a i {
                 font-size: clamp(0.8rem, 2.5vw, 1rem);
             }
-            .ad-content {
-                width: min(90%, 280px);
-                padding: clamp(0.3rem, 1vw, 0.5rem);
+            .ad-slot {
+                padding: 10px;
             }
         }
     </style>
@@ -456,10 +485,22 @@
     </div>
 
     <!-- Ad Modal -->
-    <div class="ad-modal" id="adModal">
-        <div class="ad-content">
-            <div id="adContainer"></div>
-            <button id="closeAd" role="button" aria-label="Close ad and start mining">Close Ad</button>
+    <div class="modal ad-modal" id="adModal" role="dialog" aria-modal="true">
+        <div class="ad-modal-content">
+            <div class="ad-slot" id="adContainer">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key': 'eb117daf94e120e0ae0e6f682c2e34f5',
+                        'format': 'iframe',
+                        'height': 250,
+                        'width': 300,
+                        'params': {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js"></script>
+            </div>
+            <div class="ad-timer" id="adTimer">Closing in 5 seconds...</div>
+            <button class="ad-close-btn" id="adCloseBtn" disabled><i class="fas fa-times"></i></button>
         </div>
     </div>
 
@@ -516,57 +557,6 @@
             profileSetup: false
         };
 
-        // Ad configurations
-        const adOptions = [
-            {
-                type: 'iframe',
-                key: 'eb117daf94e120e0ae0e6f682c2e34f5',
-                format: 'iframe',
-                height: 50,
-                width: 320,
-                src: '//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js'
-            },
-            {
-                type: 'script',
-                src: '//pl26881571.profitableratecpm.com/946391b8e10827404b7dd26a5817e31c/invoke.js',
-                containerId: 'container-946391b8e10827404b7dd26a5817e31c'
-            },
-            {
-                type: 'iframe',
-                key: '0e76a0edb900a6f53aa1a75d1b26bd27',
-                format: 'iframe',
-                height: 250,
-                width: 300,
-                src: '//www.highperformanceformat.com/0e76a0edb900a6f53aa1a75d1b26bd27/invoke.js'
-            },
-            {
-                type: 'script',
-                src: 'https://www.profitableratecpm.com/czy8uk6k?key=352af86bd860aff1b2109611320beef7',
-                containerId: null
-            },
-            {
-                type: 'iframe',
-                key: '78ade24182729fceea8e45203dad915b',
-                format: 'iframe',
-                height: 50,
-                width: 320,
-                src: '//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js'
-            },
-            {
-                type: 'script',
-                src: '//pl26881693.profitableratecpm.com/94a74f5c823398a73034078c56abca9c/invoke.js',
-                containerId: 'container-94a74f5c823398a73034078c56abca9c'
-            },
-            {
-                type: 'iframe',
-                key: 'c620af328467e6de19dc04af696ee0fb',
-                format: 'iframe',
-                height: 250,
-                width: 300,
-                src: '//www.highperformanceformat.com/c620af328467e6de19dc04af696ee0fb/invoke.js'
-            }
-        ];
-
         // Utility Functions
         function isLocalStorageAvailable() {
             try {
@@ -596,6 +586,41 @@
                     notification.classList.remove('show');
                 }, 3000);
             }
+        }
+
+        // Ad Modal Function
+        function showAdModal(callback) {
+            const adModal = document.getElementById('adModal');
+            const adTimer = document.getElementById('adTimer');
+            const adCloseBtn = document.getElementById('adCloseBtn');
+
+            if (!adModal || !adTimer || !adCloseBtn) {
+                showNotification('Error: Ad modal elements missing.', 'error');
+                return;
+            }
+
+            adModal.style.display = 'flex';
+            let adTimeLeft = 5; // 5 seconds ad duration
+            adTimer.textContent = `Closing in ${adTimeLeft} seconds...`;
+            adCloseBtn.disabled = true;
+
+            const adInterval = setInterval(() => {
+                adTimeLeft--;
+                adTimer.textContent = `Closing in ${adTimeLeft} seconds...`;
+                if (adTimeLeft <= 0) {
+                    clearInterval(adInterval);
+                    adCloseBtn.disabled = false;
+                }
+            }, 1000);
+
+            const closeAd = () => {
+                clearInterval(adInterval);
+                adModal.style.display = 'none';
+                if (callback) callback();
+            };
+
+            adCloseBtn.removeEventListener('click', closeAd);
+            adCloseBtn.addEventListener('click', closeAd);
         }
 
         // Generate Unique ID
@@ -684,56 +709,6 @@
             }
         }
 
-        // Show Random Ad
-        function showAd() {
-            console.log('Showing ad modal');
-            const adModal = document.getElementById('adModal');
-            const adContainer = document.getElementById('adContainer');
-            if (adModal && adContainer) {
-                // Clear previous ad
-                adContainer.innerHTML = '';
-
-                // Select a random ad
-                const randomAd = adOptions[Math.floor(Math.random() * adOptions.length)];
-
-                if (randomAd.type === 'iframe') {
-                    // Create iframe ad
-                    const iframe = document.createElement('iframe');
-                    iframe.className = 'ad-iframe';
-                    iframe.width = randomAd.width;
-                    iframe.height = randomAd.height;
-                    iframe.src = randomAd.src;
-                    adContainer.appendChild(iframe);
-
-                    // Inject atOptions for iframe
-                    const script = document.createElement('script');
-                    script.type = 'text/javascript';
-                    script.text = `atOptions = {
-                        'key': '${randomAd.key}',
-                        'format': '${randomAd.format}',
-                        'height': ${randomAd.height},
-                        'width': ${randomAd.width},
-                        'params': {}
-                    };`;
-                    adContainer.appendChild(script);
-                } else if (randomAd.type === 'script') {
-                    // Create script-based ad
-                    if (randomAd.containerId) {
-                        const div = document.createElement('div');
-                        div.id = randomAd.containerId;
-                        adContainer.appendChild(div);
-                    }
-                    const script = document.createElement('script');
-                    script.async = true;
-                    script.setAttribute('data-cfasync', 'false');
-                    script.src = randomAd.src;
-                    adContainer.appendChild(script);
-                }
-
-                adModal.style.display = 'flex';
-            }
-        }
-
         // Mining System
         const EIGHT_HOURS = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
         const TOKENS_PER_MINING = 8; // 8 tokens per 8 hours
@@ -762,41 +737,43 @@
                 showNotification('Mining already in progress!', 'warning');
                 return;
             }
-            const miningStartTime = Date.now();
-            try {
-                await update(ref(database, 'users/' + userData.userID), {
-                    miningStartTime: miningStartTime,
-                    isMining: true,
-                    miningBalance: 0
-                });
-                userData.miningStartTime = miningStartTime;
-                userData.isMining = true;
-                console.log('Mining started, time:', new Date(miningStartTime).toLocaleString());
-                miningButton.innerHTML = '<i class="fas fa-pause"></i><span>Mining...</span>';
-                miningButton.disabled = true;
-                if (timerInterval) clearInterval(timerInterval);
-                timerInterval = setInterval(() => {
-                    const timeElapsed = Date.now() - userData.miningStartTime;
-                    const remainingTime = EIGHT_HOURS - timeElapsed;
-                    if (remainingTime <= 0) {
-                        clearInterval(timerInterval);
-                        miningButton.innerHTML = '<i class="fas fa-hand-holding-usd"></i><span>Claim</span>';
-                        miningButton.disabled = false;
-                        document.getElementById('timerDisplay').textContent = 'Ready to claim!';
-                        document.getElementById('progressTimer').textContent = 'Ready to claim!';
-                        console.log('Mining complete, ready to claim');
-                    } else {
-                        updateTimerDisplay(remainingTime);
-                    }
-                }, 1000);
-            } catch (error) {
-                console.error('Error starting mining:', error);
-                showNotification('Error starting mining. Please try again.', 'error');
-                miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
-                miningButton.disabled = false;
-                document.getElementById('timerDisplay').textContent = 'Error starting mining. Please try again.';
-                document.getElementById('progressTimer').textContent = 'Error starting mining. Please try again.';
-            }
+            showAdModal(async () => {
+                const miningStartTime = Date.now();
+                try {
+                    await update(ref(database, 'users/' + userData.userID), {
+                        miningStartTime: miningStartTime,
+                        isMining: true,
+                        miningBalance: 0
+                    });
+                    userData.miningStartTime = miningStartTime;
+                    userData.isMining = true;
+                    console.log('Mining started, time:', new Date(miningStartTime).toLocaleString());
+                    miningButton.innerHTML = '<i class="fas fa-pause"></i><span>Mining...</span>';
+                    miningButton.disabled = true;
+                    if (timerInterval) clearInterval(timerInterval);
+                    timerInterval = setInterval(() => {
+                        const timeElapsed = Date.now() - userData.miningStartTime;
+                        const remainingTime = EIGHT_HOURS - timeElapsed;
+                        if (remainingTime <= 0) {
+                            clearInterval(timerInterval);
+                            miningButton.innerHTML = '<i class="fas fa-hand-holding-usd"></i><span>Claim</span>';
+                            miningButton.disabled = false;
+                            document.getElementById('timerDisplay').textContent = 'Ready to claim!';
+                            document.getElementById('progressTimer').textContent = 'Ready to claim!';
+                            console.log('Mining complete, ready to claim');
+                        } else {
+                            updateTimerDisplay(remainingTime);
+                        }
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error starting mining:', error);
+                    showNotification('Error starting mining. Please try again.', 'error');
+                    miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
+                    miningButton.disabled = false;
+                    document.getElementById('timerDisplay').textContent = 'Error starting mining. Please try again.';
+                    document.getElementById('progressTimer').textContent = 'Error starting mining. Please try again.';
+                }
+            });
         }
 
         async function claimTokens() {
@@ -917,6 +894,19 @@
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
 
+            const requiredElements = [
+                'miningButton', 'adModal', 'adContainer', 'adCloseBtn', 'adTimer',
+                'balanceText', 'miningRate', 'timerDisplay', 'progressTimer'
+            ];
+            for (const id of requiredElements) {
+                if (!document.getElementById(id)) {
+                    console.error(`DOM element ${id} not found`);
+                    showNotification(`Initialization error: Missing element ${id}`, 'error');
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
+                }
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             const referrerID = urlParams.get('ref') || null;
             if (!userID) {
@@ -944,23 +934,15 @@
 
         // Event Listeners
         const miningButton = document.getElementById('miningButton');
-        const adModal = document.getElementById('adModal');
-        const closeAdButton = document.getElementById('closeAd');
-
         miningButton.addEventListener('click', () => {
             console.log('Mining button state:', miningButton.textContent);
             if (miningButton.textContent.includes('Start Mining')) {
-                showAd();
+                startMining();
             } else if (miningButton.textContent.includes('Claim')) {
                 claimTokens();
             } else if (miningButton.textContent.includes('Mining')) {
                 showNotification('Mining in progress. Please wait until completion.', 'warning');
             }
-        });
-
-        closeAdButton.addEventListener('click', () => {
-            adModal.style.display = 'none';
-            startMining();
         });
 
         // Navigation Links
