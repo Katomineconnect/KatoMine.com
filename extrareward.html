@@ -318,6 +318,11 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner" style="width: 60px; height: 60px; border: 4px solid #ffffff; border-top: 4px solid #0047ab; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    </div>
+
     <div class="tasks-box">
         <button class="back-btn" id="backBtn">
             <i class="fas fa-arrow-left"></i>
@@ -330,7 +335,7 @@
                 <div>
                     <div class="task-text">Subscribe to YouTube Channel</div>
                     <div class="task-amount">
-                        <i class="fas fa-coins"></i> Reward: 3.0 Points
+                        <i class="fas fa-coins"></i> Reward: 3.0 KATO
                     </div>
                 </div>
             </div>
@@ -345,7 +350,7 @@
                 <div>
                     <div class="task-text">Follow on Twitter/X</div>
                     <div class="task-amount">
-                        <i class="fas fa-coins"></i> Reward: 2.5 Points
+                        <i class="fas fa-coins"></i> Reward: 2.5 KATO
                     </div>
                 </div>
             </div>
@@ -360,7 +365,7 @@
                 <div>
                     <div class="task-text">Join Telegram Community</div>
                     <div class="task-amount">
-                        <i class="fas fa-coins"></i> Reward: 3.0 Points
+                        <i class="fas fa-coins"></i> Reward: 3.0 KATO
                     </div>
                 </div>
             </div>
@@ -428,31 +433,36 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
         import { getDatabase, ref, onValue, get, set, push } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
+        // Firebase config
         let firebaseConfig;
-        try {
-            firebaseConfig = (await import('./config.js')).firebaseConfig;
-        } catch (error) {
-            console.error('Failed to load Firebase config:', error);
-            showNotification('Failed to load Firebase configuration.', 'error');
-        }
+        let database, auth;
+        let isFirebaseInitialized = false;
 
-        let database;
-        try {
-            if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
-                throw new Error('Firebase configuration is missing or invalid');
+        async function initializeFirebase() {
+            try {
+                const configModule = await import('./config.js');
+                firebaseConfig = configModule.firebaseConfig;
+                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                    throw new Error('Firebase configuration is missing or invalid');
+                }
+                const app = initializeApp(firebaseConfig);
+                database = getDatabase(app);
+                auth = getAuth(app);
+                isFirebaseInitialized = true;
+                return true;
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+                showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
+                return false;
             }
-            const app = initializeApp(firebaseConfig);
-            database = getDatabase(app);
-            console.log('Firebase initialized successfully');
-        } catch (error) {
-            console.error('Error initializing Firebase:', error);
-            showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
         }
 
         const messageDisplay = document.getElementById('messageDisplay');
         const taskButtons = document.querySelectorAll('.task-button[data-task]');
         const backBtn = document.getElementById('backBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
 
         const taskData = {
             youtube: { url: 'https://youtube.com/@katomine-r4c?si=9aMyKZ11sBlZnkS_', amount: 3.0 },
@@ -460,7 +470,11 @@
             telegram: { url: 'https://t.me/KatoMineCommunity', amount: 3.0 }
         };
 
-        let userID = null;
+        let userData = {
+            userID: null,
+            balance: 0,
+            tasksEarned: 0
+        };
 
         function showNotification(message, type = 'info') {
             const notification = document.getElementById('notification');
@@ -504,10 +518,11 @@
 
         window.handleTaskAction = async function(taskType, action = 'go') {
             console.log(`Handling task action: ${taskType}, Action: ${action}`);
-            if (!userID) {
+            if (!userData.userID) {
                 showNotification('Please login to claim rewards.', 'warning');
                 messageDisplay.textContent = 'Please visit the Home page to initialize your account.';
                 console.log('No userID found');
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
                 return;
             }
 
@@ -521,7 +536,7 @@
             }
 
             try {
-                const userRef = ref(database, `users/${userID}/tasks/${taskType}`);
+                const userRef = ref(database, `users/${userData.userID}/tasks/${taskType}`);
                 const snapshot = await get(userRef);
                 if (snapshot.exists() && snapshot.val().claimed) {
                     showNotification('You have already claimed this task reward!', 'warning');
@@ -556,7 +571,7 @@
                         window.removeEventListener('focus', onFocus);
                         card.classList.remove('loading');
                         updateButtonState(taskType, button, 'claim');
-                        messageDisplay.textContent = `Click Claim to receive your ${taskData[taskType].amount} Points for ${taskType} task!`;
+                        messageDisplay.textContent = `Click Claim to receive your ${taskData[taskType].amount} KATO for ${taskType} task!`;
                         console.log(`Switched ${taskType} button to Claim state`);
                     }, { once: true });
                 } else if (action === 'claim') {
@@ -579,9 +594,9 @@
         async function claimTask(taskType, card, button) {
             try {
                 const task = taskData[taskType];
-                const userRef = ref(database, `users/${userID}`);
-                const tasksRef = ref(database, `users/${userID}/tasks/${taskType}`);
-                const activitiesRef = ref(database, `users/${userID}/activities`);
+                const userRef = ref(database, `users/${userData.userID}`);
+                const tasksRef = ref(database, `users/${userData.userID}/tasks/${taskType}`);
+                const activitiesRef = ref(database, `users/${userData.userID}/activities`);
 
                 const snapshot = await get(tasksRef);
                 if (snapshot.exists() && snapshot.val().claimed) {
@@ -593,12 +608,12 @@
                 }
 
                 const userSnapshot = await get(userRef);
-                const userData = userSnapshot.val() || { balance: 0, tasksEarned: 0 };
-                const newBalance = (userData.balance || 0) + task.amount;
-                const newTasksEarned = (userData.tasksEarned || 0) + task.amount;
+                const existingData = userSnapshot.val() || { balance: 0, totalMined: 0, miningRate: 1.00, miningHours: 0, referrals: [], dailyStreak: 0, lastDailyReward: null, level: 1 };
+                const newBalance = (existingData.balance || 0) + task.amount;
+                const newTasksEarned = (existingData.tasksEarned || 0) + task.amount;
 
                 await set(userRef, {
-                    ...userData,
+                    ...existingData,
                     balance: newBalance,
                     tasksEarned: newTasksEarned
                 });
@@ -615,12 +630,15 @@
                     date: Date.now()
                 });
 
+                userData.balance = newBalance;
+                userData.tasksEarned = newTasksEarned;
+
                 updateButtonState(taskType, button, 'complete');
                 card.classList.add('success-animation');
                 setTimeout(() => card.classList.remove('success-animation'), 500);
 
-                showNotification(`Congratulations! You earned ${task.amount} Points!`, 'success');
-                messageDisplay.textContent = `You earned ${task.amount} Points for ${taskType} task!`;
+                showNotification(`Congratulations! You earned ${task.amount} KATO!`, 'success');
+                messageDisplay.textContent = `You earned ${task.amount} KATO for ${taskType} task!`;
             } catch (error) {
                 console.error('Error claiming task:', error);
                 showNotification('Failed to claim task reward. Please try again.', 'error');
@@ -632,72 +650,95 @@
         }
 
         async function initializeTasksPage() {
-            userID = isLocalStorageAvailable() ? localStorage.getItem('userID') : null;
-            console.log('Initializing tasks page, userID:', userID);
-            if (!userID) {
-                showNotification('Please visit the Home page to initialize your account.', 'warning');
-                messageDisplay.textContent = 'Please login to view tasks.';
-                return;
+            loadingOverlay.style.display = 'flex';
+
+            if (!isFirebaseInitialized) {
+                const success = await initializeFirebase();
+                if (!success) {
+                    loadingOverlay.style.display = 'none';
+                    showNotification('Failed to initialize Firebase.', 'error');
+                    return;
+                }
             }
 
-            const userRef = ref(database, `users/${userID}`);
-            try {
-                const snapshot = await get(userRef);
-                if (!snapshot.exists()) {
-                    console.error('No user data found for ID:', userID);
-                    showNotification('User data not found. Please return to Home page to initialize.', 'error');
-                    messageDisplay.textContent = 'User data not found.';
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    showNotification('Please log in to access this page.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    loadingOverlay.style.display = 'none';
                     return;
                 }
 
-                const pendingTask = isLocalStorageAvailable() ? localStorage.getItem('pendingTask') : null;
-                if (pendingTask && taskData[pendingTask]) {
-                    console.log(`Found pending task: ${pendingTask}`);
-                    const button = document.querySelector(`.task-button[data-task="${pendingTask}"]`);
-                    if (button && !snapshot.val()?.tasks?.[pendingTask]?.claimed) {
-                        updateButtonState(pendingTask, button, 'claim');
-                        messageDisplay.textContent = `Click Claim to receive your ${taskData[pendingTask].amount} Points for ${pendingTask} task!`;
-                    }
+                userData.userID = user.uid;
+                if (isLocalStorageAvailable()) {
+                    localStorage.setItem('userID', userData.userID);
                 }
 
-                onValue(userRef, (snapshot) => {
-                    const data = snapshot.val();
-                    console.log('User data fetched:', data);
-                    if (data && data.tasks) {
-                        taskButtons.forEach(button => {
-                            const taskType = button.getAttribute('data-task');
-                            const taskState = data.tasks[taskType]?.claimed ? 'complete' : (pendingTask === taskType ? 'claim' : 'go');
-                            updateButtonState(taskType, button, taskState);
-                            console.log(`Button state for ${taskType}: ${taskState}`);
-                        });
-                        messageDisplay.textContent = 'Earn more by completing these tasks!';
-                    } else {
-                        taskButtons.forEach(button => {
-                            const taskType = button.getAttribute('data-task');
-                            const taskState = pendingTask === taskType ? 'claim' : 'go';
-                            updateButtonState(taskType, button, taskState);
-                            console.log(`Button state for ${taskType}: ${taskState}`);
-                        });
-                        messageDisplay.textContent = 'Earn more by completing these tasks!';
+                const userRef = ref(database, `users/${userData.userID}`);
+                try {
+                    const snapshot = await get(userRef);
+                    if (!snapshot.exists()) {
+                        console.error('No user data found for ID:', userData.userID);
+                        showNotification('User data not found. Please return to Home page to initialize.', 'error');
+                        messageDisplay.textContent = 'User data not found.';
+                        loadingOverlay.style.display = 'none';
+                        return;
                     }
-                }, {
-                    onlyOnce: false,
-                    error: (error) => {
-                        console.error('Error fetching user data:', error);
-                        showNotification('Error loading tasks data. Please try again.', 'error');
-                        messageDisplay.textContent = 'Error loading tasks data.';
+
+                    userData = { ...userData, ...snapshot.val(), userID: user.uid };
+
+                    const pendingTask = isLocalStorageAvailable() ? localStorage.getItem('pendingTask') : null;
+                    if (pendingTask && taskData[pendingTask]) {
+                        console.log(`Found pending task: ${pendingTask}`);
+                        const button = document.querySelector(`.task-button[data-task="${pendingTask}"]`);
+                        if (button && !snapshot.val()?.tasks?.[pendingTask]?.claimed) {
+                            updateButtonState(pendingTask, button, 'claim');
+                            messageDisplay.textContent = `Click Claim to receive your ${taskData[pendingTask].amount} KATO for ${pendingTask} task!`;
+                        }
                     }
-                });
-            } catch (error) {
-                console.error('Error initializing tasks page:', error);
-                showNotification('Error initializing tasks page. Please try again.', 'error');
-            }
+
+                    onValue(userRef, (snapshot) => {
+                        const data = snapshot.val();
+                        console.log('User data fetched:', data);
+                        if (data && data.tasks) {
+                            taskButtons.forEach(button => {
+                                const taskType = button.getAttribute('data-task');
+                                const taskState = data.tasks[taskType]?.claimed ? 'complete' : (pendingTask === taskType ? 'claim' : 'go');
+                                updateButtonState(taskType, button, taskState);
+                                console.log(`Button state for ${taskType}: ${taskState}`);
+                            });
+                            messageDisplay.textContent = 'Earn more by completing these tasks!';
+                        } else {
+                            taskButtons.forEach(button => {
+                                const taskType = button.getAttribute('data-task');
+                                const taskState = pendingTask === taskType ? 'claim' : 'go';
+                                updateButtonState(taskType, button, taskState);
+                                console.log(`Button state for ${taskType}: ${taskState}`);
+                            });
+                            messageDisplay.textContent = 'Earn more by completing these tasks!';
+                        }
+                    }, {
+                        onlyOnce: false,
+                        error: (error) => {
+                            console.error('Error fetching user data:', error);
+                            showNotification('Error loading tasks data. Please try again.', 'error');
+                            messageDisplay.textContent = 'Error loading tasks data.';
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error initializing tasks page:', error);
+                    showNotification('Error initializing tasks page. Please try again.', 'error');
+                    messageDisplay.textContent = 'Error initializing tasks page.';
+                } finally {
+                    loadingOverlay.style.display = 'none';
+                }
+            });
         }
 
         backBtn.addEventListener('click', () => {
             try {
                 localStorage.removeItem('pendingTask');
-                window.location.href = 'index.html'; // Update with your actual home page URL
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/index.html';
             } catch (error) {
                 console.error('Navigation error:', error);
                 showNotification('Error navigating to Home page. Please try again.', 'error');
@@ -713,12 +754,7 @@
             });
         });
 
-        if (database) {
-            initializeTasksPage();
-        } else {
-            console.error('Database not initialized');
-            showNotification('Failed to initialize database. Please refresh.', 'error');
-        }
+        initializeTasksPage();
     </script>
 </body>
 </html>
