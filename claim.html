@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Katomine - Your Digital Gold Rush. Earn 9 tokens every 12 hours with our innovative mining system.">
+    <meta name="description" content="Katomine - Your Digital Gold Rush. Earn 11 tokens every 12 hours with our innovative mining system.">
     <meta name="theme-color" content="#0d1b2a">
     <title>Kato Mine - Claim</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
+        /* Existing CSS remains unchanged */
         :root {
             --primary-color: #ffd700;
             --secondary-color: #d3d3d3;
@@ -57,7 +58,6 @@
             z-index: -1;
         }
 
-        /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -86,7 +86,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Header */
         .header {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -124,7 +123,6 @@
             font-weight: 500;
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             padding: 20px;
@@ -134,7 +132,6 @@
             margin-bottom: 80px;
         }
 
-        /* Mining Section */
         .mining-section {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -243,7 +240,6 @@
             cursor: not-allowed;
         }
 
-        /* Ad Modal */
         .ad-modal {
             display: none;
             position: fixed;
@@ -326,7 +322,6 @@
             transform: none;
         }
 
-        /* Notification */
         .notification {
             position: fixed;
             top: 20px;
@@ -361,7 +356,6 @@
             background: var(--accent-color);
         }
 
-        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -399,7 +393,6 @@
             margin-bottom: 5px;
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .main-content {
                 padding: 15px;
@@ -464,7 +457,7 @@
         <!-- Mining Section -->
         <section class="mining-section">
             <div class="mining-status" id="miningStatus">Ready to Mine</div>
-            <div class="mining-rate" id="miningRate">0.75 KATO/hour</div>
+            <div class="mining-rate" id="miningRate">0.92 KATO/hour</div>
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
             </div>
@@ -561,18 +554,18 @@
             email: '',
             balance: 0,
             totalMined: 0,
-            miningRate: 0.75, // 9 tokens / 12 hours = 0.75 KATO/hour
+            miningRate: 0.9167, // 11 tokens / 12 hours = 0.9167 KATO/hour
             miningHours: 0,
             referrals: [],
             dailyStreak: 0,
             lastDailyReward: null,
-            miningStartTime: null,
+            claimMiningStartTime: null,
             level: 1
         };
 
-        // Mining variables
-        let miningInterval = null;
-        let miningTimeLeft = 43200; // 12 hours in seconds
+        // Mining variables for claim page
+        let claimMiningInterval = null;
+        let claimMiningTimeLeft = 43200; // 12 hours in seconds
 
         // Utility Functions
         function formatTime(seconds) {
@@ -600,7 +593,7 @@
             const miningStatus = document.getElementById('miningStatus');
             if (balanceText) balanceText.textContent = `Balance: ${userData.balance.toFixed(2)}`;
             if (miningRate) miningRate.textContent = `${userData.miningRate.toFixed(2)} KATO/hour`;
-            if (miningStatus) miningStatus.textContent = userData.miningStartTime ? 'Mining Active' : 'Ready to Mine';
+            if (miningStatus) miningStatus.textContent = userData.claimMiningStartTime ? 'Mining Active' : 'Ready to Mine';
         }
 
         // Ad Modal Functions
@@ -651,8 +644,8 @@
                 return;
             }
 
-            miningTimeLeft = 43200 - elapsed;
-            if (miningTimeLeft <= 0) {
+            claimMiningTimeLeft = 43200 - elapsed;
+            if (claimMiningTimeLeft <= 0) {
                 completeMining();
                 return;
             }
@@ -663,19 +656,19 @@
             claimButton.style.display = 'none';
             miningButton.style.display = 'block';
 
-            const progress = ((43200 - miningTimeLeft) / 43200) * 100;
+            const progress = ((43200 - claimMiningTimeLeft) / 43200) * 100;
             progressBar.style.width = `${progress}%`;
             progressBar.textContent = `${Math.round(progress)}%`;
-            timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
+            timeDisplay.textContent = `Next reward in: ${formatTime(claimMiningTimeLeft)}`;
 
-            if (miningInterval) clearInterval(miningInterval);
-            miningInterval = setInterval(() => {
-                miningTimeLeft--;
-                const progress = ((43200 - miningTimeLeft) / 43200) * 100;
+            if (claimMiningInterval) clearInterval(claimMiningInterval);
+            claimMiningInterval = setInterval(() => {
+                claimMiningTimeLeft--;
+                const progress = ((43200 - claimMiningTimeLeft) / 43200) * 100;
                 progressBar.style.width = `${progress}%`;
                 progressBar.textContent = `${Math.round(progress)}%`;
-                timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
-                if (miningTimeLeft <= 0) {
+                timeDisplay.textContent = `Next reward in: ${formatTime(claimMiningTimeLeft)}`;
+                if (claimMiningTimeLeft <= 0) {
                     completeMining();
                 }
             }, 1000);
@@ -688,16 +681,16 @@
                 return;
             }
 
-            if (userData.miningStartTime && miningInterval) {
+            if (userData.claimMiningStartTime && claimMiningInterval) {
                 showNotification('Mining already in progress!', 'warning');
                 return;
             }
 
             showAdModal(() => {
-                userData.miningStartTime = Date.now();
+                userData.claimMiningStartTime = Date.now();
                 updateUserData();
 
-                miningTimeLeft = 43200; // 12 hours
+                claimMiningTimeLeft = 43200; // 12 hours
                 const miningButton = document.getElementById('startMiningBtn');
                 const claimButton = document.getElementById('claimBtn');
                 const progressBar = document.getElementById('progressBar');
@@ -715,14 +708,14 @@
                 claimButton.style.display = 'none';
                 miningButton.style.display = 'block';
 
-                if (miningInterval) clearInterval(miningInterval);
-                miningInterval = setInterval(() => {
-                    miningTimeLeft--;
-                    const progress = ((43200 - miningTimeLeft) / 43200) * 100;
+                if (claimMiningInterval) clearInterval(claimMiningInterval);
+                claimMiningInterval = setInterval(() => {
+                    claimMiningTimeLeft--;
+                    const progress = ((43200 - claimMiningTimeLeft) / 43200) * 100;
                     progressBar.style.width = `${progress}%`;
                     progressBar.textContent = `${Math.round(progress)}%`;
-                    timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
-                    if (miningTimeLeft <= 0) {
+                    timeDisplay.textContent = `Next reward in: ${formatTime(claimMiningTimeLeft)}`;
+                    if (claimMiningTimeLeft <= 0) {
                         completeMining();
                     }
                 }, 1000);
@@ -730,11 +723,11 @@
         }
 
         function completeMining() {
-            if (miningInterval) {
-                clearInterval(miningInterval);
-                miningInterval = null;
+            if (claimMiningInterval) {
+                clearInterval(claimMiningInterval);
+                claimMiningInterval = null;
             }
-            userData.miningStartTime = null;
+            userData.claimMiningStartTime = null;
             updateUserData();
             const miningButton = document.getElementById('startMiningBtn');
             const claimButton = document.getElementById('claimBtn');
@@ -749,7 +742,7 @@
                 progressBar.style.width = '100%';
                 progressBar.textContent = '100%';
                 timeDisplay.textContent = 'Mining Complete!';
-                showNotification(`Mining complete! Ready to claim 9 KATO`, 'success');
+                showNotification(`Mining complete! Ready to claim 11 KATO`, 'success');
             }
         }
 
@@ -760,11 +753,11 @@
                 return;
             }
 
-            const minedAmount = 9; // 9 tokens per 12 hours
+            const minedAmount = 11; // 11 tokens per 12 hours
             userData.balance += minedAmount;
             userData.totalMined += minedAmount;
             userData.miningHours += 12;
-            userData.miningStartTime = null;
+            userData.claimMiningStartTime = null;
             updateUI();
             updateUserData();
             showNotification(`Reward claimed! +${minedAmount.toFixed(2)} KATO`, 'success');
@@ -815,12 +808,12 @@
                         referrerID: referrerID,
                         referrals: [],
                         totalMined: 0,
-                        miningRate: 0.75,
+                        miningRate: 0.9167,
                         miningHours: 0,
                         dailyStreak: 0,
                         lastDailyReward: null,
                         level: 1,
-                        miningStartTime: null
+                        claimMiningStartTime: null
                     });
                     if (referrerID) {
                         const referrerRef = ref(database, 'users/' + referrerID);
@@ -887,10 +880,10 @@
                     if (snapshot.exists()) {
                         userData = { ...userData, ...snapshot.val(), userID: user.uid };
                         updateUI();
-                        if (userData.miningStartTime) {
-                            const elapsed = Math.floor((Date.now() - userData.miningStartTime) / 1000);
+                        if (userData.claimMiningStartTime) {
+                            const elapsed = Math.floor((Date.now() - userData.claimMiningStartTime) / 1000);
                             if (elapsed >= 43200) {
-                                userData.miningStartTime = null;
+                                userData.claimMiningStartTime = null;
                                 updateUserData();
                                 completeMining();
                             } else {
@@ -905,12 +898,13 @@
                             ...userData,
                             balance: 0,
                             totalMined: 0,
-                            miningRate: 0.75,
+                            miningRate: 0.9167,
                             miningHours: 0,
                             referrals: [],
                             dailyStreak: 0,
                             lastDailyReward: null,
-                            level: 1
+                            level: 1,
+                            claimMiningStartTime: null
                         };
                         updateUI();
                     }
@@ -939,10 +933,10 @@
                     const data = snapshot.val();
                     if (data) {
                         userData = { ...userData, ...data, userID: user.uid };
-                        if (data.miningStartTime && !miningInterval) {
-                            const elapsed = Math.floor((Date.now() - data.miningStartTime) / 1000);
+                        if (data.claimMiningStartTime && !claimMiningInterval) {
+                            const elapsed = Math.floor((Date.now() - data.claimMiningStartTime) / 1000);
                             if (elapsed >= 43200) {
-                                userData.miningStartTime = null;
+                                userData.claimMiningStartTime = null;
                                 updateUserData();
                                 completeMining();
                             } else {
@@ -961,9 +955,9 @@
                 });
 
                 window.addEventListener('unload', () => {
-                    if (miningInterval) {
-                        clearInterval(miningInterval);
-                        miningInterval = null;
+                    if (claimMiningInterval) {
+                        clearInterval(claimMiningInterval);
+                        claimMiningInterval = null;
                     }
                     unsubscribe();
                 });
@@ -971,11 +965,11 @@
         }
 
         function stopMining() {
-            if (miningInterval) {
-                clearInterval(miningInterval);
-                miningInterval = null;
+            if (claimMiningInterval) {
+                clearInterval(claimMiningInterval);
+                claimMiningInterval = null;
             }
-            userData.miningStartTime = null;
+            userData.claimMiningStartTime = null;
             updateUserData();
             const miningButton = document.getElementById('startMiningBtn');
             const claimButton = document.getElementById('claimBtn');
