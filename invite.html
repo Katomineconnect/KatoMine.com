@@ -124,17 +124,46 @@
             font-weight: 500;
         }
 
-        /* Container */
-        .container {
-            padding: clamp(1rem, 5vw, 1.5rem);
-            max-width: 100%;
-            margin: 0 auto;
+        /* Main Content */
+        .main-content {
             flex: 1;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            gap: 1rem;
+            gap: 20px;
+            margin-bottom: 80px;
             align-items: center;
+        }
+
+        /* Referral Section */
+        .referral-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+            box-shadow: var(--shadow-dark);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            width: min(95%, 600px);
+        }
+
+        .referral-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.1; }
+            50% { transform: scale(1.2); opacity: 0.05; }
         }
 
         /* Referral Code */
@@ -153,6 +182,7 @@
             transition: all 0.3s ease;
             cursor: pointer;
             width: min(90%, 200px);
+            margin: 0 auto 15px;
         }
 
         .referral-code:hover {
@@ -197,6 +227,7 @@
             width: min(90%, 300px);
             border: 2px solid var(--primary-color);
             backdrop-filter: blur(10px);
+            margin: 15px auto;
         }
 
         .referral-input input {
@@ -244,7 +275,7 @@
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             width: min(95%, 600px);
-            margin: 1rem 0;
+            margin: 1rem auto;
         }
 
         .stat-card {
@@ -277,32 +308,26 @@
         }
 
         /* Progress Bar */
-        .progress-bar {
-            background: var(--glass-bg);
-            border-radius: 10px;
-            height: 20px;
+        .progress-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 5px;
+            margin: 15px auto;
             width: min(95%, 400px);
-            margin: 15px 0;
-            overflow: hidden;
             position: relative;
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(5px);
         }
 
-        .progress-fill {
+        .progress-bar {
+            height: 30px;
             background: var(--gradient-2);
-            height: 100%;
+            border-radius: 20px;
             transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: clamp(0.8rem, 2.5vw, 1rem);
-            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
             color: var(--background-color);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
         /* Achievements */
@@ -311,7 +336,7 @@
             grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
             gap: 10px;
             width: min(95%, 400px);
-            margin: 1rem 0;
+            margin: 1rem auto;
         }
 
         .achievement {
@@ -355,7 +380,7 @@
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 10px;
             width: min(95%, 400px);
-            margin: 1rem 0;
+            margin: 1rem auto;
         }
 
         .share-btn {
@@ -400,7 +425,7 @@
             background: var(--glass-bg);
             border-radius: 12px;
             padding: 20px;
-            margin: 1rem 0;
+            margin: 1rem auto;
             width: min(95%, 600px);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(10px);
@@ -451,7 +476,7 @@
             background: var(--glass-bg);
             border-radius: 12px;
             padding: 20px;
-            margin: 1rem 0;
+            margin: 1rem auto;
             width: min(95%, 600px);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(10px);
@@ -487,55 +512,52 @@
         .message-display {
             font-size: clamp(1rem, 3vw, 1.2rem);
             color: var(--primary-color);
-            margin: 1rem 0;
+            margin: 1rem auto;
             text-align: center;
             padding: 10px;
             border-radius: 8px;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(10px);
+            width: min(95%, 600px);
         }
 
-        /* Footer */
-        .footer {
+        /* Bottom Navigation */
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
-            width: 100%;
+            right: 0;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-around;
-            align-items: center;
-            padding: clamp(8px, 2vw, 10px) 0;
+            padding: 10px 0;
             border-top: 2px solid var(--primary-color);
-            z-index: 999;
+            z-index: 900;
         }
 
-        .footer a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: clamp(0.8rem, 2.5vw, 1rem);
-            padding: clamp(6px, 1.5vw, 8px);
-            border-radius: 6px;
-            transition: all 0.2s ease;
+        .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
-            flex: 1;
-            justify-content: center;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: clamp(0.8em, 2vw, 0.9em);
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 10px;
         }
 
-        .footer a i {
-            font-size: clamp(1rem, 3vw, 1.2rem);
-        }
-
-        .footer a.active,
-        .footer a:hover {
+        .nav-item.active,
+        .nav-item:hover {
             color: var(--primary-color);
-            background: rgba(255, 215, 0, 0.1);
+            background: rgba(255,215,0,0.1);
+        }
+
+        .nav-item i {
+            font-size: clamp(1.2em, 3vw, 1.4em);
+            margin-bottom: 5px;
         }
 
         /* Notification */
@@ -573,68 +595,66 @@
             background: var(--accent-color);
         }
 
-        /* Animations */
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes shimmer {
-            100% { transform: translateX(200%); }
-        }
-
         /* Responsive Design */
-        @media (max-width: 600px) {
-            .container {
-                padding: 0.8rem;
-                gap: 0.8rem;
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                margin-bottom: 80px;
             }
+
+            .referral-section {
+                padding: 20px;
+            }
+
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
             .share-buttons {
                 grid-template-columns: repeat(2, 1fr);
             }
+
             .achievements {
                 grid-template-columns: repeat(4, 1fr);
             }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px;
+            }
+
+            .logo {
+                font-size: clamp(2em, 5vw, 3em);
+            }
+
             .referral-input {
                 width: min(95%, 280px);
             }
+
             .referral-code {
                 width: min(95%, 180px);
             }
-            .footer a {
-                font-size: clamp(0.7rem, 2.2vw, 0.9rem);
-                padding: clamp(4px, 1.2vw, 6px);
-            }
-            .footer a i {
-                font-size: clamp(0.9rem, 2.8vw, 1.1rem);
-            }
-        }
 
-        @media (max-width: 360px) {
-            .referral-input {
-                width: min(95%, 260px);
-            }
-            .referral-code {
-                width: min(95%, 160px);
-            }
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
             .share-buttons {
                 grid-template-columns: 1fr;
             }
+
             .achievements {
                 grid-template-columns: repeat(3, 1fr);
             }
-            .footer a {
-                font-size: clamp(0.65rem, 2vw, 0.8rem);
-                padding: 4px;
+
+            .nav-item {
+                font-size: clamp(0.7em, 1.8vw, 0.8em);
+                padding: 4px 8px;
             }
-            .footer a i {
-                font-size: clamp(0.8rem, 2.5vw, 1rem);
+
+            .nav-item i {
+                font-size: clamp(1em, 2.5vw, 1.2em);
             }
         }
     </style>
@@ -652,64 +672,66 @@
         <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
     </header>
 
-    <!-- Container -->
-    <div class="container">
-        <span class="referral-code" id="referralCode">ID: Loading...<span class="tooltip">Copied!</span></span>
-        <div class="referral-input">
-            <input type="text" id="referralInput" placeholder="Enter Referral ID" />
-            <button id="submitReferral">Submit Referral</button>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalReferrals">0</div>
-                <div class="stat-label">Total Referrals</div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Referral Section -->
+        <section class="referral-section">
+            <span class="referral-code" id="referralCodeElement">Invite Code: Loading...<span class="tooltip">Copied!</span></span>
+            <div class="referral-input">
+                <input type="text" id="referralInput" placeholder="Enter Invite Code" />
+                <button id="submitReferral">Submit Referral</button>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="earnedTokens">0</div>
-                <div class="stat-label">Tokens Earned</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalReferrals">0</div>
+                    <div class="stat-label">Total Referrals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="earnedTokens">0</div>
+                    <div class="stat-label">Tokens Earned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="remainingSlots">10</div>
+                    <div class="stat-label">Remaining Slots</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="remainingSlots">10</div>
-                <div class="stat-label">Remaining Slots</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
             </div>
-        </div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-            <div class="progress-text" id="progressText">0 / 10</div>
-        </div>
-        <div class="achievements">
-            <div class="achievement" id="achievement1">
-                <i class="fas fa-user-plus"></i>
-                <div class="achievement-label">First Referral</div>
+            <div class="achievements">
+                <div class="achievement" id="achievement1">
+                    <i class="fas fa-user-plus"></i>
+                    <div class="achievement-label">First Referral</div>
+                </div>
+                <div class="achievement" id="achievement5">
+                    <i class="fas fa-users"></i>
+                    <div class="achievement-label">5 Referrals</div>
+                </div>
+                <div class="achievement" id="achievement10">
+                    <i class="fas fa-crown"></i>
+                    <div class="achievement-label">Max Referrals</div>
+                </div>
+                <div class="achievement" id="achievementSpeed">
+                    <i class="fas fa-bolt"></i>
+                    <div class="achievement-label">Speed Demon</div>
+                </div>
             </div>
-            <div class="achievement" id="achievement5">
-                <i class="fas fa-users"></i>
-                <div class="achievement-label">5 Referrals</div>
+            <div class="share-buttons">
+                <button class="share-btn telegram" id="shareTelegram">
+                    <i class="fab fa-telegram"></i> Telegram
+                </button>
+                <button class="share-btn whatsapp" id="shareWhatsApp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="share-btn twitter" id="shareTwitter">
+                    <i class="fab fa-twitter"></i> Twitter
+                </button>
+                <button class="share-btn facebook" id="shareFacebook">
+                    <i class="fab fa-facebook"></i> Facebook
+                </button>
             </div>
-            <div class="achievement" id="achievement10">
-                <i class="fas fa-crown"></i>
-                <div class="achievement-label">Max Referrals</div>
-            </div>
-            <div class="achievement" id="achievementSpeed">
-                <i class="fas fa-bolt"></i>
-                <div class="achievement-label">Speed Demon</div>
-            </div>
-        </div>
-        <div class="share-buttons">
-            <button class="share-btn telegram" id="shareTelegram">
-                <i class="fab fa-telegram"></i> Telegram
-            </button>
-            <button class="share-btn whatsapp" id="shareWhatsApp">
-                <i class="fab fa-whatsapp"></i> WhatsApp
-            </button>
-            <button class="share-btn twitter" id="shareTwitter">
-                <i class="fab fa-twitter"></i> Twitter
-            </button>
-            <button class="share-btn facebook" id="shareFacebook">
-                <i class="fab fa-facebook"></i> Facebook
-            </button>
-        </div>
-        <div class="referrals-section">
+        </section>
+        <section class="referrals-section">
             <div class="section-title">
                 <i class="fas fa-list"></i> My Referrals
             </div>
@@ -718,8 +740,8 @@
                     No referrals yet
                 </div>
             </div>
-        </div>
-        <div class="leaderboard">
+        </section>
+        <section class="leaderboard">
             <div class="section-title">
                 <i class="fas fa-trophy"></i> Top Referrers
             </div>
@@ -728,65 +750,91 @@
                     Loading leaderboard...
                 </div>
             </div>
-        </div>
+        </section>
         <div class="message-display" id="messageDisplay"></div>
-    </div>
+    </main>
 
     <!-- Notification -->
     <div class="notification" id="notification"></div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <a href="https://katomineconnect.github.io/KatoMine.com/index.html" aria-label="Go to Home" class="nav-link"><i class="fas fa-home"></i> Home</a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/claim.html" aria-label="Go to Claim" class="nav-link"><i class="fas fa-gift"></i> Claim</a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/invite.html" aria-label="Go to Invite" class="nav-link active"><i class="fas fa-user-plus"></i> Invite</a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/wallet.html" aria-label="Go to Wallet" class="nav-link"><i class="fas fa-wallet"></i> Wallet</a>
-    </footer>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="https://katomineconnect.github.io/KatoMine.com/claim.html" class="nav-item">
+            <i class="fas fa-gift"></i>
+            <span>Claim</span>
+        </a>
+        <a href="https://katomineconnect.github.io/KatoMine.com/invite.html" class="nav-item active">
+            <i class="fas fa-user-plus"></i>
+            <span>Invite</span>
+        </a>
+        <a href="https://katomineconnect.github.io/KatoMine.com/wallet.html" class="nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+    </nav>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-        import { getDatabase, ref, onValue, update, get } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getDatabase, ref, set, get, onValue, update, query, orderByChild, equalTo } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
         // Firebase config
         let firebaseConfig;
-        try {
-            firebaseConfig = (await import('./config.js')).firebaseConfig;
-        } catch (error) {
-            console.error('Failed to load Firebase config:', error);
-            showNotification('Failed to load Firebase configuration.', 'error');
-        }
+        let database, auth;
+        let isFirebaseInitialized = false;
 
-        // Initialize Firebase
-        let database;
-        try {
-            if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
-                throw new Error('Firebase configuration is missing or invalid');
+        async function initializeFirebase() {
+            try {
+                const configModule = await import('./config.js');
+                firebaseConfig = configModule.firebaseConfig;
+                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                    throw new Error('Firebase configuration is missing or invalid');
+                }
+                const app = initializeApp(firebaseConfig);
+                database = getDatabase(app);
+                auth = getAuth(app);
+                isFirebaseInitialized = true;
+                return true;
+            } catch (error) {
+                console.error('Error initializing Firebase:', error.message || error);
+                showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
+                return false;
             }
-            const app = initializeApp(firebaseConfig);
-            database = getDatabase(app);
-            console.log('Firebase initialized successfully');
-        } catch (error) {
-            console.error('Error initializing Firebase:', error);
-            showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) loadingOverlay.style.display = 'none';
         }
 
-        // Elements
-        const referralCodeElement = document.getElementById('referralCode');
+        // In-memory storage
+        let userData = {
+            userID: null,
+            inviteCode: null,
+            username: '',
+            email: '',
+            balance: 0,
+            totalMined: 0,
+            miningRate: 0.75,
+            miningHours: 0,
+            referrals: [],
+            dailyStreak: 0,
+            lastDailyReward: null,
+            miningStartTime: null,
+            level: 1,
+            createdAt: null
+        };
+
+        // DOM Elements
+        const referralCodeElement = document.getElementById('referralCodeElement');
         const referralInput = document.getElementById('referralInput');
         const submitReferralButton = document.getElementById('submitReferral');
         const messageDisplay = document.getElementById('messageDisplay');
         const totalReferrals = document.getElementById('totalReferrals');
         const earnedTokens = document.getElementById('earnedTokens');
         const remainingSlots = document.getElementById('remainingSlots');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
+        const progressBar = document.getElementById('progressBar');
         const referralList = document.getElementById('referralList');
         const leaderboardList = document.getElementById('leaderboardList');
-
-        // Global userID
-        let userID = null;
 
         // Notification Function
         function showNotification(message, type = 'info') {
@@ -801,21 +849,45 @@
             }
         }
 
-        // Check if localStorage is available
-        function isLocalStorageAvailable() {
+        // Generate 8-digit Invite Code
+        async function generateInviteCode() {
+            let attempts = 0;
+            const maxAttempts = 10; // Maximum retry limit to prevent infinite loop
+            while (attempts < maxAttempts) {
+                const code = Math.floor(10000000 + Math.random() * 90000000).toString();
+                try {
+                    const isUnique = await checkInviteCodeUniqueness(code);
+                    if (isUnique) {
+                        return code;
+                    }
+                    attempts++;
+                } catch (error) {
+                    console.error('Error generating invite code:', error.message || error);
+                    attempts++;
+                }
+            }
+            throw new Error('Failed to generate unique invite code after maximum attempts');
+        }
+
+        // Check Invite Code Uniqueness
+        async function checkInviteCodeUniqueness(code) {
+            if (!database) {
+                console.error('Database not initialized');
+                return false;
+            }
             try {
-                const test = '__test__';
-                localStorage.setItem(test, test);
-                localStorage.removeItem(test);
-                return true;
-            } catch (e) {
+                const usersRef = ref(database, 'users');
+                const snapshot = await get(query(usersRef, orderByChild('inviteCode'), equalTo(code)));
+                return !snapshot.exists();
+            } catch (error) {
+                console.error('Error checking invite code uniqueness:', error.message || error);
                 return false;
             }
         }
 
         // Update Achievements
         function updateAchievements(referralCount) {
-            const accountCreated = localStorage.getItem('accountCreated') || Date.now();
+            const accountCreated = userData.createdAt || Date.now();
             const achievements = {
                 achievement1: referralCount >= 1,
                 achievement5: referralCount >= 5,
@@ -825,7 +897,7 @@
 
             Object.entries(achievements).forEach(([id, unlocked]) => {
                 const element = document.getElementById(id);
-                if (unlocked) {
+                if (element && unlocked) {
                     element.classList.add('unlocked');
                 }
             });
@@ -834,8 +906,10 @@
         // Update Progress Bar
         function updateProgress(referralCount) {
             const percentage = (referralCount / 10) * 100;
-            progressFill.style.width = `${percentage}%`;
-            progressText.textContent = `${referralCount} / 10`;
+            if (progressBar) {
+                progressBar.style.width = `${percentage}%`;
+                progressBar.textContent = `${Math.round(percentage)}%`;
+            }
         }
 
         // Display Referral List
@@ -847,7 +921,7 @@
 
             referralList.innerHTML = referrals.map(referral => `
                 <div class="referral-item">
-                    <div class="referral-id">${referral.id || referral}</div>
+                    <div class="referral-id">${referral.inviteCode || referral.id || 'Unknown'}</div>
                     <div class="referral-date">${new Date(referral.date || Date.now()).toLocaleDateString()}</div>
                 </div>
             `).join('');
@@ -859,60 +933,76 @@
                 const usersRef = ref(database, 'users');
                 const snapshot = await get(usersRef);
 
-                if (snapshot.exists()) {
-                    const users = [];
-                    snapshot.forEach((userSnapshot) => {
-                        const userData = userSnapshot.val();
-                        const referralCount = userData.referrals ? userData.referrals.length : 0;
-                        if (referralCount > 0) {
-                            users.push({
-                                id: userSnapshot.key,
-                                referralCount: referralCount
-                            });
-                        }
-                    });
-
-                    users.sort((a, b) => b.referralCount - a.referralCount);
-                    const top10 = users.slice(0, 10);
-
-                    leaderboardList.innerHTML = top10.map((user, index) => `
-                        <div class="leaderboard-item">
-                            <div class="leaderboard-rank">#${index + 1}</div>
-                            <div class="leaderboard-id">${user.id}</div>
-                            <div class="leaderboard-count">${user.referralCount}</div>
-                        </div>
-                    `).join('');
-                } else {
+                if (!snapshot.exists()) {
                     leaderboardList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No data available</div>`;
+                    return;
                 }
+
+                const users = [];
+                snapshot.forEach((userSnapshot) => {
+                    const userData = userSnapshot.val();
+                    const referralCount = userData.referrals ? userData.referrals.length : 0;
+                    if (referralCount > 0) {
+                        users.push({
+                            inviteCode: userData.inviteCode || userSnapshot.key,
+                            referralCount: referralCount
+                        });
+                    }
+                });
+
+                if (users.length === 0) {
+                    leaderboardList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No referrals yet</div>`;
+                    return;
+                }
+
+                users.sort((a, b) => b.referralCount - a.referralCount);
+                const top10 = users.slice(0, 10);
+
+                leaderboardList.innerHTML = top10.map((user, index) => `
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">#${index + 1}</div>
+                        <div class="leaderboard-id">${user.inviteCode}</div>
+                        <div class="leaderboard-count">${user.referralCount}</div>
+                    </div>
+                `).join('');
             } catch (error) {
-                console.error('Error loading leaderboard:', error);
-                showNotification('Error loading leaderboard. Please try again.', 'error');
+                console.error('Error loading leaderboard:', error.message || error);
+                showNotification('Failed to load leaderboard. Please check your connection and try again.', 'error');
                 leaderboardList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">Error loading leaderboard</div>`;
             }
         }
 
         // Setup Share Buttons
         function setupShareButtons() {
-            if (!userID) return;
-            const referralLink = `${window.location.origin}/index.html?ref=${userID}`;
-            const shareText = `Join Katomine and earn crypto! Use my referral code: ${userID}`;
+            if (!userData.inviteCode) return;
+            const referralLink = `https://katomineconnect.github.io/KatoMine.com/index.html?ref=${userData.inviteCode}`;
+            const shareText = `Join Katomine and earn crypto! Use my invite code: ${userData.inviteCode}`;
 
-            document.getElementById('shareTelegram').addEventListener('click', () => {
-                window.open(`https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(shareText)}`, '_blank');
-            });
+            const shareTelegram = document.getElementById('shareTelegram');
+            const shareWhatsApp = document.getElementById('shareWhatsApp');
+            const shareTwitter = document.getElementById('shareTwitter');
+            const shareFacebook = document.getElementById('shareFacebook');
 
-            document.getElementById('shareWhatsApp').addEventListener('click', () => {
-                window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + referralLink)}`, '_blank');
-            });
-
-            document.getElementById('shareTwitter').addEventListener('click', () => {
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`, '_blank');
-            });
-
-            document.getElementById('shareFacebook').addEventListener('click', () => {
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`, '_blank');
-            });
+            if (shareTelegram) {
+                shareTelegram.addEventListener('click', () => {
+                    window.open(`https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(shareText)}`, '_blank');
+                });
+            }
+            if (shareWhatsApp) {
+                shareWhatsApp.addEventListener('click', () => {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + referralLink)}`, '_blank');
+                });
+            }
+            if (shareTwitter) {
+                shareTwitter.addEventListener('click', () => {
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`, '_blank');
+                });
+            }
+            if (shareFacebook) {
+                shareFacebook.addEventListener('click', () => {
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`, '_blank');
+                });
+            }
         }
 
         // Initialize Invite Page
@@ -920,179 +1010,329 @@
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
 
-            userID = isLocalStorageAvailable() ? localStorage.getItem('userID') : null;
-            if (!userID) {
-                showNotification('Please visit the Home page to initialize your account.', 'warning');
-                referralCodeElement.textContent = 'ID: Not Found';
-                submitReferralButton.disabled = true;
-                if (loadingOverlay) loadingOverlay.style.display = 'none';
-                return;
-            }
-
-            referralCodeElement.textContent = `ID: ${userID}`;
-            setupShareButtons();
-            await loadLeaderboard();
-
-            const userRef = ref(database, 'users/' + userID);
-            const snapshot = await get(userRef);
-            if (!snapshot.exists()) {
-                console.error('No user data found for ID:', userID);
-                showNotification('User data not found. Please return to Home page to initialize.', 'error');
-                submitReferralButton.disabled = true;
-                if (loadingOverlay) loadingOverlay.style.display = 'none';
-                return;
-            }
-
-            onValue(userRef, (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    const referralCount = data.referrals ? data.referrals.length : 0;
-                    const tokensEarned = referralCount * 1; // 1 token per referral
-                    const remaining = Math.max(0, 10 - referralCount);
-
-                    totalReferrals.textContent = referralCount;
-                    earnedTokens.textContent = tokensEarned;
-                    remainingSlots.textContent = remaining;
-
-                    updateProgress(referralCount);
-                    updateAchievements(referralCount);
-                    displayReferralList(data.referrals);
-
-                    if (data.referrerID) {
-                        messageDisplay.textContent = 'You have already set a referrer.';
-                        submitReferralButton.disabled = true;
-                    } else {
-                        submitReferralButton.disabled = false;
-                        messageDisplay.textContent = 'Enter a referral ID to get started!';
-                    }
-                }
-            }, {
-                onlyOnce: false,
-                error: (error) => {
-                    console.error('Error fetching user data:', error);
-                    showNotification('Error fetching user data. Please try again later.', 'error');
-                    submitReferralButton.disabled = true;
+            if (!isFirebaseInitialized) {
+                const success = await initializeFirebase();
+                if (!success) {
                     if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
                 }
-            });
+            }
 
-            if (loadingOverlay) loadingOverlay.style.display = 'none';
+            const requiredElements = [
+                'referralCodeElement', 'referralInput', 'submitReferral', 'messageDisplay',
+                'totalReferrals', 'earnedTokens', 'remainingSlots', 'progressBar',
+                'referralList', 'leaderboardList'
+            ];
+            for (const id of requiredElements) {
+                if (!document.getElementById(id)) {
+                    console.error(`DOM element ${id} not found`);
+                    showNotification(`Initialization error: Missing element ${id}`, 'error');
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
+                }
+            }
+
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    showNotification('Please log in to access this page.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
+                }
+
+                userData.userID = user.uid;
+                userData.email = user.email;
+                userData.username = user.displayName || user.email.split('@')[0];
+
+                const userRef = ref(database, 'users/' + userData.userID);
+                try {
+                    const snapshot = await get(userRef);
+                    if (snapshot.exists()) {
+                        userData = { ...userData, ...snapshot.val(), userID: user.uid };
+                        if (!userData.inviteCode) {
+                            try {
+                                userData.inviteCode = await generateInviteCode();
+                                await update(userRef, { inviteCode: userData.inviteCode });
+                            } catch (error) {
+                                console.error('Error setting invite code:', error.message || error);
+                                showNotification('Failed to generate invite code. Please try again.', 'error');
+                                if (loadingOverlay) loadingOverlay.style.display = 'none';
+                                return;
+                            }
+                        }
+                        if (referralCodeElement) {
+                            referralCodeElement.textContent = `Invite Code: ${userData.inviteCode}`;
+                        }
+                        setupShareButtons();
+
+                        const referralCount = userData.referrals ? userData.referrals.length : 0;
+                        const tokensEarned = referralCount * 1; // 1 token per referral
+                        const remaining = Math.max(0, 10 - referralCount);
+
+                        if (totalReferrals) totalReferrals.textContent = referralCount;
+                        if (earnedTokens) earnedTokens.textContent = tokensEarned;
+                        if (remainingSlots) remainingSlots.textContent = remaining;
+
+                        updateProgress(referralCount);
+                        updateAchievements(referralCount);
+                        displayReferralList(userData.referrals);
+
+                        if (userData.referrerID) {
+                            if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
+                            if (submitReferralButton) submitReferralButton.disabled = true;
+                        } else {
+                            if (submitReferralButton) submitReferralButton.disabled = false;
+                            if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
+                        }
+                    } else {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const referrerCode = urlParams.get('ref') || null;
+                        let referrerID = null;
+                        if (referrerCode) {
+                            const usersRef = ref(database, 'users');
+                            try {
+                                const snapshot = await get(query(usersRef, orderByChild('inviteCode'), equalTo(referrerCode)));
+                                if (snapshot.exists()) {
+                                    snapshot.forEach((childSnapshot) => {
+                                        referrerID = childSnapshot.key;
+                                    });
+                                }
+                            } catch (error) {
+                                console.error('Error checking referrer code:', error.message || error);
+                            }
+                        }
+
+                        try {
+                            userData.inviteCode = await generateInviteCode();
+                        } catch (error) {
+                            console.error('Error setting invite code for new user:', error.message || error);
+                            showNotification('Failed to generate invite code. Please try again.', 'error');
+                            if (loadingOverlay) loadingOverlay.style.display = 'none';
+                            return;
+                        }
+
+                        await set(userRef, {
+                            username: userData.username || userData.email.split('@')[0],
+                            email: userData.email,
+                            balance: 0,
+                            inviteCode: userData.inviteCode,
+                            referrerID: referrerID,
+                            referrals: [],
+                            totalMined: 0,
+                            miningRate: 0.75,
+                            miningHours: 0,
+                            dailyStreak: 0,
+                            lastDailyReward: null,
+                            level: 1,
+                            miningStartTime: null,
+                            createdAt: Date.now()
+                        });
+                        userData = {
+                            ...userData,
+                            balance: 0,
+                            totalMined: 0,
+                            miningRate: 0.75,
+                            miningHours: 0,
+                            referrals: [],
+                            dailyStreak: 0,
+                            lastDailyReward: null,
+                            level: 1,
+                            createdAt: Date.now()
+                        };
+                        if (referralCodeElement) {
+                            referralCodeElement.textContent = `Invite Code: ${userData.inviteCode}`;
+                        }
+                        setupShareButtons();
+
+                        if (totalReferrals) totalReferrals.textContent = 0;
+                        if (earnedTokens) earnedTokens.textContent = 0;
+                        if (remainingSlots) remainingSlots.textContent = 10;
+                        updateProgress(0);
+                        updateAchievements(0);
+                        displayReferralList([]);
+                        if (submitReferralButton) submitReferralButton.disabled = false;
+                        if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
+                    }
+                    await loadLeaderboard();
+                } catch (error) {
+                    console.error('Error fetching user data:', error.message || error);
+                    showNotification('Error fetching user data. Please try again.', 'error');
+                }
+
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+
+                const unsubscribe = onValue(userRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        userData = { ...userData, ...data, userID: user.uid };
+                        const referralCount = userData.referrals ? userData.referrals.length : 0;
+                        const tokensEarned = referralCount * 1; // 1 token per referral
+                        const remaining = Math.max(0, 10 - referralCount);
+
+                        if (totalReferrals) totalReferrals.textContent = referralCount;
+                        if (earnedTokens) earnedTokens.textContent = tokensEarned;
+                        if (remainingSlots) remainingSlots.textContent = remaining;
+
+                        updateProgress(referralCount);
+                        updateAchievements(referralCount);
+                        displayReferralList(userData.referrals);
+
+                        if (data.referrerID) {
+                            if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
+                            if (submitReferralButton) submitReferralButton.disabled = true;
+                        } else {
+                            if (submitReferralButton) submitReferralButton.disabled = false;
+                            if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
+                        }
+                    } else {
+                        console.error('No user data found for ID:', userData.userID);
+                        showNotification('User data not found. Please log in again.', 'error');
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    }
+                }, (error) => {
+                    console.error('Error fetching user data:', error.message || error);
+                    showNotification('Error fetching user data. Please try again later.', 'error');
+                });
+
+                window.addEventListener('unload', () => {
+                    unsubscribe();
+                });
+            });
         }
 
         // Copy Referral Code
-        referralCodeElement.addEventListener('click', () => {
-            if (!userID) {
-                showNotification('Please visit the Home page to get your referral ID.', 'warning');
-                return;
-            }
-            const referralLink = `${window.location.origin}/index.html?ref=${userID}`;
-            navigator.clipboard.writeText(referralLink).then(() => {
-                referralCodeElement.classList.add('copied');
-                showNotification('Referral link copied!', 'success');
-                setTimeout(() => {
-                    referralCodeElement.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                showNotification('Failed to copy referral link. Please try again.', 'error');
+        if (referralCodeElement) {
+            referralCodeElement.addEventListener('click', () => {
+                if (!userData.inviteCode) {
+                    showNotification('Please log in to get your invite code.', 'warning');
+                    return;
+                }
+                const referralLink = `https://katomineconnect.github.io/KatoMine.com/index.html?ref=${userData.inviteCode}`;
+                navigator.clipboard.writeText(referralLink).then(() => {
+                    referralCodeElement.classList.add('copied');
+                    showNotification('Invite link copied!', 'success');
+                    setTimeout(() => {
+                        referralCodeElement.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy:', err.message || err);
+                    showNotification('Failed to copy invite link. Please try again.', 'error');
+                });
             });
-        });
+        }
 
         // Submit Referral
-        submitReferralButton.addEventListener('click', async () => {
-            if (!userID) {
-                showNotification('Please visit the Home page to initialize your account.', 'warning');
-                return;
-            }
-            const referrerID = referralInput.value.trim();
-            if (!referrerID) {
-                showNotification('Please enter a referral ID.', 'warning');
-                return;
-            }
-            if (referrerID === userID) {
-                showNotification('You cannot refer yourself.', 'warning');
-                return;
-            }
-            if (!/^[0-9]{8}$/.test(referrerID)) {
-                showNotification('Please enter a valid 8-digit referral ID.', 'warning');
-                return;
-            }
+        if (submitReferralButton) {
+            submitReferralButton.addEventListener('click', async () => {
+                if (!userData.userID) {
+                    showNotification('Please log in to submit a referral.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    return;
+                }
+                const referrerCode = referralInput.value.trim();
+                if (!referrerCode) {
+                    showNotification('Please enter an invite code.', 'warning');
+                    return;
+                }
+                if (!/^[0-9]{8}$/.test(referrerCode)) {
+                    showNotification('Please enter a valid 8-digit invite code.', 'warning');
+                    return;
+                }
 
-            const userRef = ref(database, 'users/' + userID);
-            const userSnapshot = await get(userRef);
-            if (!userSnapshot.exists()) {
-                showNotification('User data not found. Please return to Home page.', 'error');
-                return;
-            }
-            if (userSnapshot.val().referrerID) {
-                showNotification('You have already set a referrer.', 'warning');
-                submitReferralButton.disabled = true;
-                return;
-            }
+                const userRef = ref(database, 'users/' + userData.userID);
+                const userSnapshot = await get(userRef);
+                if (!userSnapshot.exists()) {
+                    showNotification('User data not found. Please log in again.', 'error');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    return;
+                }
+                if (userSnapshot.val().referrerID) {
+                    showNotification('You have already set a referrer.', 'warning');
+                    submitReferralButton.disabled = true;
+                    return;
+                }
 
-            const referrerRef = ref(database, 'users/' + referrerID);
-            const referrerSnapshot = await get(referrerRef);
-            if (!referrerSnapshot.exists()) {
-                showNotification('Invalid referral ID. Please check and try again.', 'error');
-                return;
-            }
+                const usersRef = ref(database, 'users');
+                try {
+                    const snapshot = await get(query(usersRef, orderByChild('inviteCode'), equalTo(referrerCode)));
+                    if (!snapshot.exists()) {
+                        showNotification('Invalid invite code. Please check and try again.', 'error');
+                        return;
+                    }
 
-            const referrerData = referrerSnapshot.val();
-            const referralCount = referrerData.referrals ? referrerData.referrals.length : 0;
-            if (referralCount >= 10) {
-                showNotification('This referrer has reached the maximum limit of 10 referrals.', 'warning');
-                return;
-            }
+                    let referrerID = null;
+                    let referrerData = null;
+                    snapshot.forEach((childSnapshot) => {
+                        referrerID = childSnapshot.key;
+                        referrerData = childSnapshot.val();
+                    });
 
-            try {
-                const newBalance = (referrerData.balance || 0) + 1; // 1 token per referral
-                const newReferral = {
-                    id: userID,
-                    date: Date.now()
-                };
+                    if (referrerID === userData.userID) {
+                        showNotification('You cannot refer yourself.', 'warning');
+                        return;
+                    }
 
-                await update(ref(database, 'users/' + referrerID), {
-                    balance: newBalance,
-                    referrals: [...(referrerData.referrals || []), newReferral]
-                });
+                    const referralCount = referrerData.referrals ? referrerData.referrals.length : 0;
+                    if (referralCount >= 10) {
+                        showNotification('This referrer has reached the maximum limit of 10 referrals.', 'warning');
+                        return;
+                    }
 
-                await update(ref(database, 'users/' + userID), {
-                    referrerID: referrerID
-                });
+                    try {
+                        const newBalance = (referrerData.balance || 0) + 1; // 1 token per referral
+                        const newReferral = {
+                            id: userData.userID,
+                            inviteCode: userData.inviteCode,
+                            date: Date.now()
+                        };
 
-                showNotification('Referral submitted successfully! Referrer earned 1 KATO.', 'success');
-                submitReferralButton.disabled = true;
-                messageDisplay.textContent = 'Referral submitted successfully!';
-            } catch (error) {
-                console.error('Error submitting referral:', error);
-                showNotification('Error submitting referral. Please try again.', 'error');
-            }
-        });
+                        await update(ref(database, 'users/' + referrerID), {
+                            balance: newBalance,
+                            referrals: [...(referrerData.referrals || []), newReferral]
+                        });
+
+                        await update(ref(database, 'users/' + userData.userID), {
+                            referrerID: referrerID
+                        });
+
+                        showNotification('Referral submitted successfully! Referrer earned 1 KATO.', 'success');
+                        submitReferralButton.disabled = true;
+                        messageDisplay.textContent = 'Referral submitted successfully!';
+                    } catch (error) {
+                        console.error('Error submitting referral:', error.message || error);
+                        showNotification('Error submitting referral. Please try again.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error validating invite code:', error.message || error);
+                    showNotification('Error validating invite code. Please try again.', 'error');
+                }
+            });
+        }
 
         // Navigation Links
-        const navLinks = document.querySelectorAll('.nav-link');
+        const navLinks = document.querySelectorAll('.nav-item');
         navLinks.forEach(link => {
             link.addEventListener('click', (event) => {
-                event.preventDefault();
                 const href = link.getAttribute('href');
-                try {
-                    window.location.href = href;
-                } catch (error) {
-                    console.error('Navigation error:', error);
-                    showNotification('Error navigating to page. Please try again.', 'error');
+                if (href && href !== '#' && !link.onclick) {
+                    event.preventDefault();
+                    if (!userData.userID) {
+                        showNotification('Please log in to access this page.', 'warning');
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                        return;
+                    }
+                    try {
+                        window.location.href = href;
+                    } catch (error) {
+                        console.error('Navigation error:', error.message || error);
+                        showNotification('Error navigating to page. Please try again.', 'error');
+                    }
                 }
             });
         });
 
         // Initialize
-        if (database) {
-            initializeInvitePage();
-        } else {
-            console.error('Database not initialized');
-            showNotification('Failed to initialize database. Please refresh.', 'error');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) loadingOverlay.style.display = 'none';
-        }
+        initializeInvitePage();
     </script>
 </body>
 </html>
