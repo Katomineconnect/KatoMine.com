@@ -11,141 +11,571 @@
             --secondary-color: #d3d3d3;
             --background-color: #0d1b2a;
             --accent-color: #00bfff;
+            --success-color: #00ff88;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
         }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #0d1b2a 100%);
             color: var(--secondary-color);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(0, 255, 136, 0.08) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundMove 25s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundMove {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            33% { transform: translateX(-15px) translateY(-8px); }
+            66% { transform: translateX(15px) translateY(8px); }
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
             padding: 20px;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 40px 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
             position: relative;
-            color: var(--secondary-color);
+            padding: 30px 0;
         }
+        
         .back-btn {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 0;
+            left: 0;
             background: transparent;
-            border: 1px solid var(--accent-color);
+            border: 2px solid var(--accent-color);
             color: var(--accent-color);
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 12px 20px;
+            border-radius: 25px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.2);
         }
-        .back-btn i {
-            font-size: 16px;
-        }
+        
         .back-btn:hover {
             background: var(--accent-color);
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.4);
         }
-        h1, h2 {
+        
+        .main-title {
             color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        h1 {
-            font-size: clamp(1.8em, 5vw, 2.2em);
-        }
-        h2 {
-            font-size: clamp(1.4em, 4vw, 1.6em);
-        }
-        p {
+            font-size: clamp(2.5em, 6vw, 3.2em);
             margin-bottom: 15px;
-            line-height: 1.6;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 215, 0, 0.8); }
+        }
+        
+        .subtitle {
+            color: var(--accent-color);
+            font-size: clamp(1em, 3vw, 1.2em);
+            margin-bottom: 20px;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .last-updated {
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 25px;
+            border: 1px solid var(--border-color);
+            display: inline-block;
+            font-size: 0.9em;
+            color: var(--success-color);
+            backdrop-filter: blur(10px);
+        }
+        
+        .content-section {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.8s;
+        }
+        
+        .content-section:hover::before {
+            left: 100%;
+        }
+        
+        .intro-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: var(--secondary-color);
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .policy-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-size: clamp(1.4em, 4vw, 1.8em);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 600;
+        }
+        
+        .section-icon {
+            font-size: 1.2em;
+            color: var(--accent-color);
+            background: rgba(0, 191, 255, 0.1);
+            padding: 10px;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .policy-text {
+            margin-bottom: 15px;
+            line-height: 1.7;
             font-size: clamp(14px, 3vw, 16px);
+            color: var(--secondary-color);
         }
-        @media (max-width: 600px) {
-            body {
-                padding: 15px;
-            }
-            .container {
-                padding: 30px 15px;
-            }
-            .back-btn {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-            .back-btn i {
-                font-size: 14px;
-            }
-            h1 {
-                font-size: clamp(1.6em, 4.5vw, 2em);
-            }
-            h2 {
-                font-size: clamp(1.2em, 3.5vw, 1.4em);
-            }
-            p {
-                font-size: clamp(12px, 2.8vw, 14px);
-            }
+        
+        .info-list {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid var(--success-color);
+            margin: 20px 0;
         }
-        @media (max-width: 400px) {
-            body {
-                padding: 10px;
+        
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 10px 0;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-bullet {
+            color: var(--success-color);
+            font-size: 1.2em;
+            margin-top: 2px;
+        }
+        
+        .info-text {
+            flex: 1;
+            line-height: 1.6;
+            color: var(--secondary-color);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(0, 191, 255, 0.1));
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            margin: 25px 0;
+            position: relative;
+        }
+        
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            border-radius: 15px;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .highlight-title {
+            color: var(--primary-color);
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .contact-section {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .contact-title {
+            color: var(--primary-color);
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .contact-text {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .contact-btn {
+            background: linear-gradient(45deg, var(--accent-color), var(--success-color));
+            color: #ffffff;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 20px rgba(0, 191, 255, 0.3);
+        }
+        
+        .contact-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.5);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--secondary-color);
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+        
+        .footer-text {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { margin-bottom: 30px; padding: 20px 0; }
+            .back-btn { 
+                position: static; 
+                margin-bottom: 20px;
+                padding: 10px 16px;
+                font-size: 13px;
             }
-            .container {
-                padding: 25px 10px;
+            .content-section { padding: 25px; }
+            .section-title { 
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
             }
-            .back-btn {
-                padding: 5px 10px;
-                font-size: 11px;
-            }
-            .back-btn i {
-                font-size: 12px;
-            }
-            h1 {
-                font-size: clamp(1.4em, 4vw, 1.8em);
-            }
-            h2 {
-                font-size: clamp(1.1em, 3vw, 1.3em);
-            }
-            p {
-                font-size: clamp(11px, 2.5vw, 13px);
-            }
+            .info-list { padding: 15px; }
+            .highlight-box { padding: 20px; }
+            .contact-section { padding: 25px; }
+        }
+        
+        @media (max-width: 480px) {
+            .back-btn { padding: 8px 12px; font-size: 12px; }
+            .content-section { padding: 20px; }
+            .info-list { padding: 12px; }
+            .highlight-box { padding: 15px; }
+            .contact-section { padding: 20px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <button class="back-btn" onclick="window.location.href='https://katomineconnect.github.io/KatoMine.com/index.html'">
-            <i class="fas fa-arrow-left"></i> Back
-        </button>
-        <h1>Privacy Policy</h1>
-        <p>At Kato Mine, accessible from https://katomineconnect.github.io/KatoMine.com/, we prioritize user privacy. This Privacy Policy explains what information we collect and how we use it.</p>
-        <h2>Information We Collect</h2>
-        <p>- Username for user identification.</p>
-        <p>- 8-digit Recovery Code for account recovery.</p>
-        <h2>How We Use Your Information</h2>
-        <p>We use your information to verify your account, recover accounts if necessary, and improve user experience. We do not collect personal information like email or phone numbers unless users contact us for support.</p>
-        <h2>Cookies</h2>
-        <p>We may use cookies to maintain login sessions and improve experience. You may disable cookies in your browser, but this may affect platform functionality.</p>
-        <h2>Third-Party Disclosure</h2>
-        <p>We do not share your information with third parties except when required by law.</p>
-        <h2>Children’s Information</h2>
-        <p>We do not knowingly collect information from children under 13 years of age.</p>
+        <div class="header">
+            <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+            <h1 class="main-title">Privacy Policy</h1>
+            <p class="subtitle">Your Privacy is Our Priority</p>
+            <div class="last-updated">
+                <i class="fas fa-clock"></i> Last Updated: 18 July 2025
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <div class="intro-text">
+                <i class="fas fa-shield-alt" style="color: var(--accent-color); margin-right: 10px;"></i>
+                At Kato Mine, accessible from https://KatoMine.com, we prioritize user privacy and data protection. This Privacy Policy explains what information we collect, how we use it, and your rights regarding your personal data in accordance with our secure registration and login system.
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    Information We Collect
+                </h2>
+                <p class="policy-text">We collect only the essential information needed to provide you with a secure and personalized experience on our platform:</p>
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-user"></i></div>
+                        <div class="info-text"><strong>Personal Information:</strong> Your name, email address, and securely encrypted password during registration</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-envelope"></i></div>
+                        <div class="info-text"><strong>Account Recovery:</strong> Email address for password recovery and account verification through our 'Forgot Password' feature</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-id-card"></i></div>
+                        <div class="info-text"><strong>User Identity:</strong> Unique username for platform identification and communication</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-chart-line"></i></div>
+                        <div class="info-text"><strong>Usage Data:</strong> Anonymous analytics to improve platform performance and user experience</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    How We Use Your Information
+                </h2>
+                <p class="policy-text">Your information is used exclusively to enhance your experience and maintain platform security:</p>
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-check-circle"></i></div>
+                        <div class="info-text">Verify and manage your account with advanced security protocols</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-key"></i></div>
+                        <div class="info-text">Enable secure password reset through encrypted email verification</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-rocket"></i></div>
+                        <div class="info-text">Personalize and optimize your mining experience on our platform</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-headset"></i></div>
+                        <div class="info-text">Provide customer support and technical assistance when needed</div>
+                    </div>
+                </div>
+                <div class="highlight-box">
+                    <div class="highlight-title">
+                        <i class="fas fa-hand-paper"></i>
+                        Our Commitment
+                    </div>
+                    <p>We never sell, rent, or share your personal information with third parties for marketing purposes. Your data remains strictly confidential and is used only to provide you with the best possible service.</p>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-cookie-bite"></i>
+                    </div>
+                    Cookies & Sessions
+                </h2>
+                <p class="policy-text">We use cookies and session management to enhance your experience:</p>
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-sign-in-alt"></i></div>
+                        <div class="info-text">Maintain secure login sessions for user convenience</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-sliders-h"></i></div>
+                        <div class="info-text">Remember your preferences and settings</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-chart-bar"></i></div>
+                        <div class="info-text">Analyze platform usage to improve performance</div>
+                    </div>
+                </div>
+                <p class="policy-text">You can disable cookies in your browser settings, though this may limit some platform functionalities.</p>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    Data Security
+                </h2>
+                <p class="policy-text">We implement industry-standard security measures to protect your information:</p>
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-lock"></i></div>
+                        <div class="info-text">Advanced encryption for all sensitive data transmission</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-server"></i></div>
+                        <div class="info-text">Secure servers with regular security audits and updates</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-user-shield"></i></div>
+                        <div class="info-text">Multi-factor authentication options for enhanced account security</div>
+                    </div>
+                </div>
+                <div class="highlight-box">
+                    <div class="highlight-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Important Security Note
+                    </div>
+                    <p>While we implement robust security measures, no online system can guarantee 100% security. We encourage users to use strong, unique passwords and keep their login credentials confidential.</p>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    Third-Party Disclosure
+                </h2>
+                <p class="policy-text">We maintain strict privacy standards regarding data sharing:</p>
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-ban"></i></div>
+                        <div class="info-text">We do not sell or share personal information with third parties for marketing</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-gavel"></i></div>
+                        <div class="info-text">Information may be disclosed only when required by law or legal process</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-tools"></i></div>
+                        <div class="info-text">Limited sharing with trusted service providers for platform maintenance only</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-child"></i>
+                    </div>
+                    Children's Privacy
+                </h2>
+                <p class="policy-text">Protecting children's privacy is a top priority for us:</p>
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="info-text">We do not knowingly collect information from users under 18 years of age</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-trash-alt"></i></div>
+                        <div class="info-text">Any accidentally collected minors' information is immediately deleted</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-eye"></i></div>
+                        <div class="info-text">Parents can contact us to review or remove their child's information</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    Policy Updates
+                </h2>
+                <p class="policy-text">We may update this Privacy Policy to reflect changes in our practices or legal requirements:</p>
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-bell"></i></div>
+                        <div class="info-text">Users will be notified of significant policy changes via email</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-calendar-check"></i></div>
+                        <div class="info-text">Updated policies become effective 30 days after notification</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-bullet"><i class="fas fa-handshake"></i></div>
+                        <div class="info-text">Continued platform use indicates acceptance of updated terms</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="contact-section">
+            <h2 class="contact-title">Questions About Our Privacy Policy?</h2>
+            <p class="contact-text">
+                If you have any questions, concerns, or requests regarding this Privacy Policy or how we handle your personal information, please don't hesitate to contact us.
+            </p>
+            <a href="mailto:support@katomine.com" class="contact-btn">
+                <i class="fas fa-envelope"></i> Contact Support
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p class="footer-text">
+                © 2024 Kato Mine. All rights reserved. | Privacy Protected • Data Secure • User Focused
+            </p>
+        </div>
     </div>
 </body>
 </html>
