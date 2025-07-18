@@ -655,7 +655,8 @@
 
         // Display Activity List
         function displayActivityList(activities) {
-            if (!activities || activities.length === 0) {
+            // Ensure activities is an array; if not, treat it as empty
+            if (!Array.isArray(activities) || !activities) {
                 activityList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No activity yet</div>`;
                 return;
             }
@@ -720,7 +721,14 @@
                 try {
                     const snapshot = await get(userRef);
                     if (snapshot.exists()) {
-                        userData = { ...userData, ...snapshot.val(), userID: user.uid };
+                        const fetchedData = snapshot.val();
+                        // Ensure activities is an array
+                        userData = {
+                            ...userData,
+                            ...fetchedData,
+                            userID: user.uid,
+                            activities: Array.isArray(fetchedData.activities) ? fetchedData.activities : []
+                        };
                         updateUI();
                     } else {
                         showNotification('User data not found. Please return to Home page to initialize.', 'error');
@@ -733,7 +741,13 @@
                     const unsubscribe = onValue(userRef, (snapshot) => {
                         const data = snapshot.val();
                         if (data) {
-                            userData = { ...userData, ...data, userID: user.uid };
+                            // Ensure activities is an array
+                            userData = {
+                                ...userData,
+                                ...data,
+                                userID: user.uid,
+                                activities: Array.isArray(data.activities) ? data.activities : []
+                            };
                             updateUI();
                         } else {
                             console.error('No user data found for ID:', userData.userID);
@@ -769,11 +783,12 @@
         function updateUI() {
             const totalBalance = userData.balance || 0;
             const rewardsEarned = userData.rewardsEarned || 0;
-            const activities = userData.activities || [];
+            // Ensure activities is an array
+            const activities = Array.isArray(userData.activities) ? userData.activities : [];
 
-            balanceElement.textContent = `Balance: ${totalBalance} KATO`;
-            availableBalanceElement.textContent = `${totalBalance} KATO`;
-            rewardsEarnedElement.textContent = `${rewardsEarned} KATO`;
+            balanceElement.textContent = `Balance: ${totalBalance.toFixed(2)} KATO`;
+            availableBalanceElement.textContent = `${totalBalance.toFixed(2)} KATO`;
+            rewardsEarnedElement.textContent = `${rewardsEarned.toFixed(2)} KATO`;
             displayActivityList(activities);
             messageDisplay.textContent = 'Welcome to your wallet!';
             if (loadingOverlay) loadingOverlay.style.display = 'none';
