@@ -193,28 +193,6 @@
             animation: spin 1s linear infinite;
         }
 
-        .control-btn .tooltip {
-            visibility: hidden;
-            background-color: #ffffff;
-            color: #1e40af;
-            text-align: center;
-            border-radius: 6px;
-            padding: 6px 12px;
-            position: absolute;
-            z-index: 4;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            transition: opacity 0.3s ease;
-        }
-
-        .control-btn.copied .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-
         /* Mining Section */
         .mining-section {
             background: var(--glass-bg);
@@ -681,11 +659,10 @@
     <main class="main-content">
         <!-- Control Panel -->
         <div class="control-panel">
-            <button class="control-btn" id="userIdBtn">
+            <div class="control-btn" id="profileBtn">
                 <i class="fas fa-id-card"></i>
-                <span id="userIdText">ID: Loading...</span>
-                <span class="tooltip">Copied!</span>
-            </button>
+                <span id="profileText">Profile</span>
+            </div>
             <div class="control-btn balance" id="balanceBtn">
                 <i class="fas fa-coins"></i>
                 <span id="balanceText">Balance: 0.00</span>
@@ -701,6 +678,10 @@
             <button class="control-btn" id="dailyRewardBtn">
                 <i class="fas fa-calendar-day"></i>
                 <span>Daily Reward</span>
+            </button>
+            <button class="control-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
             </button>
         </div>
 
@@ -817,19 +798,37 @@
         // Import Firebase dependencies
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
         import { getDatabase, ref, set, get, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
-        // Firebase config (Placeholder - replace with actual config in config.js)
+        // Firebase config
         let firebaseConfig;
-        try {
-            firebaseConfig = (await import('./config.js')).firebaseConfig;
-        } catch (error) {
-            console.error('Failed to load Firebase config:', error);
-            showNotification('Failed to load Firebase configuration.', 'error');
+        let database, auth;
+        let isFirebaseInitialized = false;
+
+        async function initializeFirebase() {
+            try {
+                const configModule = await import('./config.js');
+                firebaseConfig = configModule.firebaseConfig;
+                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                    throw new Error('Firebase configuration is missing or invalid');
+                }
+                const app = initializeApp(firebaseConfig);
+                database = getDatabase(app);
+                auth = getAuth(app);
+                isFirebaseInitialized = true;
+                return true;
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+                showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
+                return false;
+            }
         }
 
         // In-memory storage
         let userData = {
             userID: null,
+            username: '',
+            email: '',
             balance: 0,
             totalMined: 0,
             miningRate: 1.00,
@@ -846,17 +845,6 @@
         let miningTimeLeft = 7200; // 2 hours in seconds
 
         // Utility Functions
-        function isLocalStorageAvailable() {
-            try {
-                const test = '__test__';
-                localStorage.setItem(test, test);
-                localStorage.removeItem(test);
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-
         function formatTime(seconds) {
             const hours = Math.floor(seconds / 3600);
             const mins = Math.floor((seconds % 3600) / 60);
@@ -877,7 +865,7 @@
         }
 
         function updateUI() {
-            const userIdBtn = document.getElementById('userIdBtn');
+            const profileBtn = document.getElementById('profileBtn');
             const balanceText = document.getElementById('balanceText');
             const miningRate = document.getElementById('miningRate');
             const totalMined = document.getElementById('totalMined');
@@ -886,10 +874,8 @@
             const dailyStreak = document.getElementById('dailyStreak');
 
             if (balanceText) balanceText.textContent = `Balance: ${userData.balance.toFixed(2)}`;
-            if (userIdBtn) {
-                userIdBtn.innerHTML = userData.userID
-                    ? `<i class="fas fa-id-card"></i><span>ID: ${userData.userID}</span><span class="tooltip">Copied!</span>`
-                    : `<i class="fas fa-id-card"></i><span>ID: Not Set</span><span class="tooltip">Copied!</span>`;
+            if (profileBtn) {
+                profileBtn.innerHTML = `<i class="fas fa-id-card"></i><span>Profile</span>`;
             }
             if (miningRate) miningRate.textContent = `${userData.miningRate.toFixed(2)} KATO/hour`;
             if (totalMined) totalMined.textContent = userData.totalMined.toFixed(2);
@@ -1149,77 +1135,37 @@
             }
         }
 
-        // Firebase Initialization
-        let database;
-        try {
-            if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
-                throw new Error('Firebase configuration is missing or invalid');
-            }
-            const app = initializeApp(firebaseConfig);
-            database = getDatabase(app);
-        } catch (error) {
-            console.error('Error initializing Firebase:', error);
-            showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) loadingOverlay.style.display = 'none';
-        }
-
-        // Generate Unique ID
-        async function generateUniqueID() {
-            let id;
-            let isUnique = false;
-            let retries = 0;
-            const maxRetries = 100;
-            while (!isUnique && retries < maxRetries) {
-                id = Math.floor(10000000 + Math.random() * 90000000).toString();
-                const userRef = ref(database, 'users/' + id);
-                try {
-                    const snapshot = await get(userRef);
-                    if (!snapshot.exists()) {
-                        isUnique = true;
-                    }
-                } catch (error) {
-                    console.error('Error checking ID uniqueness:', error);
-                    retries++;
-                }
-            }
-            if (!isUnique) {
-                showNotification('Unable to generate unique ID. Please try again.', 'error');
-                throw new Error('ID generation failed after max retries');
-            }
-            return id;
-        }
-
         // Initialize User Data
         async function initializeUserData(userID, referrerID = null) {
             try {
-                await set(ref(database, 'users/' + userID), {
-                    balance: 0.00,
-                    referrerID: referrerID,
-                    referrals: [],
-                    totalMined: 0,
-                    miningRate: 1.00,
-                    miningHours: 0,
-                    dailyStreak: 0,
-                    lastDailyReward: null,
-                    level: 1,
-                    miningStartTime: null
-                });
-                if (referrerID) {
-                    const referrerRef = ref(database, 'users/' + referrerID);
-                    try {
-                        const snapshot = await get(referrerRef);
-                        if (snapshot.exists()) {
-                            const referrerData = snapshot.val();
-                            const newBalance = (referrerData.balance || 0) + 1;
-                            await set(ref(database, 'users/' + referrerID), {
+                const userRef = ref(database, 'users/' + userID);
+                const snapshot = await get(userRef);
+                if (!snapshot.exists()) {
+                    await set(userRef, {
+                        username: userData.username || userData.email.split('@')[0],
+                        email: userData.email,
+                        balance: 0.00,
+                        referrerID: referrerID,
+                        referrals: [],
+                        totalMined: 0,
+                        miningRate: 1.00,
+                        miningHours: 0,
+                        dailyStreak: 0,
+                        lastDailyReward: null,
+                        level: 1,
+                        miningStartTime: null
+                    });
+                    if (referrerID) {
+                        const referrerRef = ref(database, 'users/' + referrerID);
+                        const referrerSnapshot = await get(referrerRef);
+                        if (referrerSnapshot.exists()) {
+                            const referrerData = referrerSnapshot.val();
+                            await set(referrerRef, {
                                 ...referrerData,
-                                balance: newBalance,
+                                balance: (referrerData.balance || 0) + 1,
                                 referrals: [...(referrerData.referrals || []), userID]
                             });
                         }
-                    } catch (error) {
-                        console.error('Error updating referrer data:', error);
                     }
                 }
                 return true;
@@ -1231,28 +1177,21 @@
         }
 
         // Initialize User
-        let userID = isLocalStorageAvailable() ? localStorage.getItem('userID') : null;
         async function initializeUser() {
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
 
-            // Check if user is logged in
-            if (!userID) {
-                showNotification('Please log in to access this page.', 'warning');
-                try {
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    return; // Stop further execution
-                } catch (error) {
-                    console.error('Error redirecting to login page:', error);
-                    showNotification('Error redirecting to login page. Please try again.', 'error');
+            if (!isFirebaseInitialized) {
+                const success = await initializeFirebase();
+                if (!success) {
                     if (loadingOverlay) loadingOverlay.style.display = 'none';
                     return;
                 }
             }
 
             const requiredElements = [
-                'userIdBtn', 'balanceBtn', 'roadmapBtn', 'rewardsBtn', 'dailyRewardBtn',
-                'startMiningBtn', 'claimBtn', 'adModal', 'adCloseBtn', 'adTimer'
+                'profileBtn', 'balanceBtn', 'roadmapBtn', 'rewardsBtn', 'dailyRewardBtn',
+                'logoutBtn', 'startMiningBtn', 'claimBtn', 'adModal', 'adCloseBtn', 'adTimer'
             ];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
@@ -1263,19 +1202,40 @@
                 }
             }
 
-            const userIdBtn = document.getElementById('userIdBtn');
+            const profileBtn = document.getElementById('profileBtn');
             const roadmapBtn = document.getElementById('roadmapBtn');
             const rewardsBtn = document.getElementById('rewardsBtn');
             const dailyRewardBtn = document.getElementById('dailyRewardBtn');
             const startMiningBtn = document.getElementById('startMiningBtn');
             const claimBtn = document.getElementById('claimBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
 
-            if (userID && database) {
-                const userRef = ref(database, 'users/' + userID);
+            profileBtn.addEventListener('click', () => {
+                try {
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/profile.html';
+                } catch (error) {
+                    console.error('Navigation error:', error);
+                    showNotification('Error navigating to Profile page. Please try again.', 'error');
+                }
+            });
+
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    showNotification('Please log in to access this page.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
+                }
+
+                userData.userID = user.uid;
+                userData.email = user.email;
+                userData.username = user.displayName || user.email.split('@')[0];
+
+                const userRef = ref(database, 'users/' + userData.userID);
                 try {
                     const snapshot = await get(userRef);
                     if (snapshot.exists()) {
-                        userData = { ...userData, ...snapshot.val(), userID };
+                        userData = { ...userData, ...snapshot.val(), userID: user.uid };
                         updateUI();
                         if (userData.miningStartTime) {
                             const elapsed = Math.floor((Date.now() - userData.miningStartTime) / 1000);
@@ -1290,10 +1250,9 @@
                     } else {
                         const urlParams = new URLSearchParams(window.location.search);
                         const referrerID = urlParams.get('ref') || null;
-                        await initializeUserData(userID, referrerID);
+                        await initializeUserData(userData.userID, referrerID);
                         userData = {
                             ...userData,
-                            userID,
                             balance: 0,
                             totalMined: 0,
                             miningRate: 1.00,
@@ -1309,72 +1268,56 @@
                     console.error('Error fetching user data:', error);
                     showNotification('Error fetching user data. Please try again.', 'error');
                 }
-                userIdBtn.innerHTML = `<i class="fas fa-id-card"></i><span>ID: ${userID}</span><span class="tooltip">Copied!</span>`;
-            }
 
-            updateUI();
-            if (loadingOverlay) loadingOverlay.style.display = 'none';
+                updateUI();
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
 
-            startMiningBtn.addEventListener('click', () => {
-                if (startMiningBtn.classList.contains('mining')) {
-                    stopMining();
-                } else {
-                    startMining();
-                }
-            });
+                startMiningBtn.addEventListener('click', () => {
+                    if (startMiningBtn.classList.contains('mining')) {
+                        stopMining();
+                    } else {
+                        startMining();
+                    }
+                });
 
-            claimBtn.addEventListener('click', claimReward);
+                claimBtn.addEventListener('click', claimReward);
 
-            dailyRewardBtn.addEventListener('click', claimDailyReward);
+                dailyRewardBtn.addEventListener('click', claimDailyReward);
 
-            roadmapBtn.addEventListener('click', () => {
-                try {
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/roadmap.html';
-                } catch (error) {
-                    console.error('Navigation error:', error);
-                    showNotification('Error navigating to Roadmap page. Please try again.', 'error');
-                }
-            });
+                roadmapBtn.addEventListener('click', () => {
+                    try {
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/roadmap.html';
+                    } catch (error) {
+                        console.error('Navigation error:', error);
+                        showNotification('Error navigating to Roadmap page. Please try again.', 'error');
+                    }
+                });
 
-            rewardsBtn.addEventListener('click', () => {
-                try {
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/extrareward.html';
-                } catch (error) {
-                    console.error('Navigation error:', error);
-                    showNotification('Error navigating to Extra Rewards page. Please try again.', 'error');
-                }
-            });
+                rewardsBtn.addEventListener('click', () => {
+                    try {
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/extrareward.html';
+                    } catch (error) {
+                        console.error('Navigation error:', error);
+                        showNotification('Error navigating to Extra Rewards page. Please try again.', 'error');
+                    }
+                });
 
-            userIdBtn.addEventListener('click', () => {
-                if (!userID) {
-                    showNotification('Please log in to copy referral link.', 'warning');
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    return;
-                }
-                const origin = window.location.origin || `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
-                const referralLink = `${origin}/index.html?ref=${userID}`;
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(referralLink).then(() => {
-                        userIdBtn.classList.add('copied');
-                        showNotification('Referral link copied!', 'success');
-                        setTimeout(() => {
-                            userIdBtn.classList.remove('copied');
-                        }, 2000);
-                    }).catch(err => {
-                        console.error('Failed to copy:', err);
-                        showNotification('Failed to copy referral link.', 'error');
-                    });
-                } else {
-                    showNotification('Copying is not supported in this browser.', 'error');
-                }
-            });
+                logoutBtn.addEventListener('click', async () => {
+                    try {
+                        stopMining();
+                        await signOut(auth);
+                        showNotification('Logged out successfully.', 'success');
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                        showNotification('Error logging out. Please try again.', 'error');
+                    }
+                });
 
-            if (userID && database) {
-                const userRef = ref(database, 'users/' + userID);
                 const unsubscribe = onValue(userRef, (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        userData = { ...userData, ...data, userID };
+                        userData = { ...userData, ...data, userID: user.uid };
                         if (data.miningStartTime && !miningInterval) {
                             const elapsed = Math.floor((Date.now() - data.miningStartTime) / 1000);
                             if (elapsed >= 7200) {
@@ -1387,7 +1330,7 @@
                         }
                         updateUI();
                     } else {
-                        console.error('No user data found for ID:', userID);
+                        console.error('No user data found for ID:', userData.userID);
                         showNotification('User data not found. Please log in again.', 'error');
                         window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
                     }
@@ -1403,17 +1346,11 @@
                     }
                     unsubscribe();
                 });
-            }
+            });
         }
 
-        if (database) {
-            initializeUser();
-        } else {
-            console.error('Database not initialized');
-            showNotification('Failed to initialize database. Please refresh.', 'error');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) loadingOverlay.style.display = 'none';
-        }
+        // Initialize
+        initializeUser();
 
         const navLinks = document.querySelectorAll('.nav-item, .footer-section a');
         navLinks.forEach(link => {
@@ -1421,7 +1358,7 @@
                 const href = link.getAttribute('href');
                 if (href && href !== '#' && !link.onclick) {
                     event.preventDefault();
-                    if (!userID) {
+                    if (!userData.userID) {
                         showNotification('Please log in to access this page.', 'warning');
                         window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
                         return;
