@@ -11,122 +11,414 @@
             --secondary-color: #d3d3d3;
             --background-color: #0d1b2a;
             --accent-color: #00bfff;
+            --success-color: #00ff88;
+            --card-bg: rgba(255, 255, 255, 0.05);
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
         }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #0d1b2a 100%);
             color: var(--secondary-color);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundMove 20s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundMove {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            33% { transform: translateX(-20px) translateY(-10px); }
+            66% { transform: translateX(20px) translateY(10px); }
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
             padding: 20px;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 40px 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
             position: relative;
-            color: var(--secondary-color);
         }
+        
         .back-btn {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 0;
+            left: 0;
             background: transparent;
-            border: 1px solid var(--accent-color);
+            border: 2px solid var(--accent-color);
             color: var(--accent-color);
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 12px 20px;
+            border-radius: 25px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.2);
         }
-        .back-btn i {
-            font-size: 16px;
-        }
+        
         .back-btn:hover {
             background: var(--accent-color);
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.4);
         }
-        h1 {
+        
+        .main-title {
             color: var(--primary-color);
-            text-align: center;
+            font-size: clamp(2.5em, 6vw, 3.5em);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 215, 0, 0.8); }
+        }
+        
+        .subtitle {
+            color: var(--accent-color);
+            font-size: clamp(1.1em, 3vw, 1.3em);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .card:hover::before {
+            left: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+        }
+        
+        .card-icon {
+            font-size: 2.5em;
+            color: var(--primary-color);
             margin-bottom: 20px;
-            font-size: clamp(1.8em, 5vw, 2.2em);
+            text-align: center;
         }
-        p {
+        
+        .card-title {
+            color: var(--primary-color);
+            font-size: 1.4em;
             margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .card-text {
+            line-height: 1.7;
+            font-size: 1em;
+            text-align: center;
+            color: var(--secondary-color);
+        }
+        
+        .features-section {
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            color: var(--accent-color);
+            font-size: clamp(1.8em, 4vw, 2.2em);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .feature-item {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-color: var(--success-color);
+        }
+        
+        .feature-icon {
+            font-size: 2em;
+            color: var(--success-color);
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            color: var(--primary-color);
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .feature-text {
+            color: var(--secondary-color);
+            font-size: 0.95em;
             line-height: 1.6;
-            font-size: clamp(14px, 3vw, 16px);
         }
-        @media (max-width: 600px) {
-            body {
-                padding: 15px;
-            }
-            .container {
-                padding: 30px 15px;
-            }
-            .back-btn {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-            .back-btn i {
-                font-size: 14px;
-            }
-            h1 {
-                font-size: clamp(1.6em, 4.5vw, 2em);
-            }
-            p {
-                font-size: clamp(12px, 2.8vw, 14px);
-            }
+        
+        .cta-section {
+            text-align: center;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
         }
-        @media (max-width: 400px) {
-            body {
-                padding: 10px;
+        
+        .cta-title {
+            color: var(--primary-color);
+            font-size: clamp(1.5em, 4vw, 2em);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .cta-text {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .cta-button {
+            background: linear-gradient(45deg, var(--accent-color), var(--success-color));
+            color: #ffffff;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 20px rgba(0, 191, 255, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 191, 255, 0.5);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--secondary-color);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-text {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { margin-bottom: 30px; }
+            .back-btn { 
+                position: static; 
+                margin-bottom: 20px;
+                padding: 10px 16px;
+                font-size: 13px;
             }
-            .container {
-                padding: 25px 10px;
+            .content-grid { 
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
-            .back-btn {
-                padding: 5px 10px;
-                font-size: 11px;
+            .card { padding: 20px; }
+            .features-grid { 
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
-            .back-btn i {
-                font-size: 12px;
-            }
-            h1 {
-                font-size: clamp(1.4em, 4vw, 1.8em);
-            }
-            p {
-                font-size: clamp(11px, 2.5vw, 13px);
-            }
+            .cta-section { padding: 25px; }
+        }
+        
+        @media (max-width: 480px) {
+            .back-btn { padding: 8px 12px; font-size: 12px; }
+            .card { padding: 15px; }
+            .feature-item { padding: 20px; }
+            .cta-section { padding: 20px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <button class="back-btn" onclick="window.location.href='https://katomineconnect.github.io/KatoMine.com/index.html'">
-            <i class="fas fa-arrow-left"></i> Back
-        </button>
-        <h1>About Us</h1>
-        <p>Kato Mine is a secure mining platform designed to make earning easy for everyone by allowing users to earn through mining, completing tasks, and inviting others.</p>
-        <p>We aim to create a simple, user-friendly, and secure environment for earning online while maintaining the highest standards of user privacy and security.</p>
-        <p>Our mission is to empower users with accessible earning opportunities in a trusted and safe environment, providing clear systems and fair practices to benefit all.</p>
-        <p>Join Kato Mine today and start your secure and simple mining journey with us.</p>
+        <div class="header">
+            <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+            <h1 class="main-title">About Kato Mine</h1>
+            <p class="subtitle">Your Gateway to Secure Digital Mining</p>
+        </div>
+        
+        <div class="content-grid">
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h2 class="card-title">Our Mission</h2>
+                <p class="card-text">
+                    Kato Mine is dedicated to creating a secure, user-friendly platform that makes digital mining accessible to everyone. We believe in empowering users with safe earning opportunities while maintaining the highest standards of security and transparency.
+                </p>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h2 class="card-title">Our Community</h2>
+                <p class="card-text">
+                    Join thousands of users who trust Kato Mine for their digital earning journey. Our community-driven approach ensures that every user has access to support, resources, and opportunities to maximize their mining potential.
+                </p>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h2 class="card-title">Our Vision</h2>
+                <p class="card-text">
+                    We envision a future where digital mining is accessible, secure, and profitable for everyone. Through innovation and user-focused design, we're building the next generation of mining platforms.
+                </p>
+            </div>
+        </div>
+        
+        <div class="features-section">
+            <h2 class="section-title">Why Choose Kato Mine?</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3 class="feature-title">Advanced Security</h3>
+                    <p class="feature-text">State-of-the-art encryption and security protocols protect your account and earnings.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 class="feature-title">Multiple Earning Ways</h3>
+                    <p class="feature-text">Earn through mining, completing tasks, and inviting friends to join our platform.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">User-Friendly Interface</h3>
+                    <p class="feature-text">Clean, intuitive design that works perfectly on all devices and screen sizes.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="feature-title">24/7 Support</h3>
+                    <p class="feature-text">Our dedicated support team is always ready to help you with any questions or issues.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Real-Time Analytics</h3>
+                    <p class="feature-text">Track your mining progress and earnings with detailed analytics and reports.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3 class="feature-title">Bonus Rewards</h3>
+                    <p class="feature-text">Regular bonuses, referral rewards, and special promotions for active users.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h2 class="cta-title">Ready to Start Your Mining Journey?</h2>
+            <p class="cta-text">
+                Join Kato Mine today and discover the easiest way to earn through secure digital mining. 
+                Create your account in minutes and start earning immediately.
+            </p>
+            <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="cta-button">
+                <i class="fas fa-play-circle"></i> Start Mining Now
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p class="footer-text">
+                © 2024 Kato Mine. All rights reserved. | Secure • Reliable • Profitable
+            </p>
+        </div>
     </div>
 </body>
 </html>
