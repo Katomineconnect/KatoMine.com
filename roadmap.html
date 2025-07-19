@@ -8,100 +8,357 @@
 <style>
 :root {
     --primary-color: #ffd700;
-    --secondary-color: #d3d3d3;
-    --background-color: #0d1b2a;
+    --secondary-color: #e8e8e8;
+    --background-start: #0d1b2a;
+    --background-end: #1b263b;
     --accent-color: #00bfff;
+    --accent-secondary: #1e90ff;
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0d1b2a, #1b263b);
+    background: linear-gradient(135deg, var(--background-start), var(--background-end));
+    background-attachment: fixed;
     color: var(--secondary-color);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     padding: 20px;
+    overflow-x: hidden;
+    position: relative;
 }
+
+/* Animated background particles */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(30, 144, 255, 0.1) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-20px) rotate(1deg); }
+    50% { transform: translateY(0px) rotate(0deg); }
+    75% { transform: translateY(-10px) rotate(-1deg); }
+}
+
 .container {
-    max-width: 800px;
+    max-width: 900px;
     margin: auto;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 40px 20px;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 60px 40px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     position: relative;
     color: var(--secondary-color);
+    animation: slideUp 1s ease-out;
 }
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--accent-color), var(--primary-color), var(--accent-secondary));
+    border-radius: 25px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.container:hover::before {
+    opacity: 0.3;
+}
+
 .back-btn {
-    position: fixed; /* কনটেইনারের উপরে উঠানোর জন্য fixed পজিশন */
-    top: 20px;
-    left: 20px;
-    background: linear-gradient(45deg, var(--accent-color), #1e90ff); /* গ্র্যাডিয়েন্ট ব্যাকগ্রাউন্ড */
+    position: fixed;
+    top: 25px;
+    left: 25px;
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
     border: none;
     color: #ffffff;
-    padding: 10px 20px;
-    border-radius: 25px; /* গোলাকার বর্ডার */
+    padding: 14px 24px;
+    border-radius: 50px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 191, 255, 0.4); /* আকর্ষণীয় শ্যাডো */
-    z-index: 1000; /* কনটেইনারের উপরে থাকার জন্য */
+    gap: 10px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 8px 25px rgba(0, 191, 255, 0.3),
+        0 0 0 0 rgba(0, 191, 255, 0.4);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-shadow: var(--text-shadow);
 }
+
 .back-btn i {
     font-size: 18px;
-    transition: transform 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .back-btn:hover {
-    background: linear-gradient(45deg, #1e90ff, var(--accent-color));
-    box-shadow: 0 6px 20px rgba(0, 191, 255, 0.6);
-    transform: translateY(-3px); /* হোভারে সামান্য উপরে উঠবে */
+    background: linear-gradient(135deg, var(--accent-secondary), var(--accent-color));
+    box-shadow: 
+        0 15px 35px rgba(0, 191, 255, 0.5),
+        0 0 0 8px rgba(0, 191, 255, 0.1);
+    transform: translateY(-5px);
+    letter-spacing: 0.5px;
 }
+
 .back-btn:hover i {
-    transform: translateX(-3px); /* আইকন বামে সরবে হোভারে */
+    transform: translateX(-5px) scale(1.1);
 }
+
+.back-btn:active {
+    transform: translateY(-2px);
+}
+
 h1 {
     color: var(--primary-color);
     text-align: center;
-    margin-bottom: 20px;
-    font-size: clamp(1.8em, 5vw, 2.2em);
+    margin-bottom: 40px;
+    font-size: clamp(2.2em, 6vw, 3em);
+    font-weight: 700;
+    text-shadow: 
+        0 0 20px rgba(255, 215, 0, 0.3),
+        var(--text-shadow);
+    position: relative;
+    animation: glow 3s ease-in-out infinite alternate;
 }
-p {
-    margin-bottom: 15px;
-    line-height: 1.6;
-    font-size: clamp(14px, 3vw, 16px);
-    color: var(--secondary-color);
-}
-@media (max-width: 600px) {
-    body { padding: 15px; }
-    .container { padding: 30px 15px; }
-    .back-btn { 
-        padding: 8px 16px; 
-        font-size: 14px; 
-        top: 15px;
-        left: 15px;
+
+@keyframes glow {
+    from {
+        text-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.3),
+            var(--text-shadow);
     }
-    .back-btn i { font-size: 16px; }
-    h1 { font-size: clamp(1.6em, 4.5vw, 2em); }
+    to {
+        text-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.6),
+            0 0 40px rgba(255, 215, 0, 0.3),
+            var(--text-shadow);
+    }
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+    animation: expand 2s ease-in-out infinite;
+}
+
+@keyframes expand {
+    0%, 100% { width: 100px; opacity: 0.5; }
+    50% { width: 200px; opacity: 1; }
+}
+
+.content-section {
+    margin-bottom: 30px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border-left: 4px solid var(--accent-color);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.content-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.content-section:hover::before {
+    left: 100%;
+}
+
+.content-section:hover {
+    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.08);
+    border-left-color: var(--primary-color);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        -5px 0 20px rgba(0, 191, 255, 0.2);
+}
+
+p {
+    margin-bottom: 20px;
+    line-height: 1.8;
+    font-size: clamp(15px, 3.5vw, 18px);
+    color: var(--secondary-color);
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+.highlight-text {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.feature-icon {
+    display: inline-block;
+    margin-right: 10px;
+    color: var(--accent-color);
+    font-size: 1.2em;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    body { 
+        padding: 15px; 
+    }
+    
+    .container { 
+        padding: 40px 25px; 
+        border-radius: 20px;
+        margin-top: 20px;
+    }
+    
+    .back-btn { 
+        padding: 12px 20px; 
+        font-size: 14px; 
+        top: 20px;
+        left: 20px;
+    }
+    
+    .back-btn i { 
+        font-size: 16px; 
+    }
+    
+    h1 { 
+        font-size: clamp(1.8em, 5vw, 2.5em);
+        margin-bottom: 30px;
+    }
+    
+    .content-section {
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .content-section:hover {
+        transform: translateX(5px);
+    }
+    
+    p {
+        font-size: clamp(14px, 4vw, 16px);
+        line-height: 1.7;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 30px 20px;
+        margin-top: 15px;
+    }
+    
+    .content-section {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    h1::after {
+        width: 60px;
+    }
+    
+    @keyframes expand {
+        0%, 100% { width: 60px; opacity: 0.5; }
+        50% { width: 120px; opacity: 1; }
+    }
+}
+
+/* Loading animation */
+.container {
+    animation: slideUp 1s ease-out, fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 </style>
 </head>
 <body>
+<button class="back-btn" onclick="window.location.href='https://katomineconnect.github.io/KatoMine.com/index.html'">
+    <i class="fas fa-arrow-left"></i> Back
+</button>
+
 <div class="container">
-    <button class="back-btn" onclick="window.location.href='https://katomineconnect.github.io/KatoMine.com/index.html'">
-        <i class="fas fa-arrow-left"></i> Back
-    </button>
     <h1>Kato Mine Roadmap</h1>
-    <p>We recently made our Kato Mine website public, and we are actively working on its various features. We promise to prepare and share a complete roadmap after refining and updating it as needed.</p>
-    <p>We plan to release our roadmap based on our specific active user base to ensure it truly serves our community. In the future, we aim to launch Kato Mine on Google Play Store and other platforms.</p>
-    <p>Thank you for staying with us. We promise to honor your trust.</p>
+    
+    <div class="content-section">
+        <p><i class="fas fa-rocket feature-icon"></i>We recently made our <span class="highlight-text">Kato Mine website</span> public, and we are actively working on its various features. We promise to prepare and share a complete roadmap after refining and updating it as needed.</p>
+    </div>
+    
+    <div class="content-section">
+        <p><i class="fas fa-users feature-icon"></i>We plan to release our roadmap based on our specific <span class="highlight-text">active user base</span> to ensure it truly serves our community. In the future, we aim to launch Kato Mine on <span class="highlight-text">Google Play Store</span> and other platforms.</p>
+    </div>
+    
+    <div class="content-section">
+        <p><i class="fas fa-heart feature-icon"></i>Thank you for staying with us. We promise to <span class="highlight-text">honor your trust</span>.</p>
+    </div>
 </div>
 </body>
 </html>
