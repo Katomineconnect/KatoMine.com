@@ -57,7 +57,6 @@
             z-index: -1;
         }
 
-        /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -86,7 +85,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Header */
         .header {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -124,7 +122,6 @@
             font-weight: 500;
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             padding: 20px;
@@ -135,7 +132,6 @@
             align-items: center;
         }
 
-        /* Referral Section */
         .referral-section {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -166,7 +162,6 @@
             50% { transform: scale(1.2); opacity: 0.05; }
         }
 
-        /* Referral Code */
         .referral-code {
             font-size: clamp(1rem, 3vw, 1.2rem);
             font-weight: 600;
@@ -215,7 +210,6 @@
             opacity: 1;
         }
 
-        /* Referral Input */
         .referral-input {
             display: flex;
             flex-direction: column;
@@ -269,7 +263,6 @@
             cursor: not-allowed;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -307,30 +300,6 @@
             font-weight: 500;
         }
 
-        /* Progress Bar */
-        .progress-container {
-            background: rgba(255,255,255,0.1);
-            border-radius: 25px;
-            padding: 5px;
-            margin: 15px auto;
-            width: min(95%, 400px);
-            position: relative;
-        }
-
-        .progress-bar {
-            height: 30px;
-            background: var(--gradient-2);
-            border-radius: 20px;
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--background-color);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        /* Achievements */
         .achievements {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
@@ -374,7 +343,6 @@
             color: var(--background-color);
         }
 
-        /* Share Buttons */
         .share-buttons {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -404,23 +372,6 @@
             box-shadow: var(--shadow-dark);
         }
 
-        .share-btn.telegram {
-            background: linear-gradient(135deg, #0088cc, #005580);
-        }
-
-        .share-btn.whatsapp {
-            background: linear-gradient(135deg, #25d366, #1da851);
-        }
-
-        .share-btn.twitter {
-            background: linear-gradient(135deg, #1da1f2, #0d8bd9);
-        }
-
-        .share-btn.facebook {
-            background: linear-gradient(135deg, #1877f2, #166fe5);
-        }
-
-        /* Referrals Section */
         .referrals-section {
             background: var(--glass-bg);
             border-radius: 12px;
@@ -471,7 +422,6 @@
             color: var(--secondary-color);
         }
 
-        /* Leaderboard */
         .leaderboard {
             background: var(--glass-bg);
             border-radius: 12px;
@@ -508,7 +458,6 @@
             color: var(--primary-color);
         }
 
-        /* Message Display */
         .message-display {
             font-size: clamp(1rem, 3vw, 1.2rem);
             color: var(--primary-color);
@@ -522,7 +471,6 @@
             width: min(95%, 600px);
         }
 
-        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -560,7 +508,6 @@
             margin-bottom: 5px;
         }
 
-        /* Notification */
         .notification {
             position: fixed;
             top: 20px;
@@ -595,7 +542,6 @@
             background: var(--accent-color);
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .main-content {
                 padding: 15px;
@@ -690,13 +636,6 @@
                     <div class="stat-number" id="earnedTokens">0</div>
                     <div class="stat-label">Tokens Earned</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="remainingSlots">10</div>
-                    <div class="stat-label">Remaining Slots</div>
-                </div>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
             </div>
             <div class="achievements">
                 <div class="achievement" id="achievement1">
@@ -709,7 +648,7 @@
                 </div>
                 <div class="achievement" id="achievement10">
                     <i class="fas fa-crown"></i>
-                    <div class="achievement-label">Max Referrals</div>
+                    <div class="achievement-label">10 Referrals</div>
                 </div>
                 <div class="achievement" id="achievementSpeed">
                     <i class="fas fa-bolt"></i>
@@ -717,18 +656,6 @@
                 </div>
             </div>
             <div class="share-buttons">
-                <button class="share-btn telegram" id="shareTelegram">
-                    <i class="fab fa-telegram"></i> Telegram
-                </button>
-                <button class="share-btn whatsapp" id="shareWhatsApp">
-                    <i class="fab fa-whatsapp"></i> WhatsApp
-                </button>
-                <button class="share-btn twitter" id="shareTwitter">
-                    <i class="fab fa-twitter"></i> Twitter
-                </button>
-                <button class="share-btn facebook" id="shareFacebook">
-                    <i class="fab fa-facebook"></i> Facebook
-                </button>
             </div>
         </section>
         <section class="referrals-section">
@@ -831,8 +758,6 @@
         const messageDisplay = document.getElementById('messageDisplay');
         const totalReferrals = document.getElementById('totalReferrals');
         const earnedTokens = document.getElementById('earnedTokens');
-        const remainingSlots = document.getElementById('remainingSlots');
-        const progressBar = document.getElementById('progressBar');
         const referralList = document.getElementById('referralList');
         const leaderboardList = document.getElementById('leaderboardList');
 
@@ -852,7 +777,7 @@
         // Generate 8-digit Invite Code
         async function generateInviteCode() {
             let attempts = 0;
-            const maxAttempts = 10; // Maximum retry limit to prevent infinite loop
+            const maxAttempts = 10;
             while (attempts < maxAttempts) {
                 const code = Math.floor(10000000 + Math.random() * 90000000).toString();
                 try {
@@ -901,15 +826,6 @@
                     element.classList.add('unlocked');
                 }
             });
-        }
-
-        // Update Progress Bar
-        function updateProgress(referralCount) {
-            const percentage = (referralCount / 10) * 100;
-            if (progressBar) {
-                progressBar.style.width = `${percentage}%`;
-                progressBar.textContent = `${Math.round(percentage)}%`;
-            }
         }
 
         // Display Referral List
@@ -977,32 +893,6 @@
             if (!userData.inviteCode) return;
             const referralLink = `https://katomineconnect.github.io/KatoMine.com/index.html?ref=${userData.inviteCode}`;
             const shareText = `Join Katomine and earn crypto! Use my invite code: ${userData.inviteCode}`;
-
-            const shareTelegram = document.getElementById('shareTelegram');
-            const shareWhatsApp = document.getElementById('shareWhatsApp');
-            const shareTwitter = document.getElementById('shareTwitter');
-            const shareFacebook = document.getElementById('shareFacebook');
-
-            if (shareTelegram) {
-                shareTelegram.addEventListener('click', () => {
-                    window.open(`https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(shareText)}`, '_blank');
-                });
-            }
-            if (shareWhatsApp) {
-                shareWhatsApp.addEventListener('click', () => {
-                    window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + referralLink)}`, '_blank');
-                });
-            }
-            if (shareTwitter) {
-                shareTwitter.addEventListener('click', () => {
-                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`, '_blank');
-                });
-            }
-            if (shareFacebook) {
-                shareFacebook.addEventListener('click', () => {
-                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`, '_blank');
-                });
-            }
         }
 
         // Initialize Invite Page
@@ -1020,8 +910,7 @@
 
             const requiredElements = [
                 'referralCodeElement', 'referralInput', 'submitReferral', 'messageDisplay',
-                'totalReferrals', 'earnedTokens', 'remainingSlots', 'progressBar',
-                'referralList', 'leaderboardList'
+                'totalReferrals', 'earnedTokens', 'referralList', 'leaderboardList'
             ];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
@@ -1066,14 +955,11 @@
                         setupShareButtons();
 
                         const referralCount = userData.referrals ? userData.referrals.length : 0;
-                        const tokensEarned = referralCount * 1; // 1 token per referral
-                        const remaining = Math.max(0, 10 - referralCount);
+                        const tokensEarned = referralCount * 25; // 25 tokens per referral
 
                         if (totalReferrals) totalReferrals.textContent = referralCount;
                         if (earnedTokens) earnedTokens.textContent = tokensEarned;
-                        if (remainingSlots) remainingSlots.textContent = remaining;
 
-                        updateProgress(referralCount);
                         updateAchievements(referralCount);
                         displayReferralList(userData.referrals);
 
@@ -1146,8 +1032,6 @@
 
                         if (totalReferrals) totalReferrals.textContent = 0;
                         if (earnedTokens) earnedTokens.textContent = 0;
-                        if (remainingSlots) remainingSlots.textContent = 10;
-                        updateProgress(0);
                         updateAchievements(0);
                         displayReferralList([]);
                         if (submitReferralButton) submitReferralButton.disabled = false;
@@ -1166,14 +1050,11 @@
                     if (data) {
                         userData = { ...userData, ...data, userID: user.uid };
                         const referralCount = userData.referrals ? userData.referrals.length : 0;
-                        const tokensEarned = referralCount * 1; // 1 token per referral
-                        const remaining = Math.max(0, 10 - referralCount);
+                        const tokensEarned = referralCount * 25; // 25 tokens per referral
 
                         if (totalReferrals) totalReferrals.textContent = referralCount;
                         if (earnedTokens) earnedTokens.textContent = tokensEarned;
-                        if (remainingSlots) remainingSlots.textContent = remaining;
 
-                        updateProgress(referralCount);
                         updateAchievements(referralCount);
                         displayReferralList(userData.referrals);
 
@@ -1272,14 +1153,8 @@
                         return;
                     }
 
-                    const referralCount = referrerData.referrals ? referrerData.referrals.length : 0;
-                    if (referralCount >= 10) {
-                        showNotification('This referrer has reached the maximum limit of 10 referrals.', 'warning');
-                        return;
-                    }
-
                     try {
-                        const newBalance = (referrerData.balance || 0) + 1; // 1 token per referral
+                        const newBalance = (referrerData.balance || 0) + 25; // 25 tokens per referral
                         const newReferral = {
                             id: userData.userID,
                             inviteCode: userData.inviteCode,
@@ -1295,7 +1170,7 @@
                             referrerID: referrerID
                         });
 
-                        showNotification('Referral submitted successfully! Referrer earned 1 KATO.', 'success');
+                        showNotification('Referral submitted successfully! Referrer earned 25 KATO.', 'success');
                         submitReferralButton.disabled = true;
                         messageDisplay.textContent = 'Referral submitted successfully!';
                     } catch (error) {
