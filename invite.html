@@ -955,10 +955,8 @@
                         setupShareButtons();
 
                         const referralCount = userData.referrals ? userData.referrals.length : 0;
-                        const tokensEarned = referralCount * 25; // 25 tokens per referral
-
                         if (totalReferrals) totalReferrals.textContent = referralCount;
-                        if (earnedTokens) earnedTokens.textContent = tokensEarned;
+                        if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
                         updateAchievements(referralCount);
                         displayReferralList(userData.referrals);
@@ -1050,10 +1048,8 @@
                     if (data) {
                         userData = { ...userData, ...data, userID: user.uid };
                         const referralCount = userData.referrals ? userData.referrals.length : 0;
-                        const tokensEarned = referralCount * 25; // 25 tokens per referral
-
                         if (totalReferrals) totalReferrals.textContent = referralCount;
-                        if (earnedTokens) earnedTokens.textContent = tokensEarned;
+                        if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
                         updateAchievements(referralCount);
                         displayReferralList(userData.referrals);
@@ -1154,7 +1150,8 @@
                     }
 
                     try {
-                        const newBalance = (referrerData.balance || 0) + 25; // 25 tokens per referral
+                        // Update referrer's balance (100 tokens) and referrals
+                        const referrerNewBalance = (referrerData.balance || 0) + 100;
                         const newReferral = {
                             id: userData.userID,
                             inviteCode: userData.inviteCode,
@@ -1162,17 +1159,20 @@
                         };
 
                         await update(ref(database, 'users/' + referrerID), {
-                            balance: newBalance,
+                            balance: referrerNewBalance,
                             referrals: [...(referrerData.referrals || []), newReferral]
                         });
 
+                        // Update user's balance (25 tokens) and referrerID
+                        const userNewBalance = (userData.balance || 0) + 25;
                         await update(ref(database, 'users/' + userData.userID), {
+                            balance: userNewBalance,
                             referrerID: referrerID
                         });
 
-                        showNotification('Referral submitted successfully! Referrer earned 25 KATO.', 'success');
+                        showNotification('Referral submitted successfully! You earned 25 KATO, and referrer earned 100 KATO.', 'success');
                         submitReferralButton.disabled = true;
-                        messageDisplay.textContent = 'Referral submitted successfully!';
+                        messageDisplay.textContent = 'Referral submitted successfully! You earned 25 KATO.';
                     } catch (error) {
                         console.error('Error submitting referral:', error.message || error);
                         showNotification('Error submitting referral. Please try again.', 'error');
