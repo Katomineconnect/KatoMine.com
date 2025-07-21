@@ -548,8 +548,6 @@
         }
 
         .nav-item {
-
-
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -847,7 +845,6 @@
             dailyStreak: 0,
             lastDailyReward: null,
             miningStartTime: null,
-            level: 1,
             tempBalance: 0 // Temporary balance for mining
         };
 
@@ -948,8 +945,9 @@
             }
 
             userData.tempBalance = (TOTAL_REWARD * (21600 - miningTimeLeft)) / 21600; // Calculate current temp balance
-            miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
+            miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Mining: ${userData.tempBalance.toFixed(3)}</span>`;
             miningButton.classList.add('mining');
+            miningButton.disabled = true; // Disable button to prevent interaction
             miningStatus.textContent = 'Mining Active';
             claimButton.style.display = 'none';
             miningButton.style.display = 'block';
@@ -963,7 +961,7 @@
             miningInterval = setInterval(() => {
                 miningTimeLeft--;
                 userData.tempBalance = (TOTAL_REWARD * (21600 - miningTimeLeft)) / 21600; // Linearly increase to 5 KATO
-                miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
+                miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Mining: ${userData.tempBalance.toFixed(3)}</span>`;
                 const progress = ((21600 - miningTimeLeft) / 21600) * 100;
                 progressBar.style.width = `${progress}%`;
                 progressBar.textContent = `${Math.round(progress)}%`;
@@ -1003,8 +1001,9 @@
                     return;
                 }
 
-                miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
+                miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Mining: ${userData.tempBalance.toFixed(3)}</span>`;
                 miningButton.classList.add('mining');
+                miningButton.disabled = true; // Disable button to prevent interaction
                 miningStatus.textContent = 'Mining Active';
                 claimButton.style.display = 'none';
                 miningButton.style.display = 'block';
@@ -1013,7 +1012,7 @@
                 miningInterval = setInterval(() => {
                     miningTimeLeft--;
                     userData.tempBalance = (TOTAL_REWARD * (21600 - miningTimeLeft)) / 21600; // Linearly increase to 5 KATO
-                    miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
+                    miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Mining: ${userData.tempBalance.toFixed(3)}</span>`;
                     const progress = ((21600 - miningTimeLeft) / 21600) * 100;
                     progressBar.style.width = `${progress}%`;
                     progressBar.textContent = `${Math.round(progress)}%`;
@@ -1022,6 +1021,7 @@
                         completeMining();
                     }
                 }, 1000);
+                showNotification('Mining started!', 'success');
             });
         }
 
@@ -1080,32 +1080,7 @@
                 timeDisplay.textContent = 'Next reward in: 360:00';
                 miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
                 miningButton.classList.remove('mining');
-            }
-        }
-
-        function stopMining() {
-            if (miningInterval) {
-                clearInterval(miningInterval);
-                miningInterval = null;
-            }
-            userData.miningStartTime = null;
-            userData.tempBalance = 0; // Reset temp balance
-            updateUserData();
-            const miningButton = document.getElementById('startMiningBtn');
-            const claimButton = document.getElementById('claimBtn');
-            const miningStatus = document.getElementById('miningStatus');
-            const progressBar = document.getElementById('progressBar');
-            const timeDisplay = document.getElementById('nextReward');
-            if (miningButton && claimButton && miningStatus && progressBar && timeDisplay) {
-                miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
-                miningButton.classList.remove('mining');
-                miningStatus.textContent = 'Ready to Mine';
-                claimButton.style.display = 'none';
-                miningButton.style.display = 'block';
-                progressBar.style.width = '0%';
-                progressBar.textContent = '0%';
-                timeDisplay.textContent = 'Next reward in: 360:00';
-                showNotification('Mining stopped', 'info');
+                miningButton.disabled = false; // Re-enable button
             }
         }
 
@@ -1293,13 +1268,7 @@
                 updateUI();
                 if (loadingOverlay) loadingOverlay.style.display = 'none';
 
-                startMiningBtn.addEventListener('click', () => {
-                    if (startMiningBtn.classList.contains('mining')) {
-                        stopMining();
-                    } else {
-                        startMining();
-                    }
-                });
+                startMiningBtn.addEventListener('click', startMining);
 
                 claimBtn.addEventListener('click', claimReward);
 
@@ -1325,7 +1294,6 @@
 
                 logoutBtn.addEventListener('click', async () => {
                     try {
-                        stopMining();
                         await signOut(auth);
                         showNotification('Logged out successfully.', 'success');
                         window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
