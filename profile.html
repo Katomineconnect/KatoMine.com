@@ -579,7 +579,7 @@
         // Import Firebase dependencies
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
         import { getDatabase, ref, get, remove } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
-        import { getAuth, onAuthStateChanged, deleteUser } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+        import { getAuth, onAuthStateChanged, deleteUser, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
         // Firebase config
         let firebaseConfig;
@@ -658,6 +658,23 @@
             }
         }
 
+        // Re-authenticate user if needed
+        async function reauthenticateUser(user) {
+            try {
+                const password = prompt('Please re-enter your password to confirm account deletion:');
+                if (!password) {
+                    throw new Error('Password is required for re-authentication.');
+                }
+                const credential = EmailAuthProvider.credential(user.email, password);
+                await reauthenticateWithCredential(user, credential);
+                return true;
+            } catch (error) {
+                console.error('Re-authentication error:', error);
+                showNotification('Re-authentication failed: ' + error.message, 'error');
+                return false;
+            }
+        }
+
         // Delete Account Function
         async function deleteAccount() {
             const user = auth.currentUser;
@@ -670,6 +687,13 @@
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
 
             try {
+                // Re-authenticate user if required
+                const isReauthenticated = await reauthenticateUser(user);
+                if (!isReauthenticated) {
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
+                }
+
                 // Delete user data from database
                 const userRef = ref(database, 'users/' + userData.userID);
                 await remove(userRef);
