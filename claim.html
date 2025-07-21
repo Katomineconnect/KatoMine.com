@@ -591,8 +591,42 @@
         function updateUI() {
             const miningRate = document.getElementById('miningRate');
             const miningStatus = document.getElementById('miningStatus');
+            const progressBar = document.getElementById('progressBar');
+            const timeDisplay = document.getElementById('nextReward');
+            const startMiningBtn = document.getElementById('startMiningBtn');
+            const claimBtn = document.getElementById('claimBtn');
+
             if (miningRate) miningRate.textContent = `11.00 KATO/12 hours`;
-            if (miningStatus) miningStatus.textContent = userData.miningStartTime ? 'Mining Active' : 'Ready to Mine';
+            if (miningStatus) {
+                miningStatus.textContent = userData.miningStartTime ? 'Mining Active' : (userData.tempBalance >= TOTAL_REWARD ? 'Claim' : 'Ready to Mine');
+            }
+            if (progressBar && timeDisplay) {
+                if (userData.miningStartTime) {
+                    const progress = ((43200 - miningTimeLeft) / 43200) * 100;
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.textContent = `${Math.round(progress)}%`;
+                    timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
+                } else if (userData.tempBalance >= TOTAL_REWARD) {
+                    progressBar.style.width = '100%';
+                    progressBar.textContent = '100%';
+                    timeDisplay.textContent = 'Mining Complete!';
+                } else {
+                    progressBar.style.width = '0%';
+                    progressBar.textContent = '0%';
+                    timeDisplay.textContent = 'Next reward in: 12:00:00';
+                }
+            }
+            if (startMiningBtn && claimBtn) {
+                startMiningBtn.style.display = userData.miningStartTime || userData.tempBalance >= TOTAL_REWARD ? 'none' : 'block';
+                claimBtn.style.display = userData.tempBalance >= TOTAL_REWARD ? 'block' : 'none';
+                if (userData.miningStartTime) {
+                    startMiningBtn.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
+                    startMiningBtn.classList.add('mining');
+                } else {
+                    startMiningBtn.innerHTML = `<i class="fas fa-play"></i><span>Start Mining</span>`;
+                    startMiningBtn.classList.remove('mining');
+                }
+            }
         }
 
         // Ad Modal Functions
@@ -628,6 +662,60 @@
         }
 
         // Mining System
+        function startMining() {
+            if (!userData.userID) {
+                showNotification('Please log in to start mining.', 'warning');
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                return;
+            }
+
+            if (userData.miningStartTime) {
+                showNotification('Mining already in progress!', 'warning');
+                return;
+            }
+
+            showAdModal(() => {
+                userData.miningStartTime = Date.now();
+                userData.tempBalance = 0; // Reset temp balance
+                miningTimeLeft = 43200; // 12 hours
+                updateUserData();
+                runMiningCycle();
+            });
+        }
+
+        function runMiningCycle() {
+            const miningButton = document.getElementById('startMiningBtn');
+            const claimButton = document.getElementById('claimBtn');
+            const progressBar = document.getElementById('progressBar');
+            const timeDisplay = document.getElementById('nextReward');
+            const miningStatus = document.getElementById('miningStatus');
+
+            if (!miningButton || !claimButton || !progressBar || !timeDisplay || !miningStatus) {
+                showNotification('Error: Mining UI elements missing.', 'error');
+                return;
+            }
+
+            miningButton.style.display = 'block';
+            claimButton.style.display = 'none';
+            miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
+            miningButton.classList.add('mining');
+            miningStatus.textContent = 'Mining Active';
+
+            if (miningInterval) clearInterval(miningInterval);
+            miningInterval = setInterval(() => {
+                miningTimeLeft--;
+                userData.tempBalance = (TOTAL_REWARD * (43200 - miningTimeLeft)) / 43200; // Linearly increase to 11 KATO
+                miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
+                const progress = ((43200 - miningTimeLeft) / 43200) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressBar.textContent = `${Math.round(progress)}%`;
+                timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
+                if (miningTimeLeft <= 0) {
+                    completeMining();
+                }
+            }, 1000);
+        }
+
         function resumeMining(elapsed) {
             const miningButton = document.getElementById('startMiningBtn');
             const claimButton = document.getElementById('claimBtn');
@@ -647,81 +735,7 @@
             }
 
             userData.tempBalance = (TOTAL_REWARD * (43200 - miningTimeLeft)) / 43200; // Calculate current temp balance
-            miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
-            miningButton.classList.add('mining');
-            miningStatus.textContent = 'Mining Active';
-            claimButton.style.display = 'none';
-            miningButton.style.display = 'block';
-
-            const progress = ((43200 - miningTimeLeft) / 43200) * 100;
-            progressBar.style.width = `${progress}%`;
-            progressBar.textContent = `${Math.round(progress)}%`;
-            timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
-
-            if (miningInterval) clearInterval(miningInterval);
-            miningInterval = setInterval(() => {
-                miningTimeLeft--;
-                userData.tempBalance = (TOTAL_REWARD * (43200 - miningTimeLeft)) / 43200; // Linearly increase to 11 KATO
-                miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
-                const progress = ((43200 - miningTimeLeft) / 43200) * 100;
-                progressBar.style.width = `${progress}%`;
-                progressBar.textContent = `${Math.round(progress)}%`;
-                timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
-                if (miningTimeLeft <= 0) {
-                    completeMining();
-                }
-            }, 1000);
-        }
-
-        function startMining() {
-            if (!userData.userID) {
-                showNotification('Please log in to start mining.', 'warning');
-                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                return;
-            }
-
-            if (userData.miningStartTime && miningInterval) {
-                showNotification('Mining already in progress!', 'warning');
-                return;
-            }
-
-            showAdModal(() => {
-                userData.miningStartTime = Date.now();
-                userData.tempBalance = 0; // Reset temp balance
-                updateUserData();
-
-                miningTimeLeft = 43200; // 12 hours
-                const miningButton = document.getElementById('startMiningBtn');
-                const claimButton = document.getElementById('claimBtn');
-                const progressBar = document.getElementById('progressBar');
-                const timeDisplay = document.getElementById('nextReward');
-                const miningStatus = document.getElementById('miningStatus');
-
-                if (!miningButton || !claimButton || !progressBar || !timeDisplay || !miningStatus) {
-                    showNotification('Error: Mining UI elements missing.', 'error');
-                    return;
-                }
-
-                miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
-                miningButton.classList.add('mining');
-                miningStatus.textContent = 'Mining Active';
-                claimButton.style.display = 'none';
-                miningButton.style.display = 'block';
-
-                if (miningInterval) clearInterval(miningInterval);
-                miningInterval = setInterval(() => {
-                    miningTimeLeft--;
-                    userData.tempBalance = (TOTAL_REWARD * (43200 - miningTimeLeft)) / 43200; // Linearly increase to 11 KATO
-                    miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
-                    const progress = ((43200 - miningTimeLeft) / 43200) * 100;
-                    progressBar.style.width = `${progress}%`;
-                    progressBar.textContent = `${Math.round(progress)}%`;
-                    timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
-                    if (miningTimeLeft <= 0) {
-                        completeMining();
-                    }
-                }, 1000);
-            });
+            runMiningCycle();
         }
 
         function completeMining() {
@@ -762,50 +776,9 @@
             userData.miningHours += 12; // Update to 12 hours
             userData.tempBalance = 0; // Reset temp balance
             userData.miningStartTime = null;
+            updateUserData();
             updateUI();
-            updateUserData();
             showNotification(`Reward claimed! +${minedAmount.toFixed(2)} KATO`, 'success');
-            const miningButton = document.getElementById('startMiningBtn');
-            const claimButton = document.getElementById('claimBtn');
-            const miningStatus = document.getElementById('miningStatus');
-            const progressBar = document.getElementById('progressBar');
-            const timeDisplay = document.getElementById('nextReward');
-            if (miningButton && claimButton && miningStatus && progressBar && timeDisplay) {
-                miningButton.style.display = 'block';
-                claimButton.style.display = 'none';
-                miningStatus.textContent = 'Ready to Mine';
-                progressBar.style.width = '0%';
-                progressBar.textContent = '0%';
-                timeDisplay.textContent = 'Next reward in: 12:00:00';
-                miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
-                miningButton.classList.remove('mining');
-            }
-        }
-
-        function stopMining() {
-            if (miningInterval) {
-                clearInterval(miningInterval);
-                miningInterval = null;
-            }
-            userData.miningStartTime = null;
-            userData.tempBalance = 0; // Reset temp balance
-            updateUserData();
-            const miningButton = document.getElementById('startMiningBtn');
-            const claimButton = document.getElementById('claimBtn');
-            const miningStatus = document.getElementById('miningStatus');
-            const progressBar = document.getElementById('progressBar');
-            const timeDisplay = document.getElementById('nextReward');
-            if (miningButton && claimButton && miningStatus && progressBar && timeDisplay) {
-                miningButton.innerHTML = '<i class="fas fa-play"></i><span>Start Mining</span>';
-                miningButton.classList.remove('mining');
-                miningStatus.textContent = 'Ready to Mine';
-                claimButton.style.display = 'none';
-                miningButton.style.display = 'block';
-                progressBar.style.width = '0%';
-                progressBar.textContent = '0%';
-                timeDisplay.textContent = 'Next reward in: 12:00:00';
-                showNotification('Mining stopped', 'info');
-            }
         }
 
         // Update Firebase
@@ -838,7 +811,7 @@
                         referrerID: referrerID,
                         referrals: [],
                         totalMined: 0,
-                        miningRate: 11.00 / 12, // 11 KATO per 12 hours
+                        miningRate: 11.00 / 12,
                         miningHours: 0,
                         dailyStreak: 0,
                         lastDailyReward: null,
@@ -952,14 +925,7 @@
                 const startMiningBtn = document.getElementById('startMiningBtn');
                 const claimBtn = document.getElementById('claimBtn');
 
-                startMiningBtn.addEventListener('click', () => {
-                    if (startMiningBtn.classList.contains('mining')) {
-                        stopMining();
-                    } else {
-                        startMining();
-                    }
-                });
-
+                startMiningBtn.addEventListener('click', startMining);
                 claimBtn.addEventListener('click', claimReward);
 
                 const unsubscribe = onValue(userRef, (snapshot) => {
