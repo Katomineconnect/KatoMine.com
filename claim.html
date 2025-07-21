@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Katomine - Your Digital Gold Rush. Earn 11 tokens every 12 hours with our innovative mining system.">
+    <meta name="description" content="Kato Mine - Your Digital Gold Rush. Earn Rewards by Completing Tasks">
     <meta name="theme-color" content="#0d1b2a">
     <title>Kato Mine - Claim</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -14,7 +14,7 @@
             --secondary-color: #d3d3d3;
             --background-color: #0d1b2a;
             --accent-color: #00bfff;
-            --success-color: #00ff88;
+            --success-color: #28a745;
             --warning-color: #ff6b35;
             --error-color: #ff4757;
             --gradient-1: linear-gradient(135deg, #0d1b2a, #1b263b);
@@ -23,6 +23,7 @@
             --glass-border: rgba(255, 255, 255, 0.2);
             --shadow-light: 0 4px 15px rgba(0,0,0,0.1);
             --shadow-dark: 0 8px 25px rgba(0,0,0,0.3);
+            --task-box-bg: #0047ab;
         }
 
         * {
@@ -40,6 +41,8 @@
             flex-direction: column;
             overflow-x: hidden;
             position: relative;
+            justify-content: center;
+            padding: 20px;
         }
 
         body::before {
@@ -129,196 +132,140 @@
             flex-direction: column;
             gap: 20px;
             margin-bottom: 80px;
-        }
-
-        .mining-section {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 20px;
-            border: 2px solid var(--primary-color);
-            box-shadow: var(--shadow-dark);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mining-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
-            opacity: 0.1;
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(0.8); opacity: 0.1; }
-            50% { transform: scale(1.2); opacity: 0.05; }
-        }
-
-        .mining-status {
-            font-size: clamp(1.5em, 4vw, 2.2em);
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: var(--success-color);
-        }
-
-        .mining-rate {
-            font-size: clamp(1.2em, 3vw, 1.4em);
-            color: var(--accent-color);
-            margin-bottom: 20px;
-        }
-
-        .progress-container {
-            background: rgba(255,255,255,0.1);
-            border-radius: 25px;
-            padding: 5px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .progress-bar {
-            height: 30px;
-            background: var(--gradient-2);
-            border-radius: 20px;
-            transition: width 0.3s ease;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--background-color);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .next-reward {
-            font-size: clamp(1em, 2.5vw, 1.2em);
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-        }
-
-        .mining-controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .mine-btn {
-            padding: 15px 30px;
-            background: var(--gradient-2);
-            border: none;
-            border-radius: 25px;
-            color: var(--background-color);
-            font-weight: bold;
-            font-size: clamp(1em, 2.5vw, 1.1em);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-light);
+        .tasks-box {
+            background: var(--task-box-bg);
+            color: var(--primary-color);
+            border-radius: 12px;
+            width: 95%;
+            max-width: 400px;
+            padding: 15px;
+            box-shadow: var(--shadow-dark);
             position: relative;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .tasks-box h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .task-item {
+            background: white;
+            color: var(--secondary-color);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.1s ease;
+            width: 100%;
+        }
+
+        .task-item:hover {
+            transform: scale(1.02);
+        }
+
+        .task-left {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex: 1;
         }
 
-        .mine-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-dark);
-        }
-
-        .mine-btn.mining {
-            background: linear-gradient(45deg, var(--warning-color), #ffb74d);
-        }
-
-        .mine-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .ad-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-1);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .ad-modal-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-            position: relative;
-            animation: modalFadeIn 0.5s ease;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .ad-slot {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 2px solid var(--primary-color);
-            border-radius: 15px;
-            padding: 15px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: var(--shadow-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .ad-timer {
-            font-size: clamp(1em, 2.5vw, 1.2em);
-            color: var(--secondary-color);
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .ad-close-btn {
-            position: absolute;
-            bottom: 20px;
-            background: var(--gradient-2);
-            border: none;
+        .task-icon {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            background: #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--background-color);
-            font-size: 1.5em;
+            font-size: 14px;
+            color: var(--secondary-color);
+        }
+
+        .task-text {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .task-amount {
+            font-size: 13px;
+            color: var(--success-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .task-amount i {
+            font-size: 13px;
+        }
+
+        .task-button {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-light);
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.3s ease;
         }
 
-        .ad-close-btn:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-dark);
+        .task-button:hover {
+            background: #1e7e34;
         }
 
-        .ad-close-btn:disabled {
-            opacity: 0.5;
+        .claimed-btn {
+            background: var(--success-color);
             cursor: not-allowed;
-            transform: none;
+            opacity: 0.8;
+        }
+
+        .claimed-btn:hover {
+            background: var(--success-color);
+        }
+
+        .claim-btn {
+            background: var(--warning-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .claim-btn:hover {
+            background: #cc5200;
+        }
+
+        .loading .task-button, .loading .claim-btn {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .message-display {
+            font-size: 13px;
+            color: var(--primary-color);
+            margin: 0.5rem 0;
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .notification {
@@ -392,18 +339,79 @@
             margin-bottom: 5px;
         }
 
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            color: var(--task-box-bg);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #e0e0e0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .success-animation {
+            animation: pulse 0.5s ease-in-out;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 padding: 15px;
                 margin-bottom: 80px;
             }
 
-            .mining-section {
-                padding: 20px;
+            .tasks-box {
+                padding: 12px;
             }
 
-            .ad-slot {
-                max-width: 100%;
+            .task-item {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+                padding: 8px;
+                margin-bottom: 6px;
+            }
+
+            .task-left {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .task-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 13px;
+            }
+
+            .task-button, .claim-btn {
+                width: 100%;
+                padding: 5px;
+                font-size: 12px;
+            }
+
+            .back-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 13px;
+                top: 8px;
+                left: 8px;
             }
         }
 
@@ -416,24 +424,19 @@
                 font-size: clamp(2em, 5vw, 3em);
             }
 
-            .mining-controls {
-                flex-direction: column;
-                align-items: center;
+            .task-text, .task-amount {
+                font-size: 11px;
             }
 
-            .mine-btn {
-                width: 100%;
-                max-width: 250px;
+            .task-button, .claim-btn {
+                padding: 4px;
+                font-size: 11px;
             }
 
-            .ad-slot {
-                padding: 10px;
-            }
-
-            .ad-close-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2em;
+            .back-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
             }
         }
     </style>
@@ -447,52 +450,66 @@
     <!-- Header -->
     <header class="header">
         <div class="logo">KATO MINE</div>
-        <div class="slogan">ONE TAP TO START, EARN EVERY 12 HOURS</div>
-        <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
+        <div class="slogan">YOUR DIGITAL GOLD RUSH</div>
+        <div class="tagline">EARN REWARDS BY COMPLETING TASKS!</div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Mining Section -->
-        <section class="mining-section">
-            <div class="mining-status" id="miningStatus">Ready to Mine</div>
-            <div class="mining-rate" id="miningRate">11.00 KATO/12 hours</div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
-            </div>
-            <div class="next-reward" id="nextReward">Next reward in: 12:00:00</div>
-            <div class="mining-controls">
-                <button class="mine-btn" id="startMiningBtn">
-                    <i class="fas fa-play"></i>
-                    <span>Start Mining</span>
-                </button>
-                <button class="mine-btn" id="claimBtn" style="display: none;">
-                    <i class="fas fa-hand-holding-usd"></i>
-                    <span>Claim</span>
-                </button>
-            </div>
-        </section>
-    </main>
+        <div class="tasks-box">
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2>Tasks</h2>
 
-    <!-- Ad Modal -->
-    <div class="modal ad-modal" id="adModal" role="dialog" aria-modal="true">
-        <div class="ad-modal-content">
-            <div class="ad-slot" id="adContainer">
-                <script type="text/javascript">
-                    atOptions = {
-                        'key': 'eb117daf94e120e0ae0e6f682c2e34f5',
-                        'format': 'iframe',
-                        'height': 250,
-                        'width': 300,
-                        'params': {}
-                    };
-                </script>
-                <script type="text/javascript" src="//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js"></script>
+            <div class="task-item" id="youtubeTask">
+                <div class="task-left">
+                    <div class="task-icon"><i class="fab fa-youtube"></i></div>
+                    <div>
+                        <div class="task-text">Subscribe to YouTube Channel</div>
+                        <div class="task-amount">
+                            <i class="fas fa-coins"></i> Reward: 3.0 KATO
+                        </div>
+                    </div>
+                </div>
+                <button class="task-button" data-task="youtube">
+                    <i class="fas fa-external-link-alt"></i> Go
+                </button>
             </div>
-            <div class="ad-timer" id="adTimer">Closing in 5 seconds...</div>
-            <button class="ad-close-btn" id="adCloseBtn" disabled><i class="fas fa-times"></i></button>
+
+            <div class="task-item" id="twitterTask">
+                <div class="task-left">
+                    <div class="task-icon"><i class="fab fa-twitter"></i></div>
+                    <div>
+                        <div class="task-text">Follow on Twitter/X</div>
+                        <div class="task-amount">
+                            <i class="fas fa-coins"></i> Reward: 2.5 KATO
+                        </div>
+                    </div>
+                </div>
+                <button class="task-button" data-task="twitter">
+                    <i class="fas fa-external-link-alt"></i> Go
+                </button>
+            </div>
+
+            <div class="task-item" id="telegramTask">
+                <div class="task-left">
+                    <div class="task-icon"><i class="fab fa-telegram"></i></div>
+                    <div>
+                        <div class="task-text">Join Telegram Community</div>
+                        <div class="task-amount">
+                            <i class="fas fa-coins"></i> Reward: 3.0 KATO
+                        </div>
+                    </div>
+                </div>
+                <button class="task-button" data-task="telegram">
+                    <i class="fas fa-external-link-alt"></i> Go
+                </button>
+            </div>
+
+            <div class="message-display" id="messageDisplay">Earn more by completing these tasks!</div>
         </div>
-    </div>
+    </main>
 
     <!-- Notification -->
     <div class="notification" id="notification"></div>
@@ -519,7 +536,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-        import { getDatabase, ref, set, get, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getDatabase, ref, onValue, get, set, push } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
         // Firebase config
@@ -552,30 +569,25 @@
             username: '',
             email: '',
             balance: 0,
-            totalMined: 0,
-            miningRate: 11.00 / 12, // 11 KATO per 12 hours
-            miningHours: 0,
+            tasksEarned: 0,
             referrals: [],
             dailyStreak: 0,
             lastDailyReward: null,
-            miningStartTime: null,
-            tempBalance: 0,
             level: 1
         };
 
-        // Mining variables
-        let miningInterval = null;
-        let miningTimeLeft = 43200; // 12 hours in seconds
-        const TOTAL_REWARD = 11.00; // Fixed reward of 11 KATO per cycle
+        const messageDisplay = document.getElementById('messageDisplay');
+        const taskButtons = document.querySelectorAll('.task-button[data-task]');
+        const backBtn = document.getElementById('backBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        const taskData = {
+            youtube: { url: 'https://youtube.com/@katomine-r4c?si=9aMyKZ11sBlZnkS_', amount: 3.0 },
+            twitter: { url: 'https://x.com/Katominework?t=TWMYMm_YvN_G3MDp37wrfA&s=09', amount: 2.5 },
+            telegram: { url: 'https://t.me/KatoMineCommunity', amount: 3.0 }
+        };
 
         // Utility Functions
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const mins = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
         function showNotification(message, type = 'info') {
             const notification = document.getElementById('notification');
             if (notification) {
@@ -588,213 +600,31 @@
             }
         }
 
-        function updateUI() {
-            const miningRate = document.getElementById('miningRate');
-            const miningStatus = document.getElementById('miningStatus');
-            const progressBar = document.getElementById('progressBar');
-            const timeDisplay = document.getElementById('nextReward');
-            const startMiningBtn = document.getElementById('startMiningBtn');
-            const claimBtn = document.getElementById('claimBtn');
-
-            if (miningRate) miningRate.textContent = `11.00 KATO/12 hours`;
-            if (miningStatus) {
-                miningStatus.textContent = userData.miningStartTime ? 'Mining Active' : (userData.tempBalance >= TOTAL_REWARD ? 'Claim' : 'Ready to Mine');
-            }
-            if (progressBar && timeDisplay) {
-                if (userData.miningStartTime) {
-                    const progress = ((43200 - miningTimeLeft) / 43200) * 100;
-                    progressBar.style.width = `${progress}%`;
-                    progressBar.textContent = `${Math.round(progress)}%`;
-                    timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
-                } else if (userData.tempBalance >= TOTAL_REWARD) {
-                    progressBar.style.width = '100%';
-                    progressBar.textContent = '100%';
-                    timeDisplay.textContent = 'Mining Complete!';
-                } else {
-                    progressBar.style.width = '0%';
-                    progressBar.textContent = '0%';
-                    timeDisplay.textContent = 'Next reward in: 12:00:00';
-                }
-            }
-            if (startMiningBtn && claimBtn) {
-                startMiningBtn.style.display = userData.miningStartTime || userData.tempBalance >= TOTAL_REWARD ? 'none' : 'block';
-                claimBtn.style.display = userData.tempBalance >= TOTAL_REWARD ? 'block' : 'none';
-                if (userData.miningStartTime) {
-                    startMiningBtn.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
-                    startMiningBtn.classList.add('mining');
-                } else {
-                    startMiningBtn.innerHTML = `<i class="fas fa-play"></i><span>Start Mining</span>`;
-                    startMiningBtn.classList.remove('mining');
-                }
-            }
-        }
-
-        // Ad Modal Functions
-        function showAdModal(callback) {
-            const adModal = document.getElementById('adModal');
-            const adTimer = document.getElementById('adTimer');
-            const adCloseBtn = document.getElementById('adCloseBtn');
-
-            if (!adModal || !adTimer || !adCloseBtn) {
-                showNotification('Error: Ad modal elements missing.', 'error');
-                return;
-            }
-
-            adModal.style.display = 'flex';
-            let adTimeLeft = 5; // 5 seconds ad duration
-            adTimer.textContent = `Closing in ${adTimeLeft} seconds...`;
-            adCloseBtn.disabled = true;
-
-            const adInterval = setInterval(() => {
-                adTimeLeft--;
-                adTimer.textContent = `Closing in ${adTimeLeft} seconds...`;
-                if (adTimeLeft <= 0) {
-                    clearInterval(adInterval);
-                    adCloseBtn.disabled = false;
-                }
-            }, 1000);
-
-            adCloseBtn.onclick = () => {
-                clearInterval(adInterval);
-                adModal.style.display = 'none';
-                if (callback) callback();
-            };
-        }
-
-        // Mining System
-        function startMining() {
-            if (!userData.userID) {
-                showNotification('Please log in to start mining.', 'warning');
-                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                return;
-            }
-
-            if (userData.miningStartTime) {
-                showNotification('Mining already in progress!', 'warning');
-                return;
-            }
-
-            showAdModal(() => {
-                userData.miningStartTime = Date.now();
-                userData.tempBalance = 0; // Reset temp balance
-                miningTimeLeft = 43200; // 12 hours
-                updateUserData();
-                runMiningCycle();
-            });
-        }
-
-        function runMiningCycle() {
-            const miningButton = document.getElementById('startMiningBtn');
-            const claimButton = document.getElementById('claimBtn');
-            const progressBar = document.getElementById('progressBar');
-            const timeDisplay = document.getElementById('nextReward');
-            const miningStatus = document.getElementById('miningStatus');
-
-            if (!miningButton || !claimButton || !progressBar || !timeDisplay || !miningStatus) {
-                showNotification('Error: Mining UI elements missing.', 'error');
-                return;
-            }
-
-            miningButton.style.display = 'block';
-            claimButton.style.display = 'none';
-            miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
-            miningButton.classList.add('mining');
-            miningStatus.textContent = 'Mining Active';
-
-            if (miningInterval) clearInterval(miningInterval);
-            miningInterval = setInterval(() => {
-                miningTimeLeft--;
-                userData.tempBalance = (TOTAL_REWARD * (43200 - miningTimeLeft)) / 43200; // Linearly increase to 11 KATO
-                miningButton.innerHTML = `<i class="fas fa-coins"></i><span>Balance: ${userData.tempBalance.toFixed(3)}</span>`;
-                const progress = ((43200 - miningTimeLeft) / 43200) * 100;
-                progressBar.style.width = `${progress}%`;
-                progressBar.textContent = `${Math.round(progress)}%`;
-                timeDisplay.textContent = `Next reward in: ${formatTime(miningTimeLeft)}`;
-                if (miningTimeLeft <= 0) {
-                    completeMining();
-                }
-            }, 1000);
-        }
-
-        function resumeMining(elapsed) {
-            const miningButton = document.getElementById('startMiningBtn');
-            const claimButton = document.getElementById('claimBtn');
-            const progressBar = document.getElementById('progressBar');
-            const timeDisplay = document.getElementById('nextReward');
-            const miningStatus = document.getElementById('miningStatus');
-
-            if (!miningButton || !claimButton || !progressBar || !timeDisplay || !miningStatus) {
-                showNotification('Error: Mining UI elements missing.', 'error');
-                return;
-            }
-
-            miningTimeLeft = 43200 - elapsed;
-            if (miningTimeLeft <= 0) {
-                completeMining();
-                return;
-            }
-
-            userData.tempBalance = (TOTAL_REWARD * (43200 - miningTimeLeft)) / 43200; // Calculate current temp balance
-            runMiningCycle();
-        }
-
-        function completeMining() {
-            if (miningInterval) {
-                clearInterval(miningInterval);
-                miningInterval = null;
-            }
-            userData.miningStartTime = null;
-            userData.tempBalance = TOTAL_REWARD; // Ensure tempBalance is exactly 11 KATO
-            updateUserData();
-            const miningButton = document.getElementById('startMiningBtn');
-            const claimButton = document.getElementById('claimBtn');
-            const miningStatus = document.getElementById('miningStatus');
-            const progressBar = document.getElementById('progressBar');
-            const timeDisplay = document.getElementById('nextReward');
-
-            if (miningButton && claimButton && miningStatus && progressBar && timeDisplay) {
-                miningButton.style.display = 'none';
-                claimButton.style.display = 'block';
-                miningStatus.textContent = 'Claim';
-                progressBar.style.width = '100%';
-                progressBar.textContent = '100%';
-                timeDisplay.textContent = 'Mining Complete!';
-                showNotification(`Mining complete! Ready to claim ${userData.tempBalance.toFixed(2)} KATO`, 'success');
-            }
-        }
-
-        function claimReward() {
-            if (!userData.userID) {
-                showNotification('Please log in to claim rewards.', 'warning');
-                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                return;
-            }
-
-            const minedAmount = userData.tempBalance; // Should be 11 KATO
-            userData.balance += minedAmount;
-            userData.totalMined += minedAmount;
-            userData.miningHours += 12; // Update to 12 hours
-            userData.tempBalance = 0; // Reset temp balance
-            userData.miningStartTime = null;
-            updateUserData();
-            updateUI();
-            showNotification(`Reward claimed! +${minedAmount.toFixed(2)} KATO`, 'success');
-        }
-
-        // Update Firebase
-        async function updateUserData() {
-            if (!database || !userData.userID) {
-                console.warn('Cannot update user data: database or userID missing');
-                return;
-            }
+        function isLocalStorageAvailable() {
             try {
-                await set(ref(database, 'users/' + userData.userID), {
-                    ...userData,
-                    referrals: userData.referrals || []
-                });
-            } catch (error) {
-                console.error('Error updating user data:', error);
-                showNotification('Error updating user data.', 'error');
+                const test = '__test__';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function updateButtonState(taskType, button, state) {
+            console.log(`Updating button state for ${taskType} to ${state}`);
+            if (state === 'complete') {
+                button.innerHTML = '<i class="fas fa-check"></i> Complete';
+                button.className = 'task-button claimed-btn';
+                button.disabled = true;
+            } else if (state === 'claim') {
+                button.innerHTML = '<i class="fas fa-coins"></i> Claim';
+                button.className = 'task-button claim-btn';
+                button.disabled = false;
+            } else {
+                button.innerHTML = '<i class="fas fa-external-link-alt"></i> Go';
+                button.className = 'task-button';
+                button.disabled = false;
             }
         }
 
@@ -808,15 +638,11 @@
                         username: userData.username || userData.email.split('@')[0],
                         email: userData.email,
                         balance: 0.00,
+                        tasksEarned: 0,
                         referrerID: referrerID,
                         referrals: [],
-                        totalMined: 0,
-                        miningRate: 11.00 / 12,
-                        miningHours: 0,
                         dailyStreak: 0,
                         lastDailyReward: null,
-                        miningStartTime: null,
-                        tempBalance: 0,
                         level: 1
                     });
                     if (referrerID) {
@@ -840,28 +666,147 @@
             }
         }
 
+        window.handleTaskAction = async function(taskType, action = 'go') {
+            console.log(`Handling task action: ${taskType}, Action: ${action}`);
+            if (!userData.userID) {
+                showNotification('Please login to claim rewards.', 'warning');
+                messageDisplay.textContent = 'Please visit the Home page to initialize your account.';
+                console.log('No userID found');
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                return;
+            }
+
+            const button = document.querySelector(`.task-button[data-task="${taskType}"]`);
+            const card = button.closest('.task-item');
+
+            if (!button || !card) {
+                console.error(`Button or card not found for taskType: ${taskType}`);
+                showNotification('Error: Task button not found.', 'error');
+                return;
+            }
+
+            try {
+                const userRef = ref(database, `users/${userData.userID}/tasks/${taskType}`);
+                const snapshot = await get(userRef);
+                if (snapshot.exists() && snapshot.val().claimed) {
+                    showNotification('You have already claimed this task reward!', 'warning');
+                    updateButtonState(taskType, button, 'complete');
+                    console.log(`Task ${taskType} already claimed`);
+                    localStorage.removeItem('pendingTask');
+                    return;
+                }
+
+                if (action === 'go') {
+                    console.log(`Opening URL for ${taskType}: ${taskData[taskType].url}`);
+                    card.classList.add('loading');
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                    button.disabled = true;
+
+                    if (isLocalStorageAvailable()) {
+                        localStorage.setItem('pendingTask', taskType);
+                        console.log(`Saved ${taskType} as pending task in localStorage`);
+                    }
+
+                    const newWindow = window.open(taskData[taskType].url, '_blank');
+                    if (!newWindow) {
+                        console.error('Failed to open URL: Popup blocked or other issue');
+                        showNotification('Please allow popups to proceed.', 'warning');
+                        card.classList.remove('loading');
+                        updateButtonState(taskType, button, 'go');
+                        localStorage.removeItem('pendingTask');
+                        return;
+                    }
+
+                    window.addEventListener('focus', function onFocus() {
+                        window.removeEventListener('focus', onFocus);
+                        card.classList.remove('loading');
+                        updateButtonState(taskType, button, 'claim');
+                        messageDisplay.textContent = `Click Claim to receive your ${taskData[taskType].amount} KATO for ${taskType} task!`;
+                        console.log(`Switched ${taskType} button to Claim state`);
+                    }, { once: true });
+                } else if (action === 'claim') {
+                    card.classList.add('loading');
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Claiming...';
+                    button.disabled = true;
+
+                    await claimTask(taskType, card, button);
+                    localStorage.removeItem('pendingTask');
+                }
+            } catch (error) {
+                console.error(`Error in handleTaskAction for ${taskType}:`, error);
+                showNotification('An error occurred. Please try again.', 'error');
+                card.classList.remove('loading');
+                updateButtonState(taskType, button, 'go');
+                localStorage.removeItem('pendingTask');
+            }
+        };
+
+        async function claimTask(taskType, card, button) {
+            try {
+                const task = taskData[taskType];
+                const userRef = ref(database, `users/${userData.userID}`);
+                const tasksRef = ref(database, `users/${userData.userID}/tasks/${taskType}`);
+                const activitiesRef = ref(database, `users/${userData.userID}/activities`);
+
+                const snapshot = await get(tasksRef);
+                if (snapshot.exists() && snapshot.val().claimed) {
+                    showNotification('This task reward has already been claimed!', 'warning');
+                    updateButtonState(taskType, button, 'complete');
+                    card.classList.remove('loading');
+                    localStorage.removeItem('pendingTask');
+                    return;
+                }
+
+                const userSnapshot = await get(userRef);
+                const existingData = userSnapshot.val() || { balance: 0, tasksEarned: 0, referrals: [], dailyStreak: 0, lastDailyReward: null, level: 1 };
+                const newBalance = (existingData.balance || 0) + task.amount;
+                const newTasksEarned = (existingData.tasksEarned || 0) + task.amount;
+
+                await set(userRef, {
+                    ...existingData,
+                    balance: newBalance,
+                    tasksEarned: newTasksEarned
+                });
+
+                await set(tasksRef, {
+                    claimed: true,
+                    amount: task.amount,
+                    date: Date.now()
+                });
+
+                await push(activitiesRef, {
+                    type: `${taskType.charAt(0).toUpperCase() + taskType.slice(1)} Task`,
+                    amount: task.amount,
+                    date: Date.now()
+                });
+
+                userData.balance = newBalance;
+                userData.tasksEarned = newTasksEarned;
+
+                updateButtonState(taskType, button, 'complete');
+                card.classList.add('success-animation');
+                setTimeout(() => card.classList.remove('success-animation'), 500);
+
+                showNotification(`Congratulations! You earned ${task.amount} KATO!`, 'success');
+                messageDisplay.textContent = `You earned ${task.amount} KATO for ${taskType} task!`;
+            } catch (error) {
+                console.error('Error claiming task:', error);
+                showNotification('Failed to claim task reward. Please try again.', 'error');
+                messageDisplay.textContent = 'Error claiming task reward.';
+                updateButtonState(taskType, button, 'claim');
+            } finally {
+                card.classList.remove('loading');
+            }
+        }
+
         // Initialize User
         async function initializeUser() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+            loadingOverlay.style.display = 'flex';
 
             if (!isFirebaseInitialized) {
                 const success = await initializeFirebase();
                 if (!success) {
-                    if (loadingOverlay) loadingOverlay.style.display = 'none';
-                    return;
-                }
-            }
-
-            const requiredElements = [
-                'startMiningBtn', 'claimBtn', 'adModal', 'adCloseBtn', 'adTimer',
-                'miningRate', 'progressBar', 'nextReward', 'miningStatus'
-            ];
-            for (const id of requiredElements) {
-                if (!document.getElementById(id)) {
-                    console.error(`DOM element ${id} not found`);
-                    showNotification(`Initialization error: Missing element ${id}`, 'error');
-                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    loadingOverlay.style.display = 'none';
                     return;
                 }
             }
@@ -870,7 +815,7 @@
                 if (!user) {
                     showNotification('Please log in to access this page.', 'warning');
                     window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    loadingOverlay.style.display = 'none';
                     return;
                 }
 
@@ -878,23 +823,15 @@
                 userData.email = user.email;
                 userData.username = user.displayName || user.email.split('@')[0];
 
-                const userRef = ref(database, 'users/' + userData.userID);
+                if (isLocalStorageAvailable()) {
+                    localStorage.setItem('userID', userData.userID);
+                }
+
+                const userRef = ref(database, `users/${userData.userID}`);
                 try {
                     const snapshot = await get(userRef);
                     if (snapshot.exists()) {
                         userData = { ...userData, ...snapshot.val(), userID: user.uid };
-                        updateUI();
-                        if (userData.miningStartTime) {
-                            const elapsed = Math.floor((Date.now() - userData.miningStartTime) / 1000);
-                            if (elapsed >= 43200) {
-                                userData.miningStartTime = null;
-                                userData.tempBalance = TOTAL_REWARD; // Set to 11 KATO
-                                updateUserData();
-                                completeMining();
-                            } else {
-                                resumeMining(elapsed);
-                            }
-                        }
                     } else {
                         const urlParams = new URLSearchParams(window.location.search);
                         const referrerID = urlParams.get('ref') || null;
@@ -902,70 +839,82 @@
                         userData = {
                             ...userData,
                             balance: 0,
-                            totalMined: 0,
-                            miningRate: 11.00 / 12,
-                            miningHours: 0,
+                            tasksEarned: 0,
                             referrals: [],
                             dailyStreak: 0,
                             lastDailyReward: null,
-                            miningStartTime: null,
-                            tempBalance: 0,
                             level: 1
                         };
-                        updateUI();
                     }
+
+                    const pendingTask = isLocalStorageAvailable() ? localStorage.getItem('pendingTask') : null;
+                    if (pendingTask && taskData[pendingTask]) {
+                        console.log(`Found pending task: ${pendingTask}`);
+                        const button = document.querySelector(`.task-button[data-task="${pendingTask}"]`);
+                        if (button && !snapshot.val()?.tasks?.[pendingTask]?.claimed) {
+                            updateButtonState(pendingTask, button, 'claim');
+                            messageDisplay.textContent = `Click Claim to receive your ${taskData[pendingTask].amount} KATO for ${pendingTask} task!`;
+                        }
+                    }
+
+                    onValue(userRef, (snapshot) => {
+                        const data = snapshot.val();
+                        console.log('User data fetched:', data);
+                        if (data && data.tasks) {
+                            taskButtons.forEach(button => {
+                                const taskType = button.getAttribute('data-task');
+                                const taskState = data.tasks[taskType]?.claimed ? 'complete' : (pendingTask === taskType ? 'claim' : 'go');
+                                updateButtonState(taskType, button, taskState);
+                                console.log(`Button state for ${taskType}: ${taskState}`);
+                            });
+                            messageDisplay.textContent = 'Earn more by completing these tasks!';
+                        } else {
+                            taskButtons.forEach(button => {
+                                const taskType = button.getAttribute('data-task');
+                                const taskState = pendingTask === taskType ? 'claim' : 'go';
+                                updateButtonState(taskType, button, taskState);
+                                console.log(`Button state for ${taskType}: ${taskState}`);
+                            });
+                            messageDisplay.textContent = 'Earn more by completing these tasks!';
+                        }
+                    }, {
+                        onlyOnce: false,
+                        error: (error) => {
+                            console.error('Error fetching user data:', error);
+                            showNotification('Error loading tasks data. Please try again.', 'error');
+                            messageDisplay.textContent = 'Error loading tasks data.';
+                        }
+                    });
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                     showNotification('Error fetching user data. Please try again.', 'error');
                 }
 
-                updateUI();
-                if (loadingOverlay) loadingOverlay.style.display = 'none';
-
-                const startMiningBtn = document.getElementById('startMiningBtn');
-                const claimBtn = document.getElementById('claimBtn');
-
-                startMiningBtn.addEventListener('click', startMining);
-                claimBtn.addEventListener('click', claimReward);
-
-                const unsubscribe = onValue(userRef, (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        userData = { ...userData, ...data, userID: user.uid };
-                        if (data.miningStartTime && !miningInterval) {
-                            const elapsed = Math.floor((Date.now() - data.miningStartTime) / 1000);
-                            if (elapsed >= 43200) {
-                                userData.miningStartTime = null;
-                                userData.tempBalance = TOTAL_REWARD; // Set to 11 KATO
-                                updateUserData();
-                                completeMining();
-                            } else {
-                                resumeMining(elapsed);
-                            }
-                        }
-                        updateUI();
-                    } else {
-                        console.error('No user data found for ID:', userData.userID);
-                        showNotification('User data not found. Please log in again.', 'error');
-                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    }
-                }, (error) => {
-                    console.error('Error fetching user data:', error);
-                    showNotification('Error fetching user data. Please try again later.', 'error');
-                });
-
-                window.addEventListener('unload', () => {
-                    if (miningInterval) {
-                        clearInterval(miningInterval);
-                        miningInterval = null;
-                    }
-                    unsubscribe();
-                });
+                loadingOverlay.style.display = 'none';
             });
         }
 
         // Initialize
         initializeUser();
+
+        backBtn.addEventListener('click', () => {
+            try {
+                localStorage.removeItem('pendingTask');
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/index.html';
+            } catch (error) {
+                console.error('Navigation error:', error);
+                showNotification('Error navigating to Home page. Please try again.', 'error');
+            }
+        });
+
+        taskButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const taskType = button.getAttribute('data-task');
+                const currentText = button.innerHTML.includes('Claim') ? 'claim' : 'go';
+                console.log(`Button clicked: ${taskType}, Action: ${currentText}`);
+                window.handleTaskAction(taskType, currentText);
+            });
+        });
 
         const navLinks = document.querySelectorAll('.nav-item');
         navLinks.forEach(link => {
