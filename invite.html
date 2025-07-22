@@ -396,7 +396,7 @@
             max-height: 200px;
             overflow-y: auto;
             padding-right: 10px;
-       izează
+        }
 
         .referral-item {
             display: flex;
@@ -655,8 +655,7 @@
                     <div class="achievement-label">Speed Demon</div>
                 </div>
             </div>
-            <div class="share-buttons">
-            </div>
+            <div class="share-buttons" id="shareButtons"></div>
         </section>
         <section class="referrals-section">
             <div class="section-title">
@@ -706,7 +705,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-        import { getDatabase, ref, set, get, onValue, update, query, orderByChild, equalTo } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getDatabase, ref, set, get, onValue, update, query, orderByChild, equalTo, limitToLast } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
         // Firebase config
@@ -760,6 +759,7 @@
         const earnedTokens = document.getElementById('earnedTokens');
         const referralList = document.getElementById('referralList');
         const leaderboardList = document.getElementById('leaderboardList');
+        const shareButtons = document.getElementById('shareButtons');
 
         // Notification Function
         function showNotification(message, type = 'info') {
@@ -844,11 +844,11 @@
             `).join('');
         }
 
-        // Load Leaderboard
+        // Load Leaderboard (Optimized)
         async function loadLeaderboard() {
             try {
                 const usersRef = ref(database, 'users');
-                const snapshot = await get(usersRef);
+                const snapshot = await get(query(usersRef, limitToLast(50))); // Limit to last 50 users for efficiency
 
                 if (!snapshot.exists()) {
                     leaderboardList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No data available</div>`;
@@ -889,11 +889,36 @@
             }
         }
 
-        // Setup Share Buttons
+        // Setup Share Buttons (Dynamic)
         function setupShareButtons() {
             if (!userData.inviteCode) return;
             const referralLink = `https://katomineconnect.github.io/KatoMine.com/index.html?ref=${userData.inviteCode}`;
             const shareText = `Join Katomine and earn crypto! Use my invite code: ${userData.inviteCode}`;
+
+            const shareOptions = [
+                {
+                    platform: 'WhatsApp',
+                    icon: 'fab fa-whatsapp',
+                    url: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + referralLink)}`
+                },
+                {
+                    platform: 'Twitter',
+                    icon: 'fab fa-twitter',
+                    url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`
+                },
+                {
+                    platform: 'Telegram',
+                    icon: 'fab fa-telegram',
+                    url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(shareText)}`
+                }
+            ];
+
+            shareButtons.innerHTML = shareOptions.map(option => `
+                <button class="share-btn" onclick="window.open('${option.url}', '_blank')">
+                    <i class="${option.icon}"></i>
+                    ${option.platform}
+                </button>
+            `).join('');
         }
 
         // Initialize Invite Page
@@ -912,7 +937,7 @@
 
             const requiredElements = [
                 'referralCodeElement', 'referralInput', 'submitReferral', 'messageDisplay',
-                'totalReferrals', 'earnedTokens', 'referralList', 'leaderboardList'
+                'totalReferrals', 'earnedTokens', 'referralList', 'leaderboardList', 'shareButtons'
             ];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
