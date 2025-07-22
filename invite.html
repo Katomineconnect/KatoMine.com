@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
+        /* আপনার দেওয়া CSS অংশ এখানে অপরিবর্তিত রয়েছে */
         :root {
             --primary-color: #ffd700;
             --secondary-color: #d3d3d3;
@@ -1063,7 +1064,7 @@
                             const newUserData = {
                                 username: userData.username || userData.email.split('@')[0],
                                 email: userData.email,
-                                balance: 0,
+                                balance: referrerID ? 25 : 0, // New user gets 25 tokens if referred
                                 inviteCode: newInviteCode,
                                 referrerID: referrerID,
                                 referrals: [],
@@ -1085,16 +1086,44 @@
 
                             await set(userRef, newUserData);
                             userData = { ...userData, ...newUserData };
+
+                            // Update referrer's balance if referred
+                            if (referrerID) {
+                                const referrerRef = ref(database, `users/${referrerID}`);
+                                try {
+                                    const referrerSnapshot = await get(referrerRef);
+                                    if (referrerSnapshot.exists()) {
+                                        const referrerData = referrerSnapshot.val();
+                                        const referrerNewBalance = (referrerData.balance || 0) + 50;
+                                        await update(referrerRef, { balance: referrerNewBalance });
+                                    }
+                                } catch (error) {
+                                    console.error('Error updating referrer balance:', error.message || error);
+                                    showNotification('Error updating referrer balance.', 'error');
+                                }
+
+                                // Create referral entry
+                                const referralsRef = ref(database, 'referrals');
+                                const newReferralRef = push(referralsRef);
+                                const newReferral = {
+                                    referrerID: referrerID,
+                                    referredID: userData.userID,
+                                    inviteCode: newInviteCode,
+                                    date: Date.now()
+                                };
+                                await set(newReferralRef, newReferral);
+                            }
+
                             if (referralCodeElement) {
                                 referralCodeElement.textContent = `Invite Code: ${userData.inviteCode}`;
                             }
                             setupShareButtons();
 
                             if (totalReferrals) totalReferrals.textContent = 0;
-                            if (earnedTokens) earnedTokens.textContent = 0;
+                            if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
                             await displayReferralList();
-                            if (submitReferralButton) submitReferralButton.disabled = false;
-                            if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
+                            if (submitReferralButton) submitReferralButton.disabled = referrerID ? true : false;
+                            if (messageDisplay) messageDisplay.textContent = referrerID ? 'Referral applied successfully! You earned 25 KATO.' : 'Enter an invite code to get started!';
                         } catch (error) {
                             console.error('Error creating user data:', error.message || error);
                             showNotification('Failed to initialize user data. Please try again.', 'error');
@@ -1227,9 +1256,8 @@
                         };
 
                         // Update balances
-                        const referrerRef = ref(database, `users/${referrerID}`);
                         const userNewBalance = (userData.balance || 0) + 25;
-                        const referrerNewBalance = (referrerData.balance || 0) + 100;
+                        const referrerNewBalance = (referrerData.balance || 0) + 50;
 
                         await Promise.all([
                             set(newReferralRef, newReferral),
@@ -1242,7 +1270,7 @@
                             })
                         ]);
 
-                        showNotification('Referral submitted successfully! You earned 25 KATO, and referrer earned 100 KATO.', 'success');
+                        showNotification('Referral submitted successfully! You earned 25 KATO, and referrer earned 50 KATO.', 'success');
                         submitReferralButton.disabled = true;
                         messageDisplay.textContent = 'Referral submitted successfully! You earned 25 KATO.';
                         await displayReferralList();
