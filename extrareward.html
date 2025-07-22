@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Tasks Box - Earn Rewards by Completing Tasks">
-    <meta name="theme-color" content="#0047ab">
-    <title>Tasks Box - Extra Rewards</title>
+    <meta name="description" content="Katomine - Your Digital Gold Rush. More features coming soon!">
+    <meta name="theme-color" content="#0d1b2a">
+    <title>Kato Mine - Extra Reward</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
         :root {
-            --primary-color: #ffffff;
-            --secondary-color: #333;
-            --background-color: #f2f2f2;
-            --accent-color: #28a745;
-            --success-color: #28a745;
+            --primary-color: #ffd700;
+            --secondary-color: #d3d3d3;
+            --background-color: #0d1b2a;
+            --accent-color: #00bfff;
+            --success-color: #00ff88;
             --warning-color: #ff6b35;
             --error-color: #ff4757;
-            --task-box-bg: #0047ab;
-            --shadow-light: 0 4px 8px rgba(0,0,0,0.2);
+            --gradient-1: linear-gradient(135deg, #0d1b2a, #1b263b);
+            --gradient-2: linear-gradient(135deg, #ffd700, #ffed4a);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-dark: 0 8px 25px rgba(0,0,0,0.3);
         }
 
         * {
@@ -28,199 +32,183 @@
         }
 
         body {
-            font-family: sans-serif;
-            background: var(--background-color);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--gradient-1);
             color: var(--primary-color);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
-            padding: 20px;
+            flex-direction: column;
             overflow-x: hidden;
             position: relative;
         }
 
-        .back-btn {
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--secondary-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--shadow-dark);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            position: relative;
+        }
+
+        .back-button {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            background: white;
-            color: var(--task-box-bg);
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s ease;
-        }
-
-        .back-btn:hover {
-            background: #e0e0e0;
-        }
-
-        .tasks-box {
-            background: var(--task-box-bg);
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--primary-color);
-            border-radius: 12px;
-            width: 95%;
-            max-width: 400px;
-            padding: 15px;
-            box-shadow: var(--shadow-light);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+            text-decoration: none;
         }
 
-        .tasks-box h2 {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .task-item {
-            background: white;
-            color: var(--secondary-color);
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.1s ease;
-            width: 100%;
-        }
-
-        .task-item:hover {
-            transform: scale(1.02);
-        }
-
-        .task-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-        }
-
-        .task-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: var(--secondary-color);
-        }
-
-        .task-text {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .task-amount {
-            font-size: 13px;
+        .back-button:hover {
             color: var(--accent-color);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            transform: translateY(-50%) scale(1.1);
         }
 
-        .task-amount i {
-            font-size: 13px;
+        .logo {
+            font-size: clamp(2.5em, 6vw, 4em);
+            letter-spacing: 4px;
+            font-weight: bold;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
         }
 
-        .task-button {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 5px 12px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: background 0.3s ease;
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            to { text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
         }
 
-        .task-button:hover {
-            background: #1e7e34;
+        .slogan {
+            font-size: clamp(1.2em, 3vw, 1.4em);
+            color: var(--secondary-color);
+            margin-bottom: 5px;
         }
 
-        .claimed-btn {
-            background: var(--success-color);
-            cursor: not-allowed;
-            opacity: 0.8;
+        .tagline {
+            font-size: clamp(1em, 2.5vw, 1.2em);
+            color: var(--accent-color);
+            font-weight: 500;
         }
 
-        .claimed-btn:hover {
-            background: var(--success-color);
-        }
-
-        .claim-btn {
-            background: var(--warning-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 5px 12px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: background 0.3s ease;
-        }
-
-        .claim-btn:hover {
-            background: #cc5200;
-        }
-
-        .loading .task-button, .loading .claim-btn {
-            background: #666;
-            cursor: not-allowed;
-        }
-
-        .message-display {
-            font-size: 13px;
-            color: var(--primary-color);
-            margin: 0.5rem 0;
-            text-align: center;
-            padding: 8px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .ad-container {
-            position: relative;
-            width: 100%;
-            max-width: 320px;
-            margin: 8px auto;
+        .main-content {
+            flex: 1;
+            padding: 20px;
             display: flex;
             flex-direction: column;
+            gap: 20px;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
         }
 
-        .ad-iframe {
-            display: block;
-            border: none;
+        .coming-soon-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+            box-shadow: var(--shadow-dark);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            width: min(95%, 600px);
+        }
+
+        .coming-soon-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.1; }
+            50% { transform: scale(1.2); opacity: 0.05; }
+        }
+
+        .coming-soon-title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .coming-soon-message {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .coming-soon-icon {
+            font-size: clamp(3rem, 8vw, 4rem);
+            color: var(--accent-color);
+            margin-bottom: 20px;
         }
 
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 12px 15px;
-            border-radius: 8px;
+            padding: 15px 20px;
+            border-radius: 10px;
             color: white;
             font-weight: 500;
             z-index: 1000;
-            max-width: 280px;
+            max-width: 300px;
             transform: translateX(100%);
             transition: transform 0.3s ease;
         }
@@ -245,237 +233,66 @@
             background: var(--accent-color);
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
 
-        .success-animation {
-            animation: pulse 0.5s ease-in-out;
-        }
-
-        @media (max-width: 600px) {
-            .tasks-box {
-                padding: 12px;
-            }
-            .task-item {
-                flex-direction: column;
-                gap: 8px;
-                text-align: center;
-                padding: 8px;
-                margin-bottom: 6px;
-            }
-            .task-left {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .task-icon {
-                width: 30px;
-                height: 30px;
-                font-size: 13px;
-            }
-            .task-button, .claim-btn {
-                width: 100%;
-                padding: 5px;
-                font-size: 12px;
-            }
-            .back-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 13px;
-                top: 8px;
-                left: 8px;
-            }
-            .ad-container {
-                max-width: 280px;
+            .coming-soon-section {
+                padding: 20px;
             }
         }
 
-        @media (max-width: 360px) {
-            .tasks-box {
-                padding: 10px;
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px;
             }
-            .task-item {
-                padding: 6px;
-                margin-bottom: 5px;
+
+            .logo {
+                font-size: clamp(2em, 5vw, 3em);
             }
-            .task-text, .task-amount {
-                font-size: 11px;
+
+            .coming-soon-section {
+                width: min(95%, 280px);
             }
-            .task-button, .claim-btn {
-                padding: 4px;
-                font-size: 11px;
-            }
-            .back-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 12px;
-            }
-            .ad-container {
-                max-width: 260px;
+
+            .back-button {
+                font-size: 1.2em;
+                left: 15px;
             }
         }
     </style>
 </head>
 <body>
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-        <div class="loading-spinner" style="width: 60px; height: 60px; border: 4px solid #ffffff; border-top: 4px solid #0047ab; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
     </div>
 
-    <div class="tasks-box">
-        <button class="back-btn" id="backBtn">
+    <!-- Header -->
+    <header class="header">
+        <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="back-button">
             <i class="fas fa-arrow-left"></i>
-        </button>
-        <h2>Tasks</h2>
+        </a>
+        <div class="logo">KATO MINE</div>
+        <div class="slogan">MORE FEATURES COMING SOON!</div>
+        <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
+    </header>
 
-        <div class="task-item" id="youtubeTask">
-            <div class="task-left">
-                <div class="task-icon"><i class="fab fa-youtube"></i></div>
-                <div>
-                    <div class="task-text">Subscribe to YouTube Channel</div>
-                    <div class="task-amount">
-                        <i class="fas fa-coins"></i> Reward: 3.0 KATO
-                    </div>
-                </div>
-            </div>
-            <button class="task-button" data-task="youtube">
-                <i class="fas fa-external-link-alt"></i> Go
-            </button>
-        </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="coming-soon-section">
+            <i class="fas fa-rocket coming-soon-icon"></i>
+            <div class="coming-soon-title">Extra Rewards</div>
+            <div class="coming-soon-message">More exciting features and rewards are on the way! Stay tuned for updates!</div>
+        </section>
+    </main>
 
-        <div class="task-item" id="twitterTask">
-            <div class="task-left">
-                <div class="task-icon"><i class="fab fa-twitter"></i></div>
-                <div>
-                    <div class="task-text">Follow on Twitter/X</div>
-                    <div class="task-amount">
-                        <i class="fas fa-coins"></i> Reward: 2.5 KATO
-                    </div>
-                </div>
-            </div>
-            <button class="task-button" data-task="twitter">
-                <i class="fas fa-external-link-alt"></i> Go
-            </button>
-        </div>
-
-        <div class="task-item" id="telegramTask">
-            <div class="task-left">
-                <div class="task-icon"><i class="fab fa-telegram"></i></div>
-                <div>
-                    <div class="task-text">Join Telegram Community</div>
-                    <div class="task-amount">
-                        <i class="fas fa-coins"></i> Reward: 3.0 KATO
-                    </div>
-                </div>
-            </div>
-            <button class="task-button" data-task="telegram">
-                <i class="fas fa-external-link-alt"></i> Go
-            </button>
-        </div>
-
-        <div class="message-display" id="messageDisplay">Earn more by completing these tasks!</div>
-
-        <div class="ad-container" id="adContainer">
-            <div id="ad-iframe"></div>
-        </div>
-    </div>
-
+    <!-- Notification -->
     <div class="notification" id="notification"></div>
 
-    <script type="text/javascript">
-        // Ad configurations
-        const adConfigs = [
-            {
-                key: '78ade24182729fceea8e45203dad915b',
-                src: '//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js',
-                height: 50,
-                width: 320
-            },
-            {
-                key: 'eb117daf94e120e0ae0e6f682c2e34f5',
-                src: '//www.highperformanceformat.com/eb117daf94e120e0ae0e6f682c2e34f5/invoke.js',
-                height: 50,
-                width: 320
-            }
-        ];
-
-        function loadAd() {
-            const adContainer = document.getElementById('ad-iframe');
-            adContainer.innerHTML = ''; // Clear previous ad
-
-            // Select a random ad from adConfigs
-            const randomAd = adConfigs[Math.floor(Math.random() * adConfigs.length)];
-
-            // Set atOptions for the selected ad
-            atOptions = {
-                'key': randomAd.key,
-                'format': 'iframe',
-                'height': randomAd.height,
-                'width': randomAd.width,
-                'params': {}
-            };
-
-            // Create and append ad script
-            const adScript = document.createElement('script');
-            adScript.type = 'text/javascript';
-            adScript.src = randomAd.src;
-            adContainer.appendChild(adScript);
-        }
-
-        // Load initial ad
-        loadAd();
-
-        // Rotate ads every 30 seconds
-        setInterval(loadAd, 30000);
-    </script>
-
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-        import { getDatabase, ref, onValue, get, set, push } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-
-        // Firebase config
-        let firebaseConfig;
-        let database, auth;
-        let isFirebaseInitialized = false;
-
-        async function initializeFirebase() {
-            try {
-                const configModule = await import('./config.js');
-                firebaseConfig = configModule.firebaseConfig;
-                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
-                    throw new Error('Firebase configuration is missing or invalid');
-                }
-                const app = initializeApp(firebaseConfig);
-                database = getDatabase(app);
-                auth = getAuth(app);
-                isFirebaseInitialized = true;
-                return true;
-            } catch (error) {
-                console.error('Error initializing Firebase:', error);
-                showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
-                return false;
-            }
-        }
-
-        const messageDisplay = document.getElementById('messageDisplay');
-        const taskButtons = document.querySelectorAll('.task-button[data-task]');
-        const backBtn = document.getElementById('backBtn');
-        const loadingOverlay = document.getElementById('loadingOverlay');
-
-        const taskData = {
-            youtube: { url: 'https://youtube.com/@katomine-r4c?si=9aMyKZ11sBlZnkS_', amount: 3.0 },
-            twitter: { url: 'https://x.com/Katominework?t=TWMYMm_YvN_G3MDp37wrfA&s=09', amount: 2.5 },
-            telegram: { url: 'https://t.me/KatoMineCommunity', amount: 3.0 }
-        };
-
-        let userData = {
-            userID: null,
-            balance: 0,
-            tasksEarned: 0
-        };
-
+    <script>
+        // Notification Function
         function showNotification(message, type = 'info') {
             const notification = document.getElementById('notification');
             if (notification) {
@@ -488,273 +305,18 @@
             }
         }
 
-        function isLocalStorageAvailable() {
-            try {
-                const test = '__test__';
-                localStorage.setItem(test, test);
-                localStorage.removeItem(test);
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-
-        function updateButtonState(taskType, button, state) {
-            console.log(`Updating button state for ${taskType} to ${state}`);
-            if (state === 'complete') {
-                button.innerHTML = '<i class="fas fa-check"></i> Complete';
-                button.className = 'task-button claimed-btn';
-                button.disabled = true;
-            } else if (state === 'claim') {
-                button.innerHTML = '<i class="fas fa-coins"></i> Claim';
-                button.className = 'task-button claim-btn';
-                button.disabled = false;
-            } else {
-                button.innerHTML = '<i class="fas fa-external-link-alt"></i> Go';
-                button.className = 'task-button';
-                button.disabled = false;
-            }
-        }
-
-        window.handleTaskAction = async function(taskType, action = 'go') {
-            console.log(`Handling task action: ${taskType}, Action: ${action}`);
-            if (!userData.userID) {
-                showNotification('Please login to claim rewards.', 'warning');
-                messageDisplay.textContent = 'Please visit the Home page to initialize your account.';
-                console.log('No userID found');
-                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                return;
-            }
-
-            const button = document.querySelector(`.task-button[data-task="${taskType}"]`);
-            const card = button.closest('.task-item');
-
-            if (!button || !card) {
-                console.error(`Button or card not found for taskType: ${taskType}`);
-                showNotification('Error: Task button not found.', 'error');
-                return;
-            }
-
-            try {
-                const userRef = ref(database, `users/${userData.userID}/tasks/${taskType}`);
-                const snapshot = await get(userRef);
-                if (snapshot.exists() && snapshot.val().claimed) {
-                    showNotification('You have already claimed this task reward!', 'warning');
-                    updateButtonState(taskType, button, 'complete');
-                    console.log(`Task ${taskType} already claimed`);
-                    localStorage.removeItem('pendingTask');
-                    return;
-                }
-
-                if (action === 'go') {
-                    console.log(`Opening URL for ${taskType}: ${taskData[taskType].url}`);
-                    card.classList.add('loading');
-                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-                    button.disabled = true;
-
-                    if (isLocalStorageAvailable()) {
-                        localStorage.setItem('pendingTask', taskType);
-                        console.log(`Saved ${taskType} as pending task in localStorage`);
-                    }
-
-                    const newWindow = window.open(taskData[taskType].url, '_blank');
-                    if (!newWindow) {
-                        console.error('Failed to open URL: Popup blocked or other issue');
-                        showNotification('Please allow popups to proceed.', 'warning');
-                        card.classList.remove('loading');
-                        updateButtonState(taskType, button, 'go');
-                        localStorage.removeItem('pendingTask');
-                        return;
-                    }
-
-                    window.addEventListener('focus', function onFocus() {
-                        window.removeEventListener('focus', onFocus);
-                        card.classList.remove('loading');
-                        updateButtonState(taskType, button, 'claim');
-                        messageDisplay.textContent = `Click Claim to receive your ${taskData[taskType].amount} KATO for ${taskType} task!`;
-                        console.log(`Switched ${taskType} button to Claim state`);
-                    }, { once: true });
-                } else if (action === 'claim') {
-                    card.classList.add('loading');
-                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Claiming...';
-                    button.disabled = true;
-
-                    await claimTask(taskType, card, button);
-                    localStorage.removeItem('pendingTask');
-                }
-            } catch (error) {
-                console.error(`Error in handleTaskAction for ${taskType}:`, error);
-                showNotification('An error occurred. Please try again.', 'error');
-                card.classList.remove('loading');
-                updateButtonState(taskType, button, 'go');
-                localStorage.removeItem('pendingTask');
-            }
-        };
-
-        async function claimTask(taskType, card, button) {
-            try {
-                const task = taskData[taskType];
-                const userRef = ref(database, `users/${userData.userID}`);
-                const tasksRef = ref(database, `users/${userData.userID}/tasks/${taskType}`);
-                const activitiesRef = ref(database, `users/${userData.userID}/activities`);
-
-                const snapshot = await get(tasksRef);
-                if (snapshot.exists() && snapshot.val().claimed) {
-                    showNotification('This task reward has already been claimed!', 'warning');
-                    updateButtonState(taskType, button, 'complete');
-                    card.classList.remove('loading');
-                    localStorage.removeItem('pendingTask');
-                    return;
-                }
-
-                const userSnapshot = await get(userRef);
-                const existingData = userSnapshot.val() || { balance: 0, totalMined: 0, miningRate: 1.00, miningHours: 0, referrals: [], dailyStreak: 0, lastDailyReward: null, level: 1 };
-                const newBalance = (existingData.balance || 0) + task.amount;
-                const newTasksEarned = (existingData.tasksEarned || 0) + task.amount;
-
-                await set(userRef, {
-                    ...existingData,
-                    balance: newBalance,
-                    tasksEarned: newTasksEarned
-                });
-
-                await set(tasksRef, {
-                    claimed: true,
-                    amount: task.amount,
-                    date: Date.now()
-                });
-
-                await push(activitiesRef, {
-                    type: `${taskType.charAt(0).toUpperCase() + taskType.slice(1)} Task`,
-                    amount: task.amount,
-                    date: Date.now()
-                });
-
-                userData.balance = newBalance;
-                userData.tasksEarned = newTasksEarned;
-
-                updateButtonState(taskType, button, 'complete');
-                card.classList.add('success-animation');
-                setTimeout(() => card.classList.remove('success-animation'), 500);
-
-                showNotification(`Congratulations! You earned ${task.amount} KATO!`, 'success');
-                messageDisplay.textContent = `You earned ${task.amount} KATO for ${taskType} task!`;
-            } catch (error) {
-                console.error('Error claiming task:', error);
-                showNotification('Failed to claim task reward. Please try again.', 'error');
-                messageDisplay.textContent = 'Error claiming task reward.';
-                updateButtonState(taskType, button, 'claim');
-            } finally {
-                card.classList.remove('loading');
-            }
-        }
-
-        async function initializeTasksPage() {
-            loadingOverlay.style.display = 'flex';
-
-            if (!isFirebaseInitialized) {
-                const success = await initializeFirebase();
-                if (!success) {
+        // Initialize Page
+        function initializePage() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                setTimeout(() => {
                     loadingOverlay.style.display = 'none';
-                    showNotification('Failed to initialize Firebase.', 'error');
-                    return;
-                }
+                }, 1000); // Simulate loading
             }
-
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    showNotification('Please log in to access this page.', 'warning');
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    loadingOverlay.style.display = 'none';
-                    return;
-                }
-
-                userData.userID = user.uid;
-                if (isLocalStorageAvailable()) {
-                    localStorage.setItem('userID', userData.userID);
-                }
-
-                const userRef = ref(database, `users/${userData.userID}`);
-                try {
-                    const snapshot = await get(userRef);
-                    if (!snapshot.exists()) {
-                        console.error('No user data found for ID:', userData.userID);
-                        showNotification('User data not found. Please return to Home page to initialize.', 'error');
-                        messageDisplay.textContent = 'User data not found.';
-                        loadingOverlay.style.display = 'none';
-                        return;
-                    }
-
-                    userData = { ...userData, ...snapshot.val(), userID: user.uid };
-
-                    const pendingTask = isLocalStorageAvailable() ? localStorage.getItem('pendingTask') : null;
-                    if (pendingTask && taskData[pendingTask]) {
-                        console.log(`Found pending task: ${pendingTask}`);
-                        const button = document.querySelector(`.task-button[data-task="${pendingTask}"]`);
-                        if (button && !snapshot.val()?.tasks?.[pendingTask]?.claimed) {
-                            updateButtonState(pendingTask, button, 'claim');
-                            messageDisplay.textContent = `Click Claim to receive your ${taskData[pendingTask].amount} KATO for ${pendingTask} task!`;
-                        }
-                    }
-
-                    onValue(userRef, (snapshot) => {
-                        const data = snapshot.val();
-                        console.log('User data fetched:', data);
-                        if (data && data.tasks) {
-                            taskButtons.forEach(button => {
-                                const taskType = button.getAttribute('data-task');
-                                const taskState = data.tasks[taskType]?.claimed ? 'complete' : (pendingTask === taskType ? 'claim' : 'go');
-                                updateButtonState(taskType, button, taskState);
-                                console.log(`Button state for ${taskType}: ${taskState}`);
-                            });
-                            messageDisplay.textContent = 'Earn more by completing these tasks!';
-                        } else {
-                            taskButtons.forEach(button => {
-                                const taskType = button.getAttribute('data-task');
-                                const taskState = pendingTask === taskType ? 'claim' : 'go';
-                                updateButtonState(taskType, button, taskState);
-                                console.log(`Button state for ${taskType}: ${taskState}`);
-                            });
-                            messageDisplay.textContent = 'Earn more by completing these tasks!';
-                        }
-                    }, {
-                        onlyOnce: false,
-                        error: (error) => {
-                            console.error('Error fetching user data:', error);
-                            showNotification('Error loading tasks data. Please try again.', 'error');
-                            messageDisplay.textContent = 'Error loading tasks data.';
-                        }
-                    });
-                } catch (error) {
-                    console.error('Error initializing tasks page:', error);
-                    showNotification('Error initializing tasks page. Please try again.', 'error');
-                    messageDisplay.textContent = 'Error initializing tasks page.';
-                } finally {
-                    loadingOverlay.style.display = 'none';
-                }
-            });
         }
 
-        backBtn.addEventListener('click', () => {
-            try {
-                localStorage.removeItem('pendingTask');
-                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/index.html';
-            } catch (error) {
-                console.error('Navigation error:', error);
-                showNotification('Error navigating to Home page. Please try again.', 'error');
-            }
-        });
-
-        taskButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const taskType = button.getAttribute('data-task');
-                const currentText = button.innerHTML.includes('Claim') ? 'claim' : 'go';
-                console.log(`Button clicked: ${taskType}, Action: ${currentText}`);
-                window.handleTaskAction(taskType, currentText);
-            });
-        });
-
-        initializeTasksPage();
+        // Run initialization
+        initializePage();
     </script>
 </body>
 </html>
