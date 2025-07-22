@@ -9,7 +9,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
-        /* আপনার দেওয়া CSS অংশ অপরিবর্তিত রাখা হয়েছে */
         :root {
             --primary-color: #ffd700;
             --secondary-color: #d3d3d3;
@@ -174,7 +173,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-           holy: var(--primary-color);
+            color: var(--primary-color);
             transition: all 0.3s ease;
             cursor: pointer;
             width: min(90%, 200px);
@@ -564,6 +563,15 @@
             .achievements {
                 grid-template-columns: repeat(4, 1fr);
             }
+
+            .nav-item {
+                font-size: clamp(0.8em, 2vw, 0.9em);
+                padding: 5px 10px;
+            }
+
+            .nav-item i {
+                font-size: clamp(1.2em, 3vw, 1.4em);
+            }
         }
 
         @media (max-width: 480px) {
@@ -746,7 +754,7 @@
             referrals: [],
             dailyStreak: 0,
             lastDailyReward: null,
-            lastDailyTokenAward: null, // New field for tracking daily token awards
+            lastDailyTokenAward: null,
             miningStartTime: null,
             level: 1,
             createdAt: null
@@ -836,7 +844,6 @@
                     const now = Date.now();
                     const oneDay = 24 * 60 * 60 * 1000;
 
-                    // Check if 24 hours have passed since the last award
                     if (!lastAward || now - lastAward >= oneDay) {
                         const newBalance = (userData.balance || 0) + 100;
                         await update(userRef, {
@@ -918,7 +925,7 @@
             }
         }
 
-        // Load Leaderboard (Optimized)
+        // Load Leaderboard
         async function loadLeaderboard() {
             try {
                 const referralsRef = ref(database, 'referrals');
@@ -976,7 +983,7 @@
             }
         }
 
-        // Setup Share Buttons (Dynamic)
+        // Setup Share Buttons
         function setupShareButtons() {
             if (!userData.inviteCode) return;
             const referralLink = `https://katomineconnect.github.io/KatoMine.com/index.html?ref=${userData.inviteCode}`;
@@ -1072,7 +1079,7 @@
                         if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
                         await displayReferralList();
-                        await checkAndAwardDailyTokens(userData.userID, userRef); // Check for daily token award
+                        await checkAndAwardDailyTokens(userData.userID, userRef);
 
                         if (userData.referrerID) {
                             if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
@@ -1105,7 +1112,7 @@
                             const newUserData = {
                                 username: userData.username || userData.email.split('@')[0],
                                 email: userData.email,
-                                balance: referrerID ? 25 : 0, // New user gets 25 tokens if referred
+                                balance: referrerID ? 25 : 0,
                                 inviteCode: newInviteCode,
                                 referrerID: referrerID,
                                 referrals: [],
@@ -1114,7 +1121,7 @@
                                 miningHours: 0,
                                 dailyStreak: 0,
                                 lastDailyReward: null,
-                                lastDailyTokenAward: null, // Initialize new field
+                                lastDailyTokenAward: null,
                                 level: 1,
                                 miningStartTime: null,
                                 createdAt: Date.now()
@@ -1129,7 +1136,6 @@
                             await set(userRef, newUserData);
                             userData = { ...userData, ...newUserData };
 
-                            // Update referrer's balance if referred
                             if (referrerID) {
                                 const referrerRef = ref(database, `users/${referrerID}`);
                                 try {
@@ -1144,7 +1150,6 @@
                                     showNotification('Error updating referrer balance.', 'error');
                                 }
 
-                                // Create referral entry
                                 const referralsRef = ref(database, 'referrals');
                                 const newReferralRef = push(referralsRef);
                                 const newReferral = {
@@ -1164,7 +1169,7 @@
                             if (totalReferrals) totalReferrals.textContent = 0;
                             if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
                             await displayReferralList();
-                            await checkAndAwardDailyTokens(userData.userID, userRef); // Check for daily token award
+                            await checkAndAwardDailyTokens(userData.userID, userRef);
                             if (submitReferralButton) submitReferralButton.disabled = referrerID ? true : false;
                             if (messageDisplay) messageDisplay.textContent = referrerID ? 'Referral applied successfully! You earned 25 KATO.' : 'Enter an invite code to get started!';
                         } catch (error) {
@@ -1191,7 +1196,7 @@
                         if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
                         displayReferralList();
-                        checkAndAwardDailyTokens(userData.userID, userRef); // Real-time check for daily tokens
+                        checkAndAwardDailyTokens(userData.userID, userRef);
 
                         if (data.referrerID) {
                             if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
@@ -1289,7 +1294,6 @@
                     }
 
                     try {
-                        // Create a new referral entry
                         const referralsRef = ref(database, 'referrals');
                         const newReferralRef = push(referralsRef);
                         const newReferral = {
@@ -1299,7 +1303,6 @@
                             date: Date.now()
                         };
 
-                        // Update balances
                         const userNewBalance = (userData.balance || 0) + 25;
                         const referrerNewBalance = (referrerData.balance || 0) + 50;
 
@@ -1309,7 +1312,7 @@
                                 balance: userNewBalance,
                                 referrerID: referrerID
                             }),
-                            update(referrerRef, {
+                            update(ref(database, `users/${referrerID}`), {
                                 balance: referrerNewBalance
                             })
                         ]);
@@ -1318,7 +1321,7 @@
                         submitReferralButton.disabled = true;
                         messageDisplay.textContent = 'Referral submitted successfully! You earned 25 KATO.';
                         await displayReferralList();
-                        await checkAndAwardDailyTokens(referrerID, ref(database, `users/${referrerID}`)); // Check for daily token for referrer
+                        await checkAndAwardDailyTokens(referrerID, ref(database, `users/${referrerID}`));
                     } catch (error) {
                         console.error('Error submitting referral:', error.message || error);
                         showNotification(`Error submitting referral: ${error.message || 'Unknown error. Please try again.'}`, 'error');
