@@ -9,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
-        /* আপনার দেওয়া CSS অংশ এখানে অপরিবর্তিত রয়েছে */
+        /* আপনার দেওয়া CSS অংশ অপরিবর্তিত রাখা হয়েছে */
         :root {
             --primary-color: #ffd700;
             --secondary-color: #d3d3d3;
@@ -174,7 +174,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-color);
+           holy: var(--primary-color);
             transition: all 0.3s ease;
             cursor: pointer;
             width: min(90%, 200px);
@@ -746,6 +746,7 @@
             referrals: [],
             dailyStreak: 0,
             lastDailyReward: null,
+            lastDailyTokenAward: null, // New field for tracking daily token awards
             miningStartTime: null,
             level: 1,
             createdAt: null
@@ -809,6 +810,45 @@
                 console.error('Error checking invite code uniqueness:', error.message || error);
                 showNotification('Error checking invite code. Please try again.', 'error');
                 return false;
+            }
+        }
+
+        // Check and Award Daily Tokens for Users with 5+ Referrals
+        async function checkAndAwardDailyTokens(userID, userRef) {
+            try {
+                const referralsRef = ref(database, `referrals`);
+                const q = query(referralsRef, orderByChild('referrerID'), equalTo(userID));
+                const snapshot = await get(q);
+                let referralCount = 0;
+
+                if (snapshot.exists()) {
+                    snapshot.forEach(() => {
+                        referralCount++;
+                    });
+                }
+
+                if (referralCount > 5) {
+                    const userSnapshot = await get(userRef);
+                    if (!userSnapshot.exists()) return;
+
+                    const userData = userSnapshot.val();
+                    const lastAward = userData.lastDailyTokenAward || 0;
+                    const now = Date.now();
+                    const oneDay = 24 * 60 * 60 * 1000;
+
+                    // Check if 24 hours have passed since the last award
+                    if (!lastAward || now - lastAward >= oneDay) {
+                        const newBalance = (userData.balance || 0) + 100;
+                        await update(userRef, {
+                            balance: newBalance,
+                            lastDailyTokenAward: now
+                        });
+                        showNotification('You earned 100 KATO for having more than 5 referrals!', 'success');
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking daily token award:', error.message || error);
+                showNotification('Error processing daily token award.', 'error');
             }
         }
 
@@ -1032,6 +1072,7 @@
                         if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
                         await displayReferralList();
+                        await checkAndAwardDailyTokens(userData.userID, userRef); // Check for daily token award
 
                         if (userData.referrerID) {
                             if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
@@ -1073,6 +1114,7 @@
                                 miningHours: 0,
                                 dailyStreak: 0,
                                 lastDailyReward: null,
+                                lastDailyTokenAward: null, // Initialize new field
                                 level: 1,
                                 miningStartTime: null,
                                 createdAt: Date.now()
@@ -1122,6 +1164,7 @@
                             if (totalReferrals) totalReferrals.textContent = 0;
                             if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
                             await displayReferralList();
+                            await checkAndAwardDailyTokens(userData.userID, userRef); // Check for daily token award
                             if (submitReferralButton) submitReferralButton.disabled = referrerID ? true : false;
                             if (messageDisplay) messageDisplay.textContent = referrerID ? 'Referral applied successfully! You earned 25 KATO.' : 'Enter an invite code to get started!';
                         } catch (error) {
@@ -1148,6 +1191,7 @@
                         if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
                         displayReferralList();
+                        checkAndAwardDailyTokens(userData.userID, userRef); // Real-time check for daily tokens
 
                         if (data.referrerID) {
                             if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
@@ -1274,6 +1318,7 @@
                         submitReferralButton.disabled = true;
                         messageDisplay.textContent = 'Referral submitted successfully! You earned 25 KATO.';
                         await displayReferralList();
+                        await checkAndAwardDailyTokens(referrerID, ref(database, `users/${referrerID}`)); // Check for daily token for referrer
                     } catch (error) {
                         console.error('Error submitting referral:', error.message || error);
                         showNotification(`Error submitting referral: ${error.message || 'Unknown error. Please try again.'}`, 'error');
