@@ -705,7 +705,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-        import { getDatabase, ref, set, get, onValue, update, query, orderByChild, equalTo, limitToLast } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getDatabase, ref, set, get, onValue, update, query, orderByChild, equalTo, limitToLast, push } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
         // Firebase config
@@ -830,42 +830,72 @@
         }
 
         // Display Referral List
-        function displayReferralList(referrals) {
-            if (!referrals || referrals.length === 0) {
-                referralList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No referrals yet</div>`;
-                return;
-            }
+        async function displayReferralList() {
+            try {
+                const referralsRef = ref(database, `referrals`);
+                const snapshot = await get(query(referralsRef, orderByChild('referrerID'), equalTo(userData.userID)));
+                const referrals = [];
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const referral = childSnapshot.val();
+                        referrals.push({
+                            id: referral.referredID,
+                            inviteCode: referral.inviteCode,
+                            date: referral.date
+                        });
+                    });
+                }
 
-            referralList.innerHTML = referrals.map(referral => `
-                <div class="referral-item">
-                    <div class="referral-id">${referral.inviteCode || referral.id || 'Unknown'}</div>
-                    <div class="referral-date">${new Date(referral.date || Date.now()).toLocaleDateString()}</div>
-                </div>
-            `).join('');
+                if (!referrals.length) {
+                    referralList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No referrals yet</div>`;
+                    return;
+                }
+
+                referralList.innerHTML = referrals.map(referral => `
+                    <div class="referral-item">
+                        <div class="referral-id">${referral.inviteCode || referral.id || 'Unknown'}</div>
+                        <div class="referral-date">${new Date(referral.date || Date.now()).toLocaleDateString()}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error displaying referral list:', error.message || error);
+                showNotification('Error loading referrals. Please try again.', 'error');
+            }
         }
 
         // Load Leaderboard (Optimized)
         async function loadLeaderboard() {
             try {
-                const usersRef = ref(database, 'users');
-                const snapshot = await get(query(usersRef, limitToLast(50))); // Limit to last 50 users for efficiency
+                const referralsRef = ref(database, 'referrals');
+                const snapshot = await get(query(referralsRef, limitToLast(50)));
 
                 if (!snapshot.exists()) {
                     leaderboardList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No data available</div>`;
                     return;
                 }
 
+                const referralCounts = {};
+                snapshot.forEach((childSnapshot) => {
+                    const referral = childSnapshot.val();
+                    const referrerID = referral.referrerID;
+                    if (!referralCounts[referrerID]) {
+                        referralCounts[referrerID] = { count: 0, inviteCode: null };
+                    }
+                    referralCounts[referrerID].count++;
+                    referralCounts[referrerID].inviteCode = referral.inviteCode;
+                });
+
                 const users = [];
-                snapshot.forEach((userSnapshot) => {
-                    const userData = userSnapshot.val();
-                    const referralCount = userData.referrals ? userData.referrals.length : 0;
-                    if (referralCount > 0) {
+                for (const [referrerID, data] of Object.entries(referralCounts)) {
+                    const userRef = ref(database, `users/${referrerID}`);
+                    const userSnapshot = await get(userRef);
+                    if (userSnapshot.exists()) {
                         users.push({
-                            inviteCode: userData.inviteCode || userSnapshot.key,
-                            referralCount: referralCount
+                            inviteCode: userSnapshot.val().inviteCode || referrerID,
+                            referralCount: data.count
                         });
                     }
-                });
+                }
 
                 if (users.length === 0) {
                     leaderboardList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No referrals yet</div>`;
@@ -987,7 +1017,7 @@
                         if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
                         updateAchievements(referralCount);
-                        displayReferralList(userData.referrals);
+                        await displayReferralList();
 
                         if (userData.referrerID) {
                             if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
@@ -1051,7 +1081,7 @@
                             if (totalReferrals) totalReferrals.textContent = 0;
                             if (earnedTokens) earnedTokens.textContent = 0;
                             updateAchievements(0);
-                            displayReferralList([]);
+                            await displayReferralList();
                             if (submitReferralButton) submitReferralButton.disabled = false;
                             if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
                         } catch (error) {
@@ -1080,7 +1110,7 @@
                         if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
                         updateAchievements(referralCount);
-                        displayReferralList(userData.referrals);
+                        displayReferralList();
 
                         if (data.referrerID) {
                             if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
@@ -1178,37 +1208,43 @@
                     }
 
                     try {
-                        // Update referrer's data
-                        const referrerRef = ref(database, `users/${referrerID}`);
-                        const referrerNewBalance = (referrerData.balance || 0) + 100;
+                        // Create a new referral entry
+                        const referralsRef = ref(database, 'referrals');
+                        const newReferralRef = push(referralsRef);
                         const newReferral = {
-                            id: userData.userID,
+                            referrerID: referrerID,
+                            referredID: userData.userID,
                             inviteCode: userData.inviteCode,
                             date: Date.now()
                         };
 
-                        await update(referrerRef, {
-                            balance: referrerNewBalance,
-                            referrals: [...(referrerData.referrals || []), newReferral]
-                        });
-
-                        // Update user's data
+                        // Update balances
+                        const referrerRef = ref(database, `users/${referrerID}`);
                         const userNewBalance = (userData.balance || 0) + 25;
-                        await update(userRef, {
-                            balance: userNewBalance,
-                            referrerID: referrerID
-                        });
+                        const referrerNewBalance = (referrerData.balance || 0) + 100;
+
+                        await Promise.all([
+                            set(newReferralRef, newReferral),
+                            update(userRef, {
+                                balance: userNewBalance,
+                                referrerID: referrerID
+                            }),
+                            update(referrerRef, {
+                                balance: referrerNewBalance
+                            })
+                        ]);
 
                         showNotification('Referral submitted successfully! You earned 25 KATO, and referrer earned 100 KATO.', 'success');
                         submitReferralButton.disabled = true;
                         messageDisplay.textContent = 'Referral submitted successfully! You earned 25 KATO.';
+                        await displayReferralList();
                     } catch (error) {
                         console.error('Error submitting referral:', error.message || error);
-                        showNotification('Error submitting referral. Please try again.', 'error');
+                        showNotification(`Error submitting referral: ${error.message || 'Unknown error. Please try again.'}`, 'error');
                     }
                 } catch (error) {
                     console.error('Error validating invite code:', error.message || error);
-                    showNotification('Error validating invite code. Please try again.', 'error');
+                    showNotification(`Error validating invite code: ${error.message || 'Unknown error. Please try again.'}`, 'error');
                 }
             });
         }
