@@ -396,7 +396,7 @@
             max-height: 200px;
             overflow-y: auto;
             padding-right: 10px;
-        }
+       izează
 
         .referral-item {
             display: flex;
@@ -806,6 +806,7 @@
                 return !snapshot.exists();
             } catch (error) {
                 console.error('Error checking invite code uniqueness:', error.message || error);
+                showNotification('Error checking invite code. Please try again.', 'error');
                 return false;
             }
         }
@@ -904,6 +905,7 @@
                 const success = await initializeFirebase();
                 if (!success) {
                     if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    showNotification('Failed to initialize Firebase. Please try again later.', 'error');
                     return;
                 }
             }
@@ -933,15 +935,16 @@
                 userData.email = user.email;
                 userData.username = user.displayName || user.email.split('@')[0];
 
-                const userRef = ref(database, 'users/' + userData.userID);
+                const userRef = ref(database, `users/${userData.userID}`);
                 try {
                     const snapshot = await get(userRef);
                     if (snapshot.exists()) {
                         userData = { ...userData, ...snapshot.val(), userID: user.uid };
                         if (!userData.inviteCode) {
                             try {
-                                userData.inviteCode = await generateInviteCode();
-                                await update(userRef, { inviteCode: userData.inviteCode });
+                                const newInviteCode = await generateInviteCode();
+                                await update(userRef, { inviteCode: newInviteCode });
+                                userData.inviteCode = newInviteCode;
                             } catch (error) {
                                 console.error('Error setting invite code:', error.message || error);
                                 showNotification('Failed to generate invite code. Please try again.', 'error');
@@ -983,62 +986,62 @@
                                 }
                             } catch (error) {
                                 console.error('Error checking referrer code:', error.message || error);
+                                showNotification('Error validating referrer code. Please try again.', 'error');
                             }
                         }
 
                         try {
-                            userData.inviteCode = await generateInviteCode();
+                            const newInviteCode = await generateInviteCode();
+                            const newUserData = {
+                                username: userData.username || userData.email.split('@')[0],
+                                email: userData.email,
+                                balance: 0,
+                                inviteCode: newInviteCode,
+                                referrerID: referrerID,
+                                referrals: [],
+                                totalMined: 0,
+                                miningRate: 0.75,
+                                miningHours: 0,
+                                dailyStreak: 0,
+                                lastDailyReward: null,
+                                level: 1,
+                                miningStartTime: null,
+                                createdAt: Date.now()
+                            };
+
+                            // Ensure the user can only create their own data
+                            if (user.uid !== userData.userID) {
+                                showNotification('Unauthorized attempt to create user data.', 'error');
+                                if (loadingOverlay) loadingOverlay.style.display = 'none';
+                                return;
+                            }
+
+                            await set(userRef, newUserData);
+                            userData = { ...userData, ...newUserData };
+                            if (referralCodeElement) {
+                                referralCodeElement.textContent = `Invite Code: ${userData.inviteCode}`;
+                            }
+                            setupShareButtons();
+
+                            if (totalReferrals) totalReferrals.textContent = 0;
+                            if (earnedTokens) earnedTokens.textContent = 0;
+                            updateAchievements(0);
+                            displayReferralList([]);
+                            if (submitReferralButton) submitReferralButton.disabled = false;
+                            if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
                         } catch (error) {
-                            console.error('Error setting invite code for new user:', error.message || error);
-                            showNotification('Failed to generate invite code. Please try again.', 'error');
+                            console.error('Error creating user data:', error.message || error);
+                            showNotification('Failed to initialize user data. Please try again.', 'error');
                             if (loadingOverlay) loadingOverlay.style.display = 'none';
                             return;
                         }
-
-                        await set(userRef, {
-                            username: userData.username || userData.email.split('@')[0],
-                            email: userData.email,
-                            balance: 0,
-                            inviteCode: userData.inviteCode,
-                            referrerID: referrerID,
-                            referrals: [],
-                            totalMined: 0,
-                            miningRate: 0.75,
-                            miningHours: 0,
-                            dailyStreak: 0,
-                            lastDailyReward: null,
-                            level: 1,
-                            miningStartTime: null,
-                            createdAt: Date.now()
-                        });
-                        userData = {
-                            ...userData,
-                            balance: 0,
-                            totalMined: 0,
-                            miningRate: 0.75,
-                            miningHours: 0,
-                            referrals: [],
-                            dailyStreak: 0,
-                            lastDailyReward: null,
-                            level: 1,
-                            createdAt: Date.now()
-                        };
-                        if (referralCodeElement) {
-                            referralCodeElement.textContent = `Invite Code: ${userData.inviteCode}`;
-                        }
-                        setupShareButtons();
-
-                        if (totalReferrals) totalReferrals.textContent = 0;
-                        if (earnedTokens) earnedTokens.textContent = 0;
-                        updateAchievements(0);
-                        displayReferralList([]);
-                        if (submitReferralButton) submitReferralButton.disabled = false;
-                        if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
                     }
                     await loadLeaderboard();
                 } catch (error) {
                     console.error('Error fetching user data:', error.message || error);
                     showNotification('Error fetching user data. Please try again.', 'error');
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
                 }
 
                 if (loadingOverlay) loadingOverlay.style.display = 'none';
@@ -1067,8 +1070,8 @@
                         window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
                     }
                 }, (error) => {
-                    console.error('Error fetching user data:', error.message || error);
-                    showNotification('Error fetching user data. Please try again later.', 'error');
+                    console.error('Error in real-time listener:', error.message || error);
+                    showNotification('Error fetching user data in real-time. Please try again later.', 'error');
                 });
 
                 window.addEventListener('unload', () => {
@@ -1116,21 +1119,21 @@
                     return;
                 }
 
-                const userRef = ref(database, 'users/' + userData.userID);
-                const userSnapshot = await get(userRef);
-                if (!userSnapshot.exists()) {
-                    showNotification('User data not found. Please log in again.', 'error');
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    return;
-                }
-                if (userSnapshot.val().referrerID) {
-                    showNotification('You have already set a referrer.', 'warning');
-                    submitReferralButton.disabled = true;
-                    return;
-                }
-
-                const usersRef = ref(database, 'users');
+                const userRef = ref(database, `users/${userData.userID}`);
                 try {
+                    const userSnapshot = await get(userRef);
+                    if (!userSnapshot.exists()) {
+                        showNotification('User data not found. Please log in again.', 'error');
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                        return;
+                    }
+                    if (userSnapshot.val().referrerID) {
+                        showNotification('You have already set a referrer.', 'warning');
+                        submitReferralButton.disabled = true;
+                        return;
+                    }
+
+                    const usersRef = ref(database, 'users');
                     const snapshot = await get(query(usersRef, orderByChild('inviteCode'), equalTo(referrerCode)));
                     if (!snapshot.exists()) {
                         showNotification('Invalid invite code. Please check and try again.', 'error');
@@ -1150,7 +1153,8 @@
                     }
 
                     try {
-                        // Update referrer's balance (100 tokens) and referrals
+                        // Update referrer's data
+                        const referrerRef = ref(database, `users/${referrerID}`);
                         const referrerNewBalance = (referrerData.balance || 0) + 100;
                         const newReferral = {
                             id: userData.userID,
@@ -1158,14 +1162,14 @@
                             date: Date.now()
                         };
 
-                        await update(ref(database, 'users/' + referrerID), {
+                        await update(referrerRef, {
                             balance: referrerNewBalance,
                             referrals: [...(referrerData.referrals || []), newReferral]
                         });
 
-                        // Update user's balance (25 tokens) and referrerID
+                        // Update user's data
                         const userNewBalance = (userData.balance || 0) + 25;
-                        await update(ref(database, 'users/' + userData.userID), {
+                        await update(userRef, {
                             balance: userNewBalance,
                             referrerID: referrerID
                         });
