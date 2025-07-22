@@ -832,34 +832,48 @@
         // Display Referral List
         async function displayReferralList() {
             try {
+                if (!userData.userID) {
+                    referralList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">Please log in to view referrals</div>`;
+                    return;
+                }
+
                 const referralsRef = ref(database, `referrals`);
-                const snapshot = await get(query(referralsRef, orderByChild('referrerID'), equalTo(userData.userID)));
+                const q = query(referralsRef, orderByChild('referrerID'), equalTo(userData.userID));
+                const snapshot = await get(q);
                 const referrals = [];
+
                 if (snapshot.exists()) {
                     snapshot.forEach((childSnapshot) => {
                         const referral = childSnapshot.val();
-                        referrals.push({
-                            id: referral.referredID,
-                            inviteCode: referral.inviteCode,
-                            date: referral.date
-                        });
+                        if (referral.referrerID && referral.referredID && referral.inviteCode && referral.date) {
+                            referrals.push({
+                                id: referral.referredID,
+                                inviteCode: referral.inviteCode,
+                                date: referral.date
+                            });
+                        }
                     });
                 }
 
                 if (!referrals.length) {
                     referralList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No referrals yet</div>`;
+                    totalReferrals.textContent = 0;
+                    updateAchievements(0);
                     return;
                 }
 
                 referralList.innerHTML = referrals.map(referral => `
                     <div class="referral-item">
                         <div class="referral-id">${referral.inviteCode || referral.id || 'Unknown'}</div>
-                        <div class="referral-date">${new Date(referral.date || Date.now()).toLocaleDateString()}</div>
+                        <div class="referral-date">${new Date(referral.date).toLocaleDateString()}</div>
                     </div>
                 `).join('');
+                totalReferrals.textContent = referrals.length;
+                updateAchievements(referrals.length);
             } catch (error) {
-                console.error('Error displaying referral list:', error.message || error);
-                showNotification('Error loading referrals. Please try again.', 'error');
+                console.error('Error loading referrals:', error.message || error);
+                showNotification(`Error loading referrals: ${error.message || 'Please try again.'}`, 'error');
+                referralList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">Error loading referrals</div>`;
             }
         }
 
@@ -878,11 +892,13 @@
                 snapshot.forEach((childSnapshot) => {
                     const referral = childSnapshot.val();
                     const referrerID = referral.referrerID;
-                    if (!referralCounts[referrerID]) {
-                        referralCounts[referrerID] = { count: 0, inviteCode: null };
+                    if (referrerID) {
+                        if (!referralCounts[referrerID]) {
+                            referralCounts[referrerID] = { count: 0, inviteCode: null };
+                        }
+                        referralCounts[referrerID].count++;
+                        referralCounts[referrerID].inviteCode = referral.inviteCode;
                     }
-                    referralCounts[referrerID].count++;
-                    referralCounts[referrerID].inviteCode = referral.inviteCode;
                 });
 
                 const users = [];
@@ -914,7 +930,7 @@
                 `).join('');
             } catch (error) {
                 console.error('Error loading leaderboard:', error.message || error);
-                showNotification('Failed to load leaderboard. Please check your connection and try again.', 'error');
+                showNotification(`Failed to load leaderboard: ${error.message || 'Please check your connection and try again.'}`, 'error');
                 leaderboardList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">Error loading leaderboard</div>`;
             }
         }
@@ -1012,11 +1028,8 @@
                         }
                         setupShareButtons();
 
-                        const referralCount = userData.referrals ? userData.referrals.length : 0;
-                        if (totalReferrals) totalReferrals.textContent = referralCount;
                         if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
-                        updateAchievements(referralCount);
                         await displayReferralList();
 
                         if (userData.referrerID) {
@@ -1064,7 +1077,6 @@
                                 createdAt: Date.now()
                             };
 
-                            // Ensure the user can only create their own data
                             if (user.uid !== userData.userID) {
                                 showNotification('Unauthorized attempt to create user data.', 'error');
                                 if (loadingOverlay) loadingOverlay.style.display = 'none';
@@ -1080,7 +1092,6 @@
 
                             if (totalReferrals) totalReferrals.textContent = 0;
                             if (earnedTokens) earnedTokens.textContent = 0;
-                            updateAchievements(0);
                             await displayReferralList();
                             if (submitReferralButton) submitReferralButton.disabled = false;
                             if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
@@ -1105,11 +1116,8 @@
                     const data = snapshot.val();
                     if (data) {
                         userData = { ...userData, ...data, userID: user.uid };
-                        const referralCount = userData.referrals ? userData.referrals.length : 0;
-                        if (totalReferrals) totalReferrals.textContent = referralCount;
                         if (earnedTokens) earnedTokens.textContent = userData.balance || 0;
 
-                        updateAchievements(referralCount);
                         displayReferralList();
 
                         if (data.referrerID) {
