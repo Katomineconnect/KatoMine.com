@@ -755,6 +755,7 @@
             dailyStreak: 0,
             lastDailyReward: null,
             lastDailyTokenAward: null,
+            dailyTokenStartDate: null, // New field to track start of daily token rewards
             miningStartTime: null,
             level: 1,
             createdAt: null
@@ -821,7 +822,7 @@
             }
         }
 
-        // Check and Award Daily Tokens for Users with 5+ Referrals
+        // Check and Award Daily Tokens for Users with 5+ or 10+ Referrals
         async function checkAndAwardDailyTokens(userID, userRef) {
             try {
                 const referralsRef = ref(database, `referrals`);
@@ -835,23 +836,41 @@
                     });
                 }
 
-                if (referralCount > 5) {
-                    const userSnapshot = await get(userRef);
-                    if (!userSnapshot.exists()) return;
+                if (referralCount < 5) return; // No daily tokens if less than 5 referrals
 
-                    const userData = userSnapshot.val();
-                    const lastAward = userData.lastDailyTokenAward || 0;
-                    const now = Date.now();
-                    const oneDay = 24 * 60 * 60 * 1000;
+                const userSnapshot = await get(userRef);
+                if (!userSnapshot.exists()) return;
 
-                    // Check if 24 hours have passed since the last award
-                    if (!lastAward || now - lastAward >= oneDay) {
-                        const newBalance = (userData.balance || 0) + 100;
+                const userData = userSnapshot.val();
+                const lastAward = userData.lastDailyTokenAward || 0;
+                const dailyTokenStart = userData.dailyTokenStartDate || Date.now();
+                const now = Date.now();
+                const oneDay = 24 * 60 * 60 * 1000;
+                const thirtyDays = 30 * oneDay;
+
+                // Check if 30 days have passed since daily token rewards started
+                if (now - dailyTokenStart >= thirtyDays) {
+                    console.log('Daily token reward period has expired for user:', userID);
+                    return;
+                }
+
+                // Check if 24 hours have passed since the last award
+                if (!lastAward || now - lastAward >= oneDay) {
+                    let tokensToAdd = 0;
+                    if (referralCount >= 10) {
+                        tokensToAdd = 100;
+                    } else if (referralCount >= 5) {
+                        tokensToAdd = 50;
+                    }
+
+                    if (tokensToAdd > 0) {
+                        const newBalance = (userData.balance || 0) + tokensToAdd;
                         await update(userRef, {
                             balance: newBalance,
-                            lastDailyTokenAward: now
+                            lastDailyTokenAward: now,
+                            dailyTokenStartDate: userData.dailyTokenStartDate || now
                         });
-                        showNotification('You earned 100 KATO for having more than 5 referrals!', 'success');
+                        showNotification(`You earned ${tokensToAdd} KATO for having ${referralCount} referrals!`, 'success');
                     }
                 }
             } catch (error) {
@@ -1123,6 +1142,7 @@
                                 dailyStreak: 0,
                                 lastDailyReward: null,
                                 lastDailyTokenAward: null,
+                                dailyTokenStartDate: null, // Initialize new field
                                 level: 1,
                                 miningStartTime: null,
                                 createdAt: Date.now()
