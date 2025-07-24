@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Katomine - Receive KATO securely!">
+    <meta name="theme-color" content="#0d1b2a">
+    <title>Kato Mine - Receive</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* wallet.html থেকে একই CSS ব্যবহার করা হবে */
+        :root {
+            --primary-color: #ffd700;
+            --secondary-color: #d3d3d3;
+            --background-color: #0d1b2a;
+            --accent-color: #00bfff;
+            --success-color: #00ff88;
+            --warning-color: #ff6b35;
+            --error-color: #ff4757;
+            --gradient-1: linear-gradient(135deg, #0d1b2a, #1b263b);
+            --gradient-2: linear-gradient(135deg, #ffd700, #ffed4a);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-dark: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--gradient-1);
+            color: var(--primary-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--secondary-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--shadow-dark);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .logo {
+            font-size: clamp(2.5em, 6vw, 4em);
+            letter-spacing: 4px;
+            font-weight: bold;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            to { text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
+        }
+
+        .slogan {
+            font-size: clamp(1.2em, 3vw, 1.4em);
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            font-size: clamp(1em, 2.5vw, 1.2em);
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .container {
+            padding: clamp(1rem, 5vw, 1.5rem);
+            max-width: 100%;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 80px;
+        }
+
+        .receive-info {
+            width: min(95%, 500px);
+            background: var(--glass-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-dark);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .info-title {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: var(--secondary-color);
+        }
+
+        .info-value {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .message-display {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            color: var(--primary-color);
+            margin: 1rem auto;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            width: min(95%, 500px);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 2px solid var(--primary-color);
+            z-index: 900;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: clamp(1em, 2.5vw, 1.1em);
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: var(--primary-color);
+            background: rgba(255,215,0,0.1);
+        }
+
+        .nav-item i {
+            font-size: clamp(1.4em, 3.5vw, 1.6em);
+            margin-bottom: 6px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            max-width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success-color);
+        }
+
+        .notification.error {
+            background: var(--error-color);
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
+        }
+
+        .notification.info {
+            background: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin-bottom: 80px;
+            }
+            .receive-info {
+                width: min(95%, 100%);
+                padding: 15px;
+            }
+            .nav-item {
+                font-size: clamp(0.9em, 2.2vw, 1em);
+                padding: 6px 10px;
+            }
+            .nav-item i {
+                font-size: clamp(1.2em, 3vw, 1.4em);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .receive-info {
+                padding: 12px;
+            }
+            .info-item {
+                padding: 8px 0;
+            }
+            .info-label, .info-value {
+                font-size: clamp(0.8rem, 2vw, 0.9rem);
+            }
+            .nav-item {
+                font-size: clamp(0.85em, 2vw, 0.95em);
+                padding: 5px 8px;
+            }
+            .nav-item i {
+                font-size: clamp(1.1em, 2.8vw, 1.3em);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">KATO MINE</div>
+        <div class="slogan">RECEIVE KATO SECURELY!</div>
+        <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="receive-info">
+            <div class="info-title">
+                <i class="fas fa-arrow-down"></i> Receive KATO
+            </div>
+            <div class="info-item">
+                <div class="info-label">Your User ID</div>
+                <div class="info-value" id="userID">Loading...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Your Email</div>
+                <div class="info-value" id="userEmail">Loading...</div>
+            </div>
+        </div>
+
+        <div class="message-display" id="messageDisplay">Share your User ID or Email to receive KATO.</div>
+    </main>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="https://katomineconnect.github.io/KatoMine.com/claim.html" class="nav-item">
+            <i class="fas fa-gift"></i>
+            <span>Claim</span>
+        </a>
+        <a href="https://katomineconnect.github.io/KatoMine.com/invite.html" class="nav-item">
+            <i class="fas fa-user-plus"></i>
+            <span>Invite</span>
+        </a>
+        <a href="https://katomineconnect.github.io/KatoMine.com/wallet.html" class="nav-item active">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+
+        // Firebase config
+        let firebaseConfig;
+        let auth;
+        let isFirebaseInitialized = false;
+
+        async function initializeFirebase() {
+            try {
+                const configModule = await import('./config.js');
+                firebaseConfig = configModule.firebaseConfig;
+                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                    throw new Error('Firebase configuration is missing or invalid');
+                }
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                isFirebaseInitialized = true;
+                return true;
+            } catch (error) {
+                console.error('Error initializing Firebase:', error.message || error);
+                showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
+                return false;
+            }
+        }
+
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const messageDisplay = document.getElementById('messageDisplay');
+        const userIDElement = document.getElementById('userID');
+        const userEmailElement = document.getElementById('userEmail');
+
+        // Notification Function
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            if (notification) {
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Initialize Receive Page
+        async function initializeReceivePage() {
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
+            if (!isFirebaseInitialized) {
+                const success = await initializeFirebase();
+                if (!success) {
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
+                }
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    showNotification('Please log in to access this page.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    return;
+                }
+
+                userIDElement.textContent = user.uid;
+                userEmailElement.textContent = user.email;
+                messageDisplay.textContent = 'Share your User ID or Email to receive KATO.';
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+            });
+        }
+
+        // Initialize
+        initializeReceivePage();
+    </script>
+</body>
+</html>
