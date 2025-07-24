@@ -57,7 +57,6 @@
             z-index: -1;
         }
 
-        /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -86,7 +85,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Header */
         .header {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -124,7 +122,6 @@
             font-weight: 500;
         }
 
-        /* Container */
         .container {
             padding: clamp(1rem, 5vw, 1.5rem);
             max-width: 100%;
@@ -138,7 +135,6 @@
             margin-bottom: 80px;
         }
 
-        /* Balance */
         .balance {
             font-size: clamp(2.5rem, 8vw, 3.5rem);
             font-weight: 600;
@@ -162,7 +158,6 @@
             background: rgba(255, 215, 0, 0.1);
         }
 
-        /* Quick Actions */
         .quick-actions {
             display: flex;
             gap: 15px;
@@ -217,7 +212,6 @@
             background: linear-gradient(45deg, #2563eb, #1d4ed8);
         }
 
-        /* Balance Breakdown */
         .balance-breakdown {
             width: min(95%, 500px);
             background: var(--glass-bg);
@@ -264,7 +258,6 @@
             color: var(--primary-color);
         }
 
-        /* Recent Activity */
         .recent-activity {
             width: min(95%, 500px);
             background: var(--glass-bg);
@@ -344,7 +337,6 @@
             color: var(--error-color);
         }
 
-        /* Message Display */
         .message-display {
             font-size: clamp(1rem, 3vw, 1.2rem);
             color: var(--primary-color);
@@ -358,7 +350,6 @@
             width: min(95%, 500px);
         }
 
-        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -396,7 +387,6 @@
             margin-bottom: 6px;
         }
 
-        /* Notification */
         .notification {
             position: fixed;
             top: 20px;
@@ -431,13 +421,11 @@
             background: var(--accent-color);
         }
 
-        /* Animations */
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -655,7 +643,6 @@
 
         // Display Activity List
         function displayActivityList(activities) {
-            // Ensure activities is an array; if not, treat it as empty
             if (!Array.isArray(activities) || !activities) {
                 activityList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No activity yet</div>`;
                 return;
@@ -722,7 +709,6 @@
                     const snapshot = await get(userRef);
                     if (snapshot.exists()) {
                         const fetchedData = snapshot.val();
-                        // Ensure activities is an array
                         userData = {
                             ...userData,
                             ...fetchedData,
@@ -741,7 +727,6 @@
                     const unsubscribe = onValue(userRef, (snapshot) => {
                         const data = snapshot.val();
                         if (data) {
-                            // Ensure activities is an array
                             userData = {
                                 ...userData,
                                 ...data,
@@ -783,7 +768,6 @@
         function updateUI() {
             const totalBalance = userData.balance || 0;
             const rewardsEarned = userData.rewardsEarned || 0;
-            // Ensure activities is an array
             const activities = Array.isArray(userData.activities) ? userData.activities : [];
 
             balanceElement.textContent = `Balance: ${totalBalance.toFixed(2)} KATO`;
@@ -797,22 +781,34 @@
         // Button Event Listeners
         if (sendButton) {
             sendButton.addEventListener('click', () => {
-                showNotification('Send money feature coming soon!', 'info');
-                messageDisplay.textContent = 'Send money feature coming soon!';
+                if (!userData.userID) {
+                    showNotification('Please log in to access this page.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    return;
+                }
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/Send.html';
             });
         }
 
         if (receiveButton) {
             receiveButton.addEventListener('click', () => {
-                showNotification('Receive money feature coming soon!', 'info');
-                messageDisplay.textContent = 'Receive money feature coming soon!';
+                if (!userData.userID) {
+                    showNotification('Please log in to access this page.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    return;
+                }
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/Receive.html';
             });
         }
 
         if (historyButton) {
             historyButton.addEventListener('click', () => {
-                showNotification('Transaction history feature coming soon!', 'info');
-                messageDisplay.textContent = 'Transaction history feature coming soon!';
+                if (!userData.userID) {
+                    showNotification('Please log in to access this page.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    return;
+                }
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/History.html';
             });
         }
 
