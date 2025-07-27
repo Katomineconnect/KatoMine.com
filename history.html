@@ -9,7 +9,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
-        /* wallet.html থেকে একই CSS ব্যবহার করা হবে */
         :root {
             --primary-color: #ffd700;
             --secondary-color: #d3d3d3;
@@ -17,7 +16,7 @@
             --accent-color: #00bfff;
             --success-color: #00ff88;
             --warning-color: #ff6b35;
-            --error-color: #ff4757;
+            --error-color: #ff0000;
             --gradient-1: linear-gradient(135deg, #0d1b2a, #1b263b);
             --gradient-2: linear-gradient(135deg, #ffd700, #ffed4a);
             --glass-bg: rgba(255, 255, 255, 0.1);
@@ -83,7 +82,7 @@
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
 
         .header {
@@ -94,6 +93,25 @@
             box-shadow: var(--shadow-dark);
             text-align: center;
             border-bottom: 2px solid var(--primary-color);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: clamp(1.4em, 3.5vw, 1.6em);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-color);
+            transform: translateY(-50%) scale(1.1);
         }
 
         .logo {
@@ -133,7 +151,6 @@
             justify-content: flex-start;
             gap: 1rem;
             align-items: center;
-            margin-bottom: 80px;
         }
 
         .recent-activity {
@@ -228,43 +245,6 @@
             width: min(95%, 500px);
         }
 
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            border-top: 2px solid var(--primary-color);
-            z-index: 900;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-size: clamp(1em, 2.5vw, 1.1em);
-            transition: all 0.3s ease;
-            padding: 8px 12px;
-            border-radius: 10px;
-        }
-
-        .nav-item.active,
-        .nav-item:hover {
-            color: var(--primary-color);
-            background: rgba(255,215,0,0.1);
-        }
-
-        .nav-item i {
-            font-size: clamp(1.4em, 3.5vw, 1.6em);
-            margin-bottom: 6px;
-        }
-
         .notification {
             position: fixed;
             top: 20px;
@@ -280,7 +260,7 @@
         }
 
         .notification.show {
-            transform: translateX(0);
+            transform: none;
         }
 
         .notification.success {
@@ -302,17 +282,12 @@
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
-                margin-bottom: 80px;
             }
             .recent-activity {
                 width: min(95%, 100%);
                 padding: 15px;
             }
-            .nav-item {
-                font-size: clamp(0.9em, 2.2vw, 1em);
-                padding: 6px 10px;
-            }
-            .nav-item i {
+            .back-btn {
                 font-size: clamp(1.2em, 3vw, 1.4em);
             }
         }
@@ -327,11 +302,7 @@
             .activity-type, .activity-date, .activity-amount {
                 font-size: clamp(0.8rem, 2vw, 0.9rem);
             }
-            .nav-item {
-                font-size: clamp(0.85em, 2vw, 0.95em);
-                padding: 5px 8px;
-            }
-            .nav-item i {
+            .back-btn {
                 font-size: clamp(1.1em, 2.8vw, 1.3em);
             }
         }
@@ -345,9 +316,10 @@
 
     <!-- Header -->
     <header class="header">
+        <button class="back-btn" id="backButton"><i class="fas fa-arrow-left"></i></button>
         <div class="logo">KATO MINE</div>
-        <div class="slogan">TRANSACTION HISTORY!</div>
-        <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
+        <div class="slogan">TRANSACTION HISTORY</div>
+        <div class="tagline">TRANSFER</div>
     </header>
 
     <!-- Main Content -->
@@ -356,38 +328,18 @@
             <div class="activity-title">
                 <i class="fas fa-history"></i> Transaction History
             </div>
-            <div id="activityList">
+            <div id="transactionHistoryList">
                 <div style="text-align: center; color: var(--secondary-color); padding: 20px;">
                     No activity yet
                 </div>
             </div>
-        </div>
+        </main>
 
-        <div class="message-display" id="messageDisplay">Your transaction history.</div>
-    </main>
+        <div class="message-display" id="messageDisplay"></div>
+    </div>
 
     <!-- Notification -->
     <div class="notification" id="notification"></div>
-
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/claim.html" class="nav-item">
-            <i class="fas fa-gift"></i>
-            <span>Claim</span>
-        </a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/invite.html" class="nav-item">
-            <i class="fas fa-user-plus"></i>
-            <span>Invite</span>
-        </a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/wallet.html" class="nav-item active">
-            <i class="fas fa-wallet"></i>
-            <span>Wallet</span>
-        </a>
-    </nav>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -396,7 +348,8 @@
 
         // Firebase config
         let firebaseConfig;
-        let database, auth;
+        let database;
+        let auth;
         let isFirebaseInitialized = false;
 
         async function initializeFirebase() {
@@ -413,7 +366,7 @@
                 return true;
             } catch (error) {
                 console.error('Error initializing Firebase:', error.message || error);
-                showNotification('Failed to connect to server. Please check your configuration and try again.', 'error');
+                showNotification('Failed to connect to server.', 'error');
                 return false;
             }
         }
@@ -427,7 +380,8 @@
         // DOM Elements
         const loadingOverlay = document.getElementById('loadingOverlay');
         const messageDisplay = document.getElementById('messageDisplay');
-        const activityList = document.getElementById('activityList');
+        const transactionHistoryList = document.getElementById('transactionHistoryList');
+        const backButton = document.getElementById('backButton');
 
         // Notification Function
         function showNotification(message, type = 'info') {
@@ -442,34 +396,34 @@
             }
         }
 
-        // Display Activity List
-        function displayActivityList(activities) {
-            if (!Array.isArray(activities) || !activities) {
-                activityList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No activity yet</div>`;
+        // Display transaction history
+        function displayTransactionHistory(activities) {
+            if (!Array.isArray(activities) || !activities || activities.length === 0) {
+                transactionHistoryList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No activity yet</div>`;
                 return;
             }
 
-            activityList.innerHTML = activities.map(activity => {
+            transactionHistoryList.innerHTML = activities.map(activity => {
                 const isPositive = activity.amount >= 0;
                 return `
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-icon" style="background: ${activity.type === 'Daily Reward' ? '#00ff88' : activity.type === 'Referral Bonus' ? '#3b82f6' : activity.type === 'Mining Reward' ? '#ffd700' : '#ef4444'};">
-                                <i class="fas fa-${activity.type === 'Daily Reward' ? 'gift' : activity.type === 'Referral Bonus' ? 'user-plus' : activity.type === 'Mining Reward' ? 'star' : 'paper-plane'}"></i>
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-icon" style="background: ${activity.type === 'Deposit' ? '#00ff88' : activity.type === 'Withdrawal' ? '#ef4444' : '#ffd700'};">
+                                <i class="fas fa-${activity.type === 'Deposit' ? 'arrow-down' : activity.type === 'Withdrawal' ? 'arrow-up' : 'exchange-alt'}"></i>
                             </div>
-                            <div class="activity-details">
-                                <div class="activity-type">${activity.type}</div>
-                                <div class="activity-date">${new Date(activity.date || Date.now()).toLocaleDateString()}</div>
+                            <div class="transaction-details">
+                                <div class="transaction-type">${activity.type}</div>
+                                <div class="transaction-date">${new Date(activity.date || Date.now()).toLocaleString()}</div>
                             </div>
                         </div>
-                        <div class="activity-amount ${isPositive ? 'positive' : 'negative'}">${isPositive ? '+' : ''}${activity.amount} KATO</div>
+                        <div class="transaction-amount ${isPositive ? 'positive' : 'negative'}">${isPositive ? '+' : ''}${activity.amount} KATO</div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Initialize History Page
-        async function initializeHistoryPage() {
+        // Initialize Transaction History Page
+        async function initializeTransactionHistoryPage() {
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
 
             if (!isFirebaseInitialized) {
@@ -480,40 +434,46 @@
                 }
             }
 
-            onAuthStateChanged(auth, async (user) => {
+            try {
+                const user = auth.currentUser;
                 if (!user) {
                     showNotification('Please log in to access this page.', 'warning');
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    window.location.href = '/login';
                     if (loadingOverlay) loadingOverlay.style.display = 'none';
                     return;
                 }
 
                 userData.userID = user.uid;
 
-                const userRef = ref(database, 'users/' + userData.userID);
-                try {
-                    const snapshot = await get(userRef);
-                    if (snapshot.exists()) {
-                        const fetchedData = snapshot.val();
-                        userData.activities = Array.isArray(fetchedData.activities) ? fetchedData.activities : [];
-                        displayActivityList(userData.activities);
-                        messageDisplay.textContent = 'Your transaction history.';
-                    } else {
-                        showNotification('User data not found. Please return to Home page to initialize.', 'error');
-                        messageDisplay.textContent = 'User data not found.';
-                        activityList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No activity yet</div>`;
-                    }
-                    if (loadingOverlay) loadingOverlay.style.display = 'none';
-                } catch (error) {
-                    console.error('Error fetching user data:', error.message || error);
-                    showNotification('Error fetching transaction history. Please try again.', 'error');
-                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                const transactionsRef = ref(database, 'transactions/' + userData.userID);
+                const snapshot = await get(transactionsRef);
+                if (snapshot.exists()) {
+                    const fetchedData = snapshot.val();
+                    userData.transactions = Array.isArray(fetchedData.transactions) ? fetchedData.transactions : [];
+                    displayTransactionHistory(userData.transactions);
+                    messageDisplay.textContent = 'Your recent transactions';
+                } else {
+                    showNotification('No transactions found.', 'info');
+                    messageDisplay.textContent = 'No transactions found.';
+                    transactionHistoryList.innerHTML = '<div style="text-align: center; color: gray; padding: 50px;">No transactions yet</div>';
                 }
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+            } catch (error) {
+                console.error('Error fetching transaction history:', error.message || error);
+                showNotification('Error fetching transaction history.', 'error');
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+            }
+        }
+
+        // Back Button Event Listener
+        if (backButton) {
+            backButton.addEventListener('click', () => {
+                window.location.href = '/wallet';
             });
         }
 
         // Initialize
-        initializeHistoryPage();
+        initializeTransactionHistoryPage();
     </script>
 </body>
 </html>
