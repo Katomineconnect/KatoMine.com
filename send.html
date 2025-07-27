@@ -9,7 +9,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
-        /* পূর্ববর্তী wallet.html থেকে একই CSS ব্যবহার করা হবে */
         :root {
             --primary-color: #ffd700;
             --secondary-color: #d3d3d3;
@@ -94,6 +93,25 @@
             box-shadow: var(--shadow-dark);
             text-align: center;
             border-bottom: 2px solid var(--primary-color);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: clamp(1.4em, 3.5vw, 1.6em);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-color);
+            transform: translateY(-50%) scale(1.1);
         }
 
         .logo {
@@ -133,7 +151,6 @@
             justify-content: flex-start;
             gap: 1rem;
             align-items: center;
-            margin-bottom: 80px;
         }
 
         .send-form {
@@ -196,10 +213,16 @@
             width: 100%;
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             background: linear-gradient(45deg, #dc2626, #b91c1c);
             transform: translateY(-2px);
             box-shadow: var(--shadow-dark);
+        }
+
+        .submit-btn:disabled {
+            background: linear-gradient(45deg, #6b7280, #4b5563);
+            cursor: not-allowed;
+            opacity: 0.6;
         }
 
         .message-display {
@@ -213,43 +236,6 @@
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(10px);
             width: min(95%, 500px);
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            border-top: 2px solid var(--primary-color);
-            z-index: 900;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-size: clamp(1em, 2.5vw, 1.1em);
-            transition: all 0.3s ease;
-            padding: 8px 12px;
-            border-radius: 10px;
-        }
-
-        .nav-item.active,
-        .nav-item:hover {
-            color: var(--primary-color);
-            background: rgba(255,215,0,0.1);
-        }
-
-        .nav-item i {
-            font-size: clamp(1.4em, 3.5vw, 1.6em);
-            margin-bottom: 6px;
         }
 
         .notification {
@@ -289,17 +275,12 @@
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
-                margin-bottom: 80px;
             }
             .send-form {
                 width: min(95%, 100%);
                 padding: 15px;
             }
-            .nav-item {
-                font-size: clamp(0.9em, 2.2vw, 1em);
-                padding: 6px 10px;
-            }
-            .nav-item i {
+            .back-btn {
                 font-size: clamp(1.2em, 3vw, 1.4em);
             }
         }
@@ -316,11 +297,7 @@
                 padding: 10px 20px;
                 font-size: clamp(0.8rem, 2vw, 0.9rem);
             }
-            .nav-item {
-                font-size: clamp(0.85em, 2vw, 0.95em);
-                padding: 5px 8px;
-            }
-            .nav-item i {
+            .back-btn {
                 font-size: clamp(1.1em, 2.8vw, 1.3em);
             }
         }
@@ -334,6 +311,7 @@
 
     <!-- Header -->
     <header class="header">
+        <button class="back-btn" id="backButton"><i class="fas fa-arrow-left"></i></button>
         <div class="logo">KATO MINE</div>
         <div class="slogan">SEND KATO SECURELY!</div>
         <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
@@ -353,7 +331,7 @@
                 <label for="amount">Amount (KATO)</label>
                 <input type="number" id="amount" placeholder="Enter amount">
             </div>
-            <button class="submit-btn" id="submitSend">Send Now</button>
+            <button class="submit-btn" id="submitSend" disabled title="Send feature is not active yet">Send Now</button>
         </div>
 
         <div class="message-display" id="messageDisplay">Enter recipient details to send KATO.</div>
@@ -361,26 +339,6 @@
 
     <!-- Notification -->
     <div class="notification" id="notification"></div>
-
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/claim.html" class="nav-item">
-            <i class="fas fa-gift"></i>
-            <span>Claim</span>
-        </a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/invite.html" class="nav-item">
-            <i class="fas fa-user-plus"></i>
-            <span>Invite</span>
-        </a>
-        <a href="https://katomineconnect.github.io/KatoMine.com/wallet.html" class="nav-item active">
-            <i class="fas fa-wallet"></i>
-            <span>Wallet</span>
-        </a>
-    </nav>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -413,6 +371,7 @@
         const loadingOverlay = document.getElementById('loadingOverlay');
         const messageDisplay = document.getElementById('messageDisplay');
         const submitSendButton = document.getElementById('submitSend');
+        const backButton = document.getElementById('backButton');
 
         // Notification Function
         function showNotification(message, type = 'info') {
@@ -452,11 +411,10 @@
             });
         }
 
-        // Submit Button Event Listener
-        if (submitSendButton) {
-            submitSendButton.addEventListener('click', () => {
-                showNotification('Send money feature coming soon!', 'info');
-                messageDisplay.textContent = 'Send money feature coming soon!';
+        // Back Button Event Listener
+        if (backButton) {
+            backButton.addEventListener('click', () => {
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/wallet.html';
             });
         }
 
