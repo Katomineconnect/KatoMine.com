@@ -52,6 +52,26 @@
             font-size: clamp(1rem, 3vw, 1.2rem);
         }
         
+        #closeAdButton {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 5px 10px;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            background: #FF4500;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+        
+        #closeAdButton:hover {
+            background: #CC3700;
+            transform: scale(1.05);
+        }
+        
         #gameContainer {
             position: relative;
             width: 100%;
@@ -137,6 +157,11 @@
                 font-size: clamp(0.9rem, 2.8vw, 1rem);
             }
 
+            #closeAdButton {
+                padding: 4px 8px;
+                font-size: clamp(0.6rem, 1.8vw, 0.8rem);
+            }
+
             #startScreen h1, #gameOverScreen h1 {
                 font-size: clamp(1.2rem, 4vw, 2rem);
             }
@@ -152,6 +177,7 @@
     <div id="adBanner">
         <div id="adContainer"></div>
         <div class="ad-content" style="display: none;">No Internet</div>
+        <button id="closeAdButton">Close Ad</button>
     </div>
     
     <div id="gameContainer">
@@ -205,6 +231,8 @@
         const adBanner = document.getElementById('adBanner');
         const adContainer = document.getElementById('adContainer');
         const offlineMessage = adBanner.querySelector('.ad-content');
+        const closeAdButton = document.getElementById('closeAdButton');
+        let adRotationInterval;
 
         // Function to load a random ad
         function loadRandomAd() {
@@ -232,14 +260,22 @@
 
         // Check internet connectivity and load ad
         function checkConnectivityAndLoadAd() {
-            loadRandomAd();
+            if (adBanner.style.display !== 'none') {
+                loadRandomAd();
+            }
         }
 
         // Load initial ad
         checkConnectivityAndLoadAd();
 
         // Rotate ads every 30 seconds
-        setInterval(checkConnectivityAndLoadAd, 30000);
+        adRotationInterval = setInterval(checkConnectivityAndLoadAd, 30000);
+
+        // Close ad functionality
+        closeAdButton.addEventListener('click', () => {
+            adBanner.style.display = 'none';
+            clearInterval(adRotationInterval); // Stop ad rotation
+        });
 
         // Listen for online/offline events
         window.addEventListener('online', checkConnectivityAndLoadAd);
