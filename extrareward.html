@@ -3,320 +3,607 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Katomine - Your Digital Gold Rush. More features coming soon!">
-    <meta name="theme-color" content="#0d1b2a">
-    <title>Kato Mine - Extra Reward</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
+    <title>Flappy Bird Clone</title>
     <style>
-        :root {
-            --primary-color: #ffd700;
-            --secondary-color: #d3d3d3;
-            --background-color: #0d1b2a;
-            --accent-color: #00bfff;
-            --success-color: #00ff88;
-            --warning-color: #ff6b35;
-            --error-color: #ff4757;
-            --gradient-1: linear-gradient(135deg, #0d1b2a, #1b263b);
-            --gradient-2: linear-gradient(135deg, #ffd700, #ffed4a);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --shadow-light: 0 4px 15px rgba(0,0,0,0.1);
-            --shadow-dark: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: var(--gradient-1);
-            color: var(--primary-color);
-            min-height: 100vh;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #87CEEB 0%, #98FB98 100%);
+            font-family: Arial, sans-serif;
             overflow-x: hidden;
-            position: relative;
         }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
+        
+        #adBanner {
             width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+            max-width: 90vw;
+            height: 90px; /* Default height for largest ad */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2vh 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 2px solid #fff;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
         }
-
-        .loading-overlay {
-            position: fixed;
+        
+        #adBanner.offline {
+            background: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #adBanner.offline .ad-content {
+            text-align: center;
+            color: #333;
+            font-weight: bold;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100%;
+            max-width: 90vw;
+            background: #87CEEB;
+            border: 3px solid #4169E1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: linear-gradient(180deg, #87CEEB 0%, #98FB98 70%, #90EE90 100%);
+            touch-action: none;
+        }
+        
+        #startScreen, #gameOverScreen {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.8);
             display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.3s ease;
-        }
-
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid var(--secondary-color);
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 0 0 20px 20px;
-            box-shadow: var(--shadow-dark);
-            text-align: center;
-            border-bottom: 2px solid var(--primary-color);
-            position: relative;
-        }
-
-        .back-button {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary-color);
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: color 0.3s ease, transform 0.3s ease;
-            text-decoration: none;
-        }
-
-        .back-button:hover {
-            color: var(--accent-color);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .logo {
-            font-size: clamp(2.5em, 6vw, 4em);
-            letter-spacing: 4px;
-            font-weight: bold;
-            background: var(--gradient-2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-            to { text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-        }
-
-        .slogan {
-            font-size: clamp(1.2em, 3vw, 1.4em);
-            color: var(--secondary-color);
-            margin-bottom: 5px;
-        }
-
-        .tagline {
-            font-size: clamp(1em, 2.5vw, 1.2em);
-            color: var(--accent-color);
-            font-weight: 500;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            display: flex;
             flex-direction: column;
-            gap: 20px;
-            align-items: center;
             justify-content: center;
-        }
-
-        .coming-soon-section {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid var(--primary-color);
-            box-shadow: var(--shadow-dark);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            width: min(95%, 600px);
-        }
-
-        .coming-soon-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
-            opacity: 0.1;
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(0.8); opacity: 0.1; }
-            50% { transform: scale(1.2); opacity: 0.05; }
-        }
-
-        .coming-soon-title {
-            font-size: clamp(1.5rem, 4vw, 2rem);
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .coming-soon-message {
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-        }
-
-        .coming-soon-icon {
-            font-size: clamp(3rem, 8vw, 4rem);
-            color: var(--accent-color);
-            margin-bottom: 20px;
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 10px;
+            align-items: center;
             color: white;
-            font-weight: 500;
-            z-index: 1000;
-            max-width: 300px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
+            text-align: center;
+        }
+        
+        #startScreen h1, #gameOverScreen h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            margin: 0 0 1rem 0;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+        
+        #startScreen p, #gameOverScreen p {
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            margin: 0.5rem 0;
+        }
+        
+        button {
+            padding: clamp(8px, 2vw, 12px) clamp(15px, 4vw, 20px);
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            background: #FFD700;
+            color: #333;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+        
+        button:hover {
+            background: #FFA500;
+            transform: scale(1.05);
+        }
+        
+        #score {
+            position: absolute;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            z-index: 10;
         }
 
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            background: var(--success-color);
-        }
-
-        .notification.error {
-            background: var(--error-color);
-        }
-
-        .notification.warning {
-            background: var(--warning-color);
-        }
-
-        .notification.info {
-            background: var(--accent-color);
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 15px;
+        /* Media Queries for smaller screens */
+        @media (max-width: 600px) {
+            #adBanner {
+                height: 50px; /* Adjust for smaller ad size */
             }
 
-            .coming-soon-section {
-                padding: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                padding: 15px;
+            #adBanner.offline .ad-content {
+                font-size: clamp(0.9rem, 2.8vw, 1rem);
             }
 
-            .logo {
-                font-size: clamp(2em, 5vw, 3em);
+            #startScreen h1, #gameOverScreen h1 {
+                font-size: clamp(1.2rem, 4vw, 2rem);
             }
 
-            .coming-soon-section {
-                width: min(95%, 280px);
-            }
-
-            .back-button {
-                font-size: 1.2em;
-                left: 15px;
+            button {
+                padding: clamp(6px, 1.5vw, 10px) clamp(12px, 3vw, 15px);
+                font-size: clamp(0.8rem, 2vw, 1rem);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner"></div>
+    <div id="adBanner">
+        <div id="adContainer"></div>
+        <div class="ad-content" style="display: none;">No Internet</div>
+    </div>
+    
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="score">0</div>
+        
+        <div id="startScreen">
+            <h1>🐦 Flappy Bird</h1>
+            <p>Tap or press spacebar to make the bird fly</p>
+            <p>Avoid the pipes!</p>
+            <button onclick="startGame()">Start Game</button>
+        </div>
+        
+        <div id="gameOverScreen" style="display: none;">
+            <h1>Game Over!</h1>
+            <p>Your Score: <span id="finalScore">0</span></p>
+            <p>High Score: <span id="highScore">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
     </div>
 
-    <!-- Header -->
-    <header class="header">
-        <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="back-button">
-            <i class="fas fa-arrow-left"></i>
-        </a>
-        <div class="logo">KATO MINE</div>
-        <div class="slogan">MORE FEATURES COMING SOON!</div>
-        <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <section class="coming-soon-section">
-            <i class="fas fa-rocket coming-soon-icon"></i>
-            <div class="coming-soon-title">Extra Rewards</div>
-            <div class="coming-soon-message">More exciting features and rewards are on the way! Stay tuned for updates!</div>
-        </section>
-    </main>
-
-    <!-- Notification -->
-    <div class="notification" id="notification"></div>
-
     <script>
-        // Notification Function
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            if (notification) {
-                notification.textContent = message;
-                notification.className = `notification ${type}`;
-                notification.classList.add('show');
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
+        // Ad configurations
+        const adConfigs = [
+            {
+                key: '63718988f07bc6d276f3c6a441757cae',
+                format: 'iframe',
+                height: 90,
+                width: 728,
+                params: {},
+                src: '//www.highperformanceformat.com/63718988f07bc6d276f3c6a441757cae/invoke.js'
+            },
+            {
+                key: 'c620af328467e6de19dc04af696ee0fb',
+                format: 'iframe',
+                height: 250,
+                width: 300,
+                params: {},
+                src: '//www.highperformanceformat.com/c620af328467e6de19dc04af696ee0fb/invoke.js'
+            },
+            {
+                key: '78ade24182729fceea8e45203dad915b',
+                format: 'iframe',
+                height: 50,
+                width: 320,
+                params: {},
+                src: '//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js'
+            }
+        ];
+
+        const adBanner = document.getElementById('adBanner');
+        const adContainer = document.getElementById('adContainer');
+        const offlineMessage = adBanner.querySelector('.ad-content');
+
+        // Function to load a random ad
+        function loadRandomAd() {
+            adContainer.innerHTML = ''; // Clear previous ad
+            const randomAd = adConfigs[Math.floor(Math.random() * adConfigs.length)];
+            adBanner.style.height = `${randomAd.height}px`;
+
+            if (navigator.onLine) {
+                adBanner.classList.remove('offline');
+                offlineMessage.style.display = 'none';
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.innerHTML = `atOptions = ${JSON.stringify(randomAd)};`;
+                adContainer.appendChild(script);
+
+                const invokeScript = document.createElement('script');
+                invokeScript.type = 'text/javascript';
+                invokeScript.src = randomAd.src;
+                adContainer.appendChild(invokeScript);
+            } else {
+                adBanner.classList.add('offline');
+                offlineMessage.style.display = 'block';
             }
         }
 
-        // Initialize Page
-        function initializePage() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                setTimeout(() => {
-                    loadingOverlay.style.display = 'none';
-                }, 1000); // Simulate loading
+        // Check internet connectivity and load ad
+        function checkConnectivityAndLoadAd() {
+            loadRandomAd();
+        }
+
+        // Load initial ad
+        checkConnectivityAndLoadAd();
+
+        // Rotate ads every 30 seconds
+        setInterval(checkConnectivityAndLoadAd, 30000);
+
+        // Listen for online/offline events
+        window.addEventListener('online', checkConnectivityAndLoadAd);
+        window.addEventListener('offline', checkConnectivityAndLoadAd);
+
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const finalScoreElement = document.getElementById('finalScore');
+        const highScoreElement = document.getElementById('highScore');
+
+        let gameState = 'start';
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('flappyHighScore')) || 0;
+        let animationId;
+
+        // Default canvas dimensions
+        const defaultWidth = 400;
+        const defaultHeight = 600;
+        const aspectRatio = defaultWidth / defaultHeight;
+
+        // Bird object
+        const bird = {
+            x: 80,
+            y: defaultHeight / 2,
+            width: 30,
+            height: 25,
+            velocity: 0,
+            gravity: 0.5,
+            jumpPower: -8,
+            rotation: 0
+        };
+
+        // Pipes array
+        let pipes = [];
+        let pipeWidth = 60;
+        const pipeGap = 180;
+        let pipeSpeed = 2;
+
+        // Cloud array for background
+        let clouds = [];
+
+        // Resize canvas to fit screen
+        function resizeCanvas() {
+            const maxWidth = window.innerWidth * 0.9;
+            const maxHeight = window.innerHeight * 0.7;
+            let newWidth = Math.min(maxWidth, defaultWidth);
+            let newHeight = newWidth / aspectRatio;
+
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                newWidth = newHeight * aspectRatio;
+            }
+
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+
+            // Scale game elements
+            const scaleX = newWidth / defaultWidth;
+            const scaleY = newHeight / defaultHeight;
+            bird.x = 80 * scaleX;
+            bird.width = 30 * scaleX;
+            bird.height = 25 * scaleY;
+            pipeWidth = 60 * scaleX;
+            pipeSpeed = 2 * scaleX;
+
+            bird.y = canvas.height / 2;
+
+            pipes.forEach(pipe => {
+                pipe.x *= scaleX;
+                pipe.topHeight *= scaleY;
+                pipe.bottomY *= scaleY;
+            });
+
+            clouds.forEach(cloud => {
+                cloud.x *= scaleX;
+                cloud.y *= scaleY;
+                cloud.size *= scaleX;
+                cloud.speed *= scaleX;
+            });
+        }
+
+        // Initialize clouds
+        function initClouds() {
+            clouds = [];
+            for (let i = 0; i < 5; i++) {
+                clouds.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * (canvas.height / 3),
+                    size: Math.random() * 30 + 20,
+                    speed: Math.random() * 0.5 + 0.2
+                });
             }
         }
 
-        // Run initialization
-        initializePage();
+        // Draw cloud
+        function drawCloud(cloud) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(cloud.x, cloud.y, cloud.size, 0, Math.PI * 2);
+            ctx.arc(cloud.x + cloud.size * 0.7, cloud.y, cloud.size * 0.8, 0, Math.PI * 2);
+            ctx.arc(cloud.x + cloud.size * 1.4, cloud.y, cloud.size * 0.6, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Update clouds
+        function updateClouds() {
+            clouds.forEach(cloud => {
+                cloud.x -= cloud.speed;
+                if (cloud.x + cloud.size * 2 < 0) {
+                    cloud.x = canvas.width + cloud.size;
+                }
+            });
+        }
+
+        // Draw bird
+        function drawBird() {
+            ctx.save();
+            ctx.translate(bird.x + bird.width/2, bird.y + bird.height/2);
+            ctx.rotate(bird.rotation);
+            
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(-bird.width/2, -bird.height/2, bird.width, bird.height);
+            
+            ctx.fillStyle = '#FFA500';
+            ctx.fillRect(-bird.width/3, -bird.height/3, bird.width/2, bird.height/3);
+            
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(bird.width/4, -bird.height/4, 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(bird.width/4 + 1, -bird.height/4, 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#FF4500';
+            ctx.beginPath();
+            ctx.moveTo(bird.width/2, 0);
+            ctx.lineTo(bird.width/2 + 8, 0);
+            ctx.lineTo(bird.width/2, 4);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.restore();
+        }
+
+        // Draw pipe
+        function drawPipe(pipe) {
+            ctx.fillStyle = '#228B22';
+            ctx.fillRect(pipe.x, 0, pipeWidth, pipe.topHeight);
+            
+            ctx.fillStyle = '#32CD32';
+            ctx.fillRect(pipe.x - 5, pipe.topHeight - 30, pipeWidth + 10, 30);
+            
+            ctx.fillStyle = '#228B22';
+            ctx.fillRect(pipe.x, pipe.bottomY, pipeWidth, canvas.height - pipe.bottomY);
+            
+            ctx.fillStyle = '#32CD32';
+            ctx.fillRect(pipe.x - 5, pipe.bottomY, pipeWidth + 10, 30);
+        }
+
+        // Create new pipe
+        function createPipe() {
+            const topHeight = Math.random() * (canvas.height - pipeGap - 100) + 50;
+            const bottomY = topHeight + pipeGap;
+            
+            pipes.push({
+                x: canvas.width,
+                topHeight: topHeight,
+                bottomY: bottomY,
+                passed: false
+            });
+        }
+
+        // Update bird
+        function updateBird() {
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
+            
+            bird.rotation = Math.min(bird.velocity * 0.1, Math.PI / 6);
+            
+            if (bird.y < 0) {
+                bird.y = 0;
+                bird.velocity = 0;
+            }
+            if (bird.y + bird.height > canvas.height) {
+                gameOver();
+            }
+        }
+
+        // Update pipes
+        function updatePipes() {
+            pipes.forEach(pipe => {
+                pipe.x -= pipeSpeed;
+                
+                if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
+                    pipe.passed = true;
+                    score++;
+                    scoreElement.textContent = score;
+                }
+            });
+            
+            pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
+            
+            if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+                createPipe();
+            }
+        }
+
+        // Check collision
+        function checkCollision() {
+            for (let pipe of pipes) {
+                if (bird.x < pipe.x + pipeWidth &&
+                    bird.x + bird.width > pipe.x &&
+                    bird.y < pipe.topHeight) {
+                    return true;
+                }
+                
+                if (bird.x < pipe.x + pipeWidth &&
+                    bird.x + bird.width > pipe.x &&
+                    bird.y + bird.height > pipe.bottomY) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Draw ground
+        function drawGround() {
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+            
+            ctx.fillStyle = '#A0522D';
+            for (let i = 0; i < canvas.width; i += 40) {
+                ctx.fillRect(i, canvas.height - 15, 20, 10);
+            }
+        }
+
+        // Game loop
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(0.7, '#98FB98');
+            gradient.addColorStop(1, '#90EE90');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            updateClouds();
+            clouds.forEach(drawCloud);
+            
+            if (gameState === 'playing') {
+                updateBird();
+                updatePipes();
+                
+                if (checkCollision()) {
+                    gameOver();
+                    return;
+                }
+            }
+            
+            pipes.forEach(drawPipe);
+            drawBird();
+            drawGround();
+            
+            if (gameState === 'playing') {
+                animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Bird jump
+        function jump() {
+            if (gameState === 'playing') {
+                bird.velocity = bird.jumpPower;
+            }
+        }
+
+        // Start game
+        function startGame() {
+            gameState = 'playing';
+            score = 0;
+            scoreElement.textContent = score;
+            
+            bird.y = canvas.height / 2;
+            bird.velocity = 0;
+            bird.rotation = 0;
+            
+            pipes = [];
+            
+            initClouds();
+            
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            
+            gameLoop();
+        }
+
+        // Game over
+        function gameOver() {
+            gameState = 'gameOver';
+            cancelAnimationFrame(animationId);
+            
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('flappyHighScore', highScore.toString());
+            }
+            
+            finalScoreElement.textContent = score;
+            highScoreElement.textContent = highScore;
+            gameOverScreen.style.display = 'flex';
+        }
+
+        // Restart game
+        function restartGame() {
+            startGame();
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (gameState === 'start') {
+                    startGame();
+                } else if (gameState === 'playing') {
+                    jump();
+                } else if (gameState === 'gameOver') {
+                    restartGame();
+                }
+            }
+        });
+
+        canvas.addEventListener('click', () => {
+            if (gameState === 'start') {
+                startGame();
+            } else if (gameState === 'playing') {
+                jump();
+            } else if (gameState === 'gameOver') {
+                restartGame();
+            }
+        });
+
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (gameState === 'start') {
+                startGame();
+            } else if (gameState === 'playing') {
+                jump();
+            } else if (gameState === 'gameOver') {
+                restartGame();
+            }
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+
+        resizeCanvas();
+        initClouds();
+        highScoreElement.textContent = highScore;
+        gameLoop();
     </script>
 </body>
 </html>
