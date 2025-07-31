@@ -3,86 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Flappy Bird Clone</title>
+    <meta name="description" content="SkyFlap Adventure - Play and Earn KATO Rewards">
+    <meta name="theme-color" content="#0d1b2a">
+    <title>SkyFlap Adventure</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #ffd700;
+            --secondary-color: #d3d3d3;
+            --background-color: #0d1b2a;
+            --accent-color: #00bfff;
+            --success-color: #00ff88;
+            --warning-color: #ff6b35;
+            --error-color: #ff4757;
+            --gradient-1: linear-gradient(135deg, #0d1b2a, #1b263b);
+            --gradient-2: linear-gradient(135deg, #ffd700, #ffed4a);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-dark: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--gradient-1);
+            color: var(--primary-color);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(180deg, #87CEEB 0%, #98FB98 100%);
-            font-family: Arial, sans-serif;
-            overflow-x: hidden;
+            overflow: hidden; /* Disable scrolling */
+            position: relative;
         }
-        
-        #adBanner {
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 90vw;
-            height: 90px; /* Default height for largest ad */
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 2vh 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            border: 2px solid #fff;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--secondary-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--shadow-dark);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            width: 100%;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 25px; /* Moved down from 15px to 25px */
+            left: 15px;
+            background: var(--gradient-2);
+            color: var(--background-color);
+            border: none;
+            border-radius: 25px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: clamp(0.7em, 1.8vw, 0.8em);
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-dark);
+        }
+
+        .logo {
+            font-size: clamp(1.8em, 4vw, 2.5em);
+            letter-spacing: 3px;
+            font-weight: bold;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            to { text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
+        }
+
+        .slogan {
+            font-size: clamp(0.9em, 2.5vw, 1.1em);
+            color: var(--secondary-color);
+            margin-bottom: 4px;
+        }
+
+        .tagline {
+            font-size: clamp(0.8em, 2vw, 1em);
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        #adBanner {
+            width: 95%;
+            max-width: 600px;
+            height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1.5vh 0;
+            border-radius: 12px;
+            box-shadow: var(--shadow-dark);
+            border: 2px solid var(--primary-color);
             position: relative;
             overflow: hidden;
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
         }
-        
+
         #adBanner.offline {
-            background: #ccc;
+            background: var(--glass-bg);
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        
+
         #adBanner.offline .ad-content {
             text-align: center;
-            color: #333;
+            color: var(--secondary-color);
             font-weight: bold;
-            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-size: clamp(0.9rem, 2.8vw, 1rem);
         }
-        
+
         #closeAdButton {
             position: absolute;
             top: 5px;
             right: 5px;
             padding: 5px 10px;
             font-size: clamp(0.7rem, 2vw, 0.9rem);
-            background: #FF4500;
+            background: var(--warning-color);
             color: white;
             border: none;
             border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s;
-            z-index: 2;
+            box-shadow: var(--shadow-light);
         }
-        
+
         #closeAdButton:hover {
-            background: #CC3700;
+            background: #e55a2f;
             transform: scale(1.05);
         }
-        
+
         #gameContainer {
             position: relative;
-            width: 100%;
-            max-width: 90vw;
-            background: #87CEEB;
-            border: 3px solid #4169E1;
-            border-radius: 10px;
+            width: 95%;
+            max-width: 600px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow-dark);
         }
-        
+
         #gameCanvas {
             display: block;
             width: 100%;
@@ -90,51 +218,57 @@
             background: linear-gradient(180deg, #87CEEB 0%, #98FB98 70%, #90EE90 100%);
             touch-action: none;
         }
-        
+
         #startScreen, #gameOverScreen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: white;
+            color: var(--primary-color);
             text-align: center;
+            border: 1px solid var(--primary-color);
         }
-        
+
         #startScreen h1, #gameOverScreen h1 {
             font-size: clamp(1.5rem, 5vw, 2.5rem);
             margin: 0 0 1rem 0;
-            color: #FFD700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--shadow-light);
         }
-        
+
         #startScreen p, #gameOverScreen p {
-            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            color: var(--secondary-color);
             margin: 0.5rem 0;
         }
-        
+
         button {
-            padding: clamp(8px, 2vw, 12px) clamp(15px, 4vw, 20px);
-            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-            background: #FFD700;
-            color: #333;
+            background: var(--gradient-2);
+            color: var(--background-color);
             border: none;
             border-radius: 25px;
+            padding: clamp(8px, 2vw, 12px) clamp(15px, 4vw, 20px);
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-            margin: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
         }
-        
+
         button:hover {
-            background: #FFA500;
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-dark);
         }
-        
+
         #score {
             position: absolute;
             top: 1rem;
@@ -142,19 +276,50 @@
             transform: translateX(-50%);
             font-size: clamp(1.2rem, 4vw, 1.8rem);
             font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            color: var(--primary-color);
+            text-shadow: var(--shadow-light);
             z-index: 10;
         }
 
-        /* Media Queries for smaller screens */
+        #studioFooter {
+            margin-top: 1vh;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            color: var(--secondary-color);
+            font-weight: bold;
+            text-align: center;
+            text-shadow: var(--shadow-light);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            max-width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success { background: var(--success-color); }
+        .notification.error { background: var(--error-color); }
+        .notification.warning { background: var(--warning-color); }
+        .notification.info { background: var(--accent-color); }
+
         @media (max-width: 600px) {
             #adBanner {
-                height: 50px; /* Adjust for smaller ad size */
+                height: 90px; /* Fixed to match the only ad config */
             }
 
             #adBanner.offline .ad-content {
-                font-size: clamp(0.9rem, 2.8vw, 1rem);
+                font-size: clamp(0.8rem, 2.5vw, 0.9rem);
             }
 
             #closeAdButton {
@@ -170,24 +335,63 @@
                 padding: clamp(6px, 1.5vw, 10px) clamp(12px, 3vw, 15px);
                 font-size: clamp(0.8rem, 2vw, 1rem);
             }
+
+            #studioFooter {
+                font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+            }
+
+            .back-button {
+                padding: 5px 10px;
+                font-size: clamp(0.6em, 1.6vw, 0.7em);
+                top: 20px; /* Adjusted for mobile, moved down slightly */
+            }
+
+            .logo {
+                font-size: clamp(1.5em, 3.5vw, 2em);
+            }
+
+            .slogan {
+                font-size: clamp(0.8em, 2.2vw, 1em);
+            }
+
+            .tagline {
+                font-size: clamp(0.7em, 1.8vw, 0.9em);
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <button class="back-button" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <div class="logo">SKYFLAP ADVENTURE</div>
+        <div class="slogan">FLY HIGH, EARN KATO!</div>
+        <div class="tagline">PLAY AND WIN REWARDS!</div>
+    </header>
+
+    <!-- Ad Banner -->
     <div id="adBanner">
         <div id="adContainer"></div>
         <div class="ad-content" style="display: none;">No Internet</div>
         <button id="closeAdButton">Close Ad</button>
     </div>
-    
+
+    <!-- Game Container -->
     <div id="gameContainer">
         <canvas id="gameCanvas"></canvas>
         <div id="score">0</div>
         
         <div id="startScreen">
-            <h1>🐦 Flappy Bird</h1>
+            <h1>🐦 SkyFlap Adventure</h1>
             <p>Tap or press spacebar to make the bird fly</p>
-            <p>Avoid the pipes!</p>
+            <p>Avoid the pipes to earn KATO!</p>
             <button onclick="startGame()">Start Game</button>
         </div>
         
@@ -195,91 +399,59 @@
             <h1>Game Over!</h1>
             <p>Your Score: <span id="finalScore">0</span></p>
             <p>High Score: <span id="highScore">0</span></p>
+            <p>Reward Earned: <span id="rewardEarned">0</span> KATO</p>
             <button onclick="restartGame()">Play Again</button>
+            <button id="claimReward" onclick="claimGameReward()" style="display: none;">Claim Reward</button>
         </div>
     </div>
 
-    <script>
-        // Ad configurations
-        const adConfigs = [
-            {
-                key: '63718988f07bc6d276f3c6a441757cae',
-                format: 'iframe',
-                height: 90,
-                width: 728,
-                params: {},
-                src: '//www.highperformanceformat.com/63718988f07bc6d276f3c6a441757cae/invoke.js'
-            },
-            {
-                key: 'c620af328467e6de19dc04af696ee0fb',
-                format: 'iframe',
-                height: 250,
-                width: 300,
-                params: {},
-                src: '//www.highperformanceformat.com/c620af328467e6de19dc04af696ee0fb/invoke.js'
-            },
-            {
-                key: '78ade24182729fceea8e45203dad915b',
-                format: 'iframe',
-                height: 50,
-                width: 320,
-                params: {},
-                src: '//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js'
-            }
-        ];
+    <!-- Studio Footer -->
+    <div id="studioFooter">WEBGAMER STUDIO</div>
 
-        const adBanner = document.getElementById('adBanner');
-        const adContainer = document.getElementById('adContainer');
-        const offlineMessage = adBanner.querySelector('.ad-content');
-        const closeAdButton = document.getElementById('closeAdButton');
-        let adRotationInterval;
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
 
-        // Function to load a random ad
-        function loadRandomAd() {
-            adContainer.innerHTML = ''; // Clear previous ad
-            const randomAd = adConfigs[Math.floor(Math.random() * adConfigs.length)];
-            adBanner.style.height = `${randomAd.height}px`;
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+        import { getDatabase, ref, onValue, get, set, push } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
-            if (navigator.onLine) {
-                adBanner.classList.remove('offline');
-                offlineMessage.style.display = 'none';
-                const script = document.createElement('script');
-                script.type = 'text/javascript';
-                script.innerHTML = `atOptions = ${JSON.stringify(randomAd)};`;
-                adContainer.appendChild(script);
+        // Firebase config
+        let firebaseConfig;
+        let database, auth;
+        let isFirebaseInitialized = false;
 
-                const invokeScript = document.createElement('script');
-                invokeScript.type = 'text/javascript';
-                invokeScript.src = randomAd.src;
-                adContainer.appendChild(invokeScript);
-            } else {
-                adBanner.classList.add('offline');
-                offlineMessage.style.display = 'block';
+        async function initializeFirebase() {
+            try {
+                const configModule = await import('./config.js');
+                firebaseConfig = configModule.firebaseConfig;
+                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                    throw new Error('Firebase configuration is missing or invalid');
+                }
+                const app = initializeApp(firebaseConfig);
+                database = getDatabase(app);
+                auth = getAuth(app);
+                isFirebaseInitialized = true;
+                return true;
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+                showNotification('Failed to connect to server. Please check your configuration.', 'error');
+                return false;
             }
         }
 
-        // Check internet connectivity and load ad
-        function checkConnectivityAndLoadAd() {
-            if (adBanner.style.display !== 'none') {
-                loadRandomAd();
-            }
-        }
-
-        // Load initial ad
-        checkConnectivityAndLoadAd();
-
-        // Rotate ads every 30 seconds
-        adRotationInterval = setInterval(checkConnectivityAndLoadAd, 30000);
-
-        // Close ad functionality
-        closeAdButton.addEventListener('click', () => {
-            adBanner.style.display = 'none';
-            clearInterval(adRotationInterval); // Stop ad rotation
-        });
-
-        // Listen for online/offline events
-        window.addEventListener('online', checkConnectivityAndLoadAd);
-        window.addEventListener('offline', checkConnectivityAndLoadAd);
+        // In-memory storage
+        let userData = {
+            userID: null,
+            username: '',
+            email: '',
+            balance: 0,
+            tasksEarned: 0,
+            referrals: [],
+            dailyStreak: 0,
+            lastDailyReward: null,
+            level: 1
+        };
 
         // Game variables
         const canvas = document.getElementById('gameCanvas');
@@ -289,6 +461,9 @@
         const gameOverScreen = document.getElementById('gameOverScreen');
         const finalScoreElement = document.getElementById('finalScore');
         const highScoreElement = document.getElementById('highScore');
+        const rewardEarnedElement = document.getElementById('rewardEarned');
+        const claimRewardButton = document.getElementById('claimReward');
+        const loadingOverlay = document.getElementById('loadingOverlay');
 
         let gameState = 'start';
         let score = 0;
@@ -312,18 +487,235 @@
             rotation: 0
         };
 
-        // Pipes array
         let pipes = [];
         let pipeWidth = 60;
         const pipeGap = 180;
         let pipeSpeed = 2;
-
-        // Cloud array for background
         let clouds = [];
 
-        // Resize canvas to fit screen
+        // Ad configurations
+        const adConfigs = [
+            {
+                key: '63718988f07bc6d276f3c6a441757cae',
+                format: 'iframe',
+                height: 90,
+                width: 728,
+                params: {},
+                src: '//www.highperformanceformat.com/63718988f07bc6d276f3c6a441757cae/invoke.js'
+            }
+        ];
+
+        const adBanner = document.getElementById('adBanner');
+        const adContainer = document.getElementById('adContainer');
+        const offlineMessage = adBanner.querySelector('.ad-content');
+        const closeAdButton = document.getElementById('closeAdButton');
+        let adRotationInterval;
+
+        // Utility Functions
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            if (notification) {
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function isLocalStorageAvailable() {
+            try {
+                const test = '__test__';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Back Button Navigation
+        window.goBack = function() {
+            try {
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/index.html';
+            } catch (error) {
+                console.error('Navigation error:', error);
+                showNotification('Error navigating to home page. Please try again.', 'error');
+            }
+        };
+
+        // Ad Functions
+        function loadRandomAd() {
+            adContainer.innerHTML = '';
+            const randomAd = adConfigs[0]; // Only one ad config, no need for random selection
+            adBanner.style.height = `${randomAd.height}px`;
+
+            if (navigator.onLine) {
+                adBanner.classList.remove('offline');
+                offlineMessage.style.display = 'none';
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.innerHTML = `atOptions = ${JSON.stringify(randomAd)};`;
+                adContainer.appendChild(script);
+
+                const invokeScript = document.createElement('script');
+                invokeScript.type = 'text/javascript';
+                invokeScript.src = randomAd.src;
+                adContainer.appendChild(invokeScript);
+            } else {
+                adBanner.classList.add('offline');
+                offlineMessage.style.display = 'block';
+            }
+        }
+
+        function checkConnectivityAndLoadAd() {
+            if (adBanner.style.display !== 'none') {
+                loadRandomAd();
+            }
+        }
+
+        function startAdRotation() {
+            adRotationInterval = setInterval(checkConnectivityAndLoadAd, 30000);
+        }
+
+        closeAdButton.addEventListener('click', () => {
+            adBanner.style.display = 'none';
+            clearInterval(adRotationInterval);
+            setTimeout(() => {
+                adBanner.style.display = 'flex';
+                checkConnectivityAndLoadAd();
+                startAdRotation();
+            }, 10000);
+        });
+
+        window.addEventListener('online', checkConnectivityAndLoadAd);
+        window.addEventListener('offline', checkConnectivityAndLoadAd);
+
+        // Initialize User
+        async function initializeUser() {
+            loadingOverlay.style.display = 'flex';
+
+            if (!isFirebaseInitialized) {
+                const success = await initializeFirebase();
+                if (!success) {
+                    loadingOverlay.style.display = 'none';
+                    return;
+                }
+            }
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userData.userID = user.uid;
+                    userData.email = user.email;
+                    userData.username = user.displayName || user.email.split('@')[0];
+
+                    if (isLocalStorageAvailable()) {
+                        localStorage.setItem('userID', userData.userID);
+                    }
+
+                    const userRef = ref(database, `users/${userData.userID}`);
+                    try {
+                        const snapshot = await get(userRef);
+                        if (snapshot.exists()) {
+                            userData = { ...userData, ...snapshot.val(), userID: user.uid };
+                        } else {
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const referrerID = urlParams.get('ref') || null;
+                            await set(userRef, {
+                                username: userData.username || userData.email.split('@')[0],
+                                email: userData.email,
+                                balance: 0.00,
+                                tasksEarned: 0,
+                                referrals: [],
+                                dailyStreak: 0,
+                                lastDailyReward: null,
+                                level: 1
+                            });
+                            if (referrerID) {
+                                const referrerRef = ref(database, 'users/' + referrerID);
+                                const referrerSnapshot = await get(referrerRef);
+                                if (referrerSnapshot.exists()) {
+                                    const referrerData = referrerSnapshot.val();
+                                    await set(referrerRef, {
+                                        ...referrerData,
+                                        balance: (referrerData.balance || 0) + 1,
+                                        referrals: [...(referrerData.referrals || []), userData.userID]
+                                    });
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error fetching user data:', error);
+                        showNotification('Error fetching user data. Please try again.', 'error');
+                    }
+                }
+
+                loadingOverlay.style.display = 'none';
+            });
+        }
+
+        // Claim Game Reward
+        window.claimGameReward = async function() {
+            if (!userData.userID) {
+                showNotification('Please login to claim rewards.', 'warning');
+                return;
+            }
+
+            try {
+                const reward = calculateReward(score);
+                const userRef = ref(database, `users/${userData.userID}`);
+                const tasksRef = ref(database, `users/${userData.userID}/tasks/game_skyflap`);
+                const activitiesRef = ref(database, `users/${userData.userID}/activities`);
+
+                const snapshot = await get(tasksRef);
+                if (snapshot.exists() && snapshot.val().claimed) {
+                    showNotification('You have already claimed this game reward!', 'warning');
+                    claimRewardButton.style.display = 'none';
+                    return;
+                }
+
+                const userSnapshot = await get(userRef);
+                const existingData = userSnapshot.val() || { balance: 0, tasksEarned: 0 };
+                const newBalance = (existingData.balance || 0) + parseFloat(reward);
+                const newTasksEarned = (existingData.tasksEarned || 0) + parseFloat(reward);
+
+                await set(userRef, {
+                    ...existingData,
+                    balance: newBalance,
+                    tasksEarned: newTasksEarned
+                });
+
+                await set(tasksRef, {
+                    claimed: true,
+                    amount: parseFloat(reward),
+                    date: Date.now()
+                });
+
+                await push(activitiesRef, {
+                    type: 'SkyFlap Game',
+                    amount: parseFloat(reward),
+                    date: Date.now()
+                });
+
+                userData.balance = newBalance;
+                userData.tasksEarned = newTasksEarned;
+
+                showNotification(`Congratulations! You earned ${reward} KATO!`, 'success');
+                claimRewardButton.style.display = 'none';
+            } catch (error) {
+                console.error('Error claiming game reward:', error);
+                showNotification('Failed to claim reward. Please try again.', 'error');
+            }
+        };
+
+        function calculateReward(score) {
+            return Math.min(score * 0.1, 5.0).toFixed(2); // Max 5 KATO per game
+        }
+
+        // Resize canvas
         function resizeCanvas() {
-            const maxWidth = window.innerWidth * 0.9;
+            const maxWidth = window.innerWidth * 0.95;
             const maxHeight = window.innerHeight * 0.7;
             let newWidth = Math.min(maxWidth, defaultWidth);
             let newHeight = newWidth / aspectRatio;
@@ -336,7 +728,6 @@
             canvas.width = newWidth;
             canvas.height = newHeight;
 
-            // Scale game elements
             const scaleX = newWidth / defaultWidth;
             const scaleY = newHeight / defaultHeight;
             bird.x = 80 * scaleX;
@@ -400,10 +791,10 @@
             ctx.translate(bird.x + bird.width/2, bird.y + bird.height/2);
             ctx.rotate(bird.rotation);
             
-            ctx.fillStyle = '#FFD700';
+            ctx.fillStyle = 'var(--primary-color)';
             ctx.fillRect(-bird.width/2, -bird.height/2, bird.width, bird.height);
             
-            ctx.fillStyle = '#FFA500';
+            ctx.fillStyle = 'var(--gradient-2)';
             ctx.fillRect(-bird.width/3, -bird.height/3, bird.width/2, bird.height/3);
             
             ctx.fillStyle = 'white';
@@ -416,7 +807,7 @@
             ctx.arc(bird.width/4 + 1, -bird.height/4, 2, 0, Math.PI * 2);
             ctx.fill();
             
-            ctx.fillStyle = '#FF4500';
+            ctx.fillStyle = 'var(--warning-color)';
             ctx.beginPath();
             ctx.moveTo(bird.width/2, 0);
             ctx.lineTo(bird.width/2 + 8, 0);
@@ -561,6 +952,11 @@
 
         // Start game
         function startGame() {
+            if (!userData.userID) {
+                showNotification('Please login to play and earn rewards.', 'warning');
+                return;
+            }
+
             gameState = 'playing';
             score = 0;
             scoreElement.textContent = score;
@@ -580,7 +976,7 @@
         }
 
         // Game over
-        function gameOver() {
+        async function gameOver() {
             gameState = 'gameOver';
             cancelAnimationFrame(animationId);
             
@@ -591,6 +987,19 @@
             
             finalScoreElement.textContent = score;
             highScoreElement.textContent = highScore;
+
+            if (userData.userID && score >= 10) { // Minimum score to claim reward
+                const reward = calculateReward(score);
+                rewardEarnedElement.textContent = reward;
+                claimRewardButton.style.display = 'block';
+            } else {
+                rewardEarnedElement.textContent = '0';
+                claimRewardButton.style.display = 'none';
+                if (!userData.userID) {
+                    showNotification('Please login to claim rewards.', 'warning');
+                }
+            }
+            
             gameOverScreen.style.display = 'flex';
         }
 
@@ -636,9 +1045,13 @@
 
         window.addEventListener('resize', resizeCanvas);
 
+        // Initialize
         resizeCanvas();
         initClouds();
         highScoreElement.textContent = highScore;
+        checkConnectivityAndLoadAd();
+        startAdRotation();
+        initializeUser();
         gameLoop();
     </script>
 </body>
