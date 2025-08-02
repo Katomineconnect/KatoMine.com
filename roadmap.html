@@ -1,364 +1,392 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Roadmap - Kato Mine</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" type="text/css">
-<style>
-:root {
-    --primary-color: #ffd700;
-    --secondary-color: #e8e8e8;
-    --background-start: #0d1b2a;
-    --background-end: #1b263b;
-    --accent-color: #00bfff;
-    --accent-secondary: #1e90ff;
-    --card-bg: rgba(255, 255, 255, 0.08);
-    --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kato Mine - Roadmap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        body {
+            font-family: Arial, sans-serif;
+            background: #ffffff;
+            color: #333333;
+            line-height: 1.6;
+        }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, var(--background-start), var(--background-end));
-    background-attachment: fixed;
-    color: var(--secondary-color);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    overflow-x: hidden;
-    position: relative;
-}
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-/* Animated background particles */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 20% 50%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(30, 144, 255, 0.1) 0%, transparent 50%);
-    animation: float 20s ease-in-out infinite;
-    pointer-events: none;
-    z-index: -1;
-}
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 2px solid #f0f0f0;
+            position: relative;
+        }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    25% { transform: translateY(-20px) rotate(1deg); }
-    50% { transform: translateY(0px) rotate(0deg); }
-    75% { transform: translateY(-10px) rotate(-1deg); }
-}
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
 
-.container {
-    max-width: 900px;
-    margin: auto;
-    background: var(--card-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 60px 40px;
-    border-radius: 25px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.05),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    position: relative;
-    color: var(--secondary-color);
-    animation: slideUp 1s ease-out;
-}
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        .back-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
 
-.container::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, var(--accent-color), var(--primary-color), var(--accent-secondary));
-    border-radius: 25px;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
+        .back-link:hover::before {
+            left: 100%;
+        }
 
-.container:hover::before {
-    opacity: 0.3;
-}
+        .back-link:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-2px) translateX(-3px);
+            box-shadow: 0 12px 25px rgba(118, 75, 162, 0.4);
+        }
 
-.back-btn {
-    position: fixed;
-    top: 25px;
-    left: 25px;
-    background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
-    border: none;
-    color: #ffffff;
-    padding: 14px 24px;
-    border-radius: 50px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 
-        0 8px 25px rgba(0, 191, 255, 0.3),
-        0 0 0 0 rgba(0, 191, 255, 0.4);
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    text-shadow: var(--text-shadow);
-}
+        .back-link:active {
+            transform: translateY(0) translateX(0);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
 
-.back-btn i {
-    font-size: 18px;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
 
-.back-btn:hover {
-    background: linear-gradient(135deg, var(--accent-secondary), var(--accent-color));
-    box-shadow: 
-        0 15px 35px rgba(0, 191, 255, 0.5),
-        0 0 0 8px rgba(0, 191, 255, 0.1);
-    transform: translateY(-5px);
-    letter-spacing: 0.5px;
-}
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
 
-.back-btn:hover i {
-    transform: translateX(-5px) scale(1.1);
-}
+        /* Roadmap */
+        .roadmap {
+            padding: 40px 0;
+        }
 
-.back-btn:active {
-    transform: translateY(-2px);
-}
+        .roadmap-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #333;
+        }
 
-h1 {
-    color: var(--primary-color);
-    text-align: center;
-    margin-bottom: 40px;
-    font-size: clamp(2.2em, 6vw, 3em);
-    font-weight: 700;
-    text-shadow: 
-        0 0 20px rgba(255, 215, 0, 0.3),
-        var(--text-shadow);
-    position: relative;
-    animation: glow 3s ease-in-out infinite alternate;
-}
+        .phase {
+            margin-bottom: 40px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 30px;
+            background: #fafafa;
+        }
 
-@keyframes glow {
-    from {
-        text-shadow: 
-            0 0 20px rgba(255, 215, 0, 0.3),
-            var(--text-shadow);
-    }
-    to {
-        text-shadow: 
-            0 0 30px rgba(255, 215, 0, 0.6),
-            0 0 40px rgba(255, 215, 0, 0.3),
-            var(--text-shadow);
-    }
-}
+        .phase-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
 
-h1::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-    animation: expand 2s ease-in-out infinite;
-}
+        .phase-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
 
-@keyframes expand {
-    0%, 100% { width: 100px; opacity: 0.5; }
-    50% { width: 200px; opacity: 1; }
-}
+        .phase-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
 
-.content-section {
-    margin-bottom: 30px;
-    padding: 25px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
-    border-left: 4px solid var(--accent-color);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
+        .phase-status {
+            margin-left: auto;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
 
-.content-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.1), transparent);
-    transition: left 0.5s ease;
-}
+        .current {
+            background: #e8f5e8;
+            color: #2d5016;
+            border: 2px solid #4caf50;
+        }
 
-.content-section:hover::before {
-    left: 100%;
-}
+        .upcoming {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
 
-.content-section:hover {
-    transform: translateX(10px);
-    background: rgba(255, 255, 255, 0.08);
-    border-left-color: var(--primary-color);
-    box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.3),
-        -5px 0 20px rgba(0, 191, 255, 0.2);
-}
+        .phase-description {
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
 
-p {
-    margin-bottom: 20px;
-    line-height: 1.8;
-    font-size: clamp(15px, 3.5vw, 18px);
-    color: var(--secondary-color);
-    position: relative;
-    z-index: 1;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
 
-p:last-child {
-    margin-bottom: 0;
-}
+        .feature {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
 
-.highlight-text {
-    color: var(--primary-color);
-    font-weight: 600;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
 
-.feature-icon {
-    display: inline-block;
-    margin-right: 10px;
-    color: var(--accent-color);
-    font-size: 1.2em;
-    animation: pulse 2s infinite;
-}
+        .feature-description {
+            color: #666;
+            font-size: 0.95rem;
+        }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
+        .checkmark {
+            color: #4caf50;
+            margin-right: 8px;
+            font-weight: bold;
+        }
 
-/* Mobile optimizations */
-@media (max-width: 768px) {
-    body { 
-        padding: 15px; 
-    }
-    
-    .container { 
-        padding: 40px 25px; 
-        border-radius: 20px;
-        margin-top: 20px;
-    }
-    
-    .back-btn { 
-        padding: 12px 20px; 
-        font-size: 14px; 
-        top: 20px;
-        left: 20px;
-    }
-    
-    .back-btn i { 
-        font-size: 16px; 
-    }
-    
-    h1 { 
-        font-size: clamp(1.8em, 5vw, 2.5em);
-        margin-bottom: 30px;
-    }
-    
-    .content-section {
-        padding: 20px;
-        margin-bottom: 25px;
-    }
-    
-    .content-section:hover {
-        transform: translateX(5px);
-    }
-    
-    p {
-        font-size: clamp(14px, 4vw, 16px);
-        line-height: 1.7;
-    }
-}
+        /* Note */
+        .note {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
 
-@media (max-width: 480px) {
-    .container {
-        padding: 30px 20px;
-        margin-top: 15px;
-    }
-    
-    .content-section {
-        padding: 15px;
-        margin-bottom: 20px;
-    }
-    
-    h1::after {
-        width: 60px;
-    }
-    
-    @keyframes expand {
-        0%, 100% { width: 60px; opacity: 0.5; }
-        50% { width: 120px; opacity: 1; }
-    }
-}
+        .note-icon {
+            color: #856404;
+            margin-right: 8px;
+        }
 
-/* Loading animation */
-.container {
-    animation: slideUp 1s ease-out, fadeIn 0.8s ease-out;
-}
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 2px solid #f0f0f0;
+            margin-top: 40px;
+            background: #f9f9f9;
+        }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-</style>
+        .footer-links {
+            margin-top: 15px;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .footer-links a:hover {
+            color: #333;
+            text-decoration: underline;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .back-button {
+                position: static;
+                text-align: left;
+                margin-bottom: 20px;
+            }
+
+            .back-link {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .phase-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .phase-status {
+                margin-left: 0;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-<button class="back-btn" onclick="window.location.href='https://katomineconnect.github.io/KatoMine.com/index.html'">
-    <i class="fas fa-arrow-left"></i> Back
-</button>
+    <header>
+        <div class="container">
+            <div class="back-button">
+                <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="back-link">
+                    ◀️ Back
+                </a>
+            </div>
+            <h1 class="logo">⛏️ Kato Mine</h1>
+            <p class="subtitle">Blockchain Mining & Social Ecosystem</p>
+        </div>
+    </header>
 
-<div class="container">
-    <h1>Kato Mine Roadmap</h1>
-    
-    <div class="content-section">
-        <p><i class="fas fa-rocket feature-icon"></i>We recently made our <span class="highlight-text">Kato Mine website</span> public, and we are actively working on its various features. We promise to prepare and share a complete roadmap after refining and updating it as needed.</p>
-    </div>
-    
-    <div class="content-section">
-        <p><i class="fas fa-users feature-icon"></i>We plan to release our roadmap based on our specific <span class="highlight-text">active user base</span> to ensure it truly serves our community. In the future, we aim to launch Kato Mine on <span class="highlight-text">Google Play Store</span> and other platforms.</p>
-    </div>
-    
-    <div class="content-section">
-        <p><i class="fas fa-heart feature-icon"></i>Thank you for staying with us. We promise to <span class="highlight-text">honor your trust</span>.</p>
-    </div>
-</div>
+    <main class="container">
+        <section class="roadmap">
+            <h2 class="roadmap-title">Kato Mine Roadmap</h2>
+            
+            <!-- Phase 1 -->
+            <div class="phase">
+                <div class="phase-header">
+                    <div class="phase-icon">🟢</div>
+                    <div>
+                        <h3 class="phase-title">Phase 1: App Development and Community Building</h3>
+                    </div>
+                    <div class="phase-status current">Currently Active</div>
+                </div>
+                <p class="phase-description">Currently, we are in this phase</p>
+                
+                <div class="features">
+                    <div class="feature">
+                        <h4 class="feature-title"><span class="checkmark">✅</span>App Development</h4>
+                        <p class="feature-description">Creating a user-friendly, fast, and secure mobile app that offers mining capabilities to users.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h4 class="feature-title"><span class="checkmark">✅</span>Community Building</h4>
+                        <p class="feature-description">• Increasing presence on social media<br>• Referral bonuses for users<br>• xAndEarn feature to keep users active daily</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h4 class="feature-title"><span class="checkmark">✅</span>Income Features and Revenue</h4>
+                        <p class="feature-description">• Earn tokens by watching ads (AdAndEarn)<br>• Earn by playing games (PlayAndEarn)<br>• Referral income (ReferAndEarn)</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h4 class="feature-title"><span class="checkmark">✅</span>Ecosystem Building</h4>
+                        <p class="feature-description">• Integration of local services<br>• Games<br>• Custom profiles<br>• KYC system<br>• Event bonuses</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="phase">
+                <div class="phase-header">
+                    <div class="phase-icon">🟡</div>
+                    <div>
+                        <h3 class="phase-title">Phase 2: Kato Token Distribution and Smart Contract</h3>
+                    </div>
+                    <div class="phase-status upcoming">Target: Q1 2027</div>
+                </div>
+                
+                <div class="features">
+                    <div class="feature">
+                        <h4 class="feature-title">Launch of Kato Token</h4>
+                        <p class="feature-description">Launch of Kato Token and smart contract on BNB Smart Chain (BSC)</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h4 class="feature-title">Token Distribution</h4>
+                        <p class="feature-description">Token distribution for users with KYC mandatory for verified users</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h4 class="feature-title">Smart Contract Integration</h4>
+                        <p class="feature-description">Secure transactions via smart contract and enable Kato token usage in the ecosystem</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="phase">
+                <div class="phase-header">
+                    <div class="phase-icon">🔵</div>
+                    <div>
+                        <h3 class="phase-title">Phase 3: Social Platform and Mainnet Launch</h3>
+                    </div>
+                    <div class="phase-status upcoming">Future Release</div>
+                </div>
+                
+                <div class="features">
+                    <div class="feature">
+                        <h4 class="feature-title"><span class="checkmark">✅</span>Advanced Social Features</h4>
+                        <p class="feature-description">• Transforming the app into a blockchain-integrated social platform<br>• Features like messaging, follow system, content sharing<br>• Social rewards through blockchain technology</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h4 class="feature-title"><span class="checkmark">✅</span>Mainnet Development</h4>
+                        <p class="feature-description">• Improving app stability and user experience before mainnet launch<br>• Simplifying and securing token transfers, smart contracts, and transactions</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h4 class="feature-title"><span class="checkmark">✅</span>Merchant and Local Services</h4>
+                        <p class="feature-description">• Blockchain-based payment and loyalty program for merchants<br>• Enabling Kato token usage in local services</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h4 class="feature-title"><span class="checkmark">✅</span>Ecosystem Expansion</h4>
+                        <p class="feature-description">• NFT mining, web app, global membership system<br>• Income through games and social activity</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="note">
+            <p><span class="note-icon">🔔</span><strong>Note:</strong> This roadmap may be updated in the future based on the project's progress and needs.</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 – Kato Mine</p>
+            <div class="footer-links">
+                <a href="https://katomineconnect.github.io/KatoMine.com/privacy-policy.html">Privacy Policy</a>
+                <a href="https://katomineconnect.github.io/KatoMine.com/terms-of-service.html">Terms & Conditions</a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
