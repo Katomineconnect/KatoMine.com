@@ -29,6 +29,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none; /* Disable text selection */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE/Edge */
         }
 
         body {
@@ -96,19 +100,31 @@
             text-align: center;
             border-bottom: 2px solid var(--primary-color);
             position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .menu-icon {
-            position: absolute;
-            left: 20px;
-            top: 20px;
+        .menu-icon, .notification-icon {
             font-size: 1.5em;
             color: var(--primary-color);
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .menu-icon:hover {
+        .menu-icon {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+
+        .notification-icon {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+
+        .menu-icon:hover, .notification-icon:hover {
             color: var(--accent-color);
         }
 
@@ -665,9 +681,12 @@
     <!-- Header -->
     <header class="header">
         <i class="fas fa-ellipsis-v menu-icon" id="menuIcon"></i>
-        <div class="logo">KATO MINE</div>
-        <div class="slogan">ONE TAP TO START, EARN EVERY 6 HOURS</div>
-        <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
+        <div>
+            <div class="logo">KATO MINE</div>
+            <div class="slogan">ONE TAP TO START, EARN EVERY 6 HOURS</div>
+            <div class="tagline">YOUR DIGITAL GOLD RUSH!</div>
+        </div>
+        <i class="fas fa-bell notification-icon" id="notificationIcon"></i>
     </header>
 
     <!-- Sidebar Menu -->
@@ -872,6 +891,17 @@
             }
             if (miningRate) miningRate.textContent = `5.00 KATO/6 hours`;
         }
+
+        // Disable Copy and Context Menu
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+            showNotification('Copying is disabled on this website.', 'warning');
+        });
+
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showNotification('Right-click is disabled on this website.', 'warning');
+        });
 
         // Ad Modal Functions
         function showAdModal(callback) {
@@ -1165,7 +1195,8 @@
 
             const requiredElements = [
                 'profileBtn', 'balanceBtn', 'roadmapBtn', 'rewardsBtn', 'dailyRewardBtn',
-                'logoutBtn', 'startMiningBtn', 'claimBtn', 'adModal', 'adCloseBtn', 'adTimer', 'menuIcon', 'sidebar', 'closeSidebarBtn'
+                'logoutBtn', 'startMiningBtn', 'claimBtn', 'adModal', 'adCloseBtn', 'adTimer',
+                'menuIcon', 'sidebar', 'closeSidebarBtn', 'notificationIcon'
             ];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
@@ -1184,6 +1215,7 @@
             const claimBtn = document.getElementById('claimBtn');
             const logoutBtn = document.getElementById('logoutBtn');
             const menuIcon = document.getElementById('menuIcon');
+            const notificationIcon = document.getElementById('notificationIcon');
             const sidebar = document.getElementById('sidebar');
             const closeSidebarBtn = document.getElementById('closeSidebarBtn');
 
@@ -1193,6 +1225,20 @@
 
             closeSidebarBtn.addEventListener('click', () => {
                 sidebar.classList.remove('open');
+            });
+
+            notificationIcon.addEventListener('click', () => {
+                if (!userData.userID) {
+                    showNotification('Please log in to view notifications.', 'warning');
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    return;
+                }
+                try {
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/notification.html';
+                } catch (error) {
+                    console.error('Navigation error:', error);
+                    showNotification('Error navigating to Notifications page. Please try again.', 'error');
+                }
             });
 
             profileBtn.addEventListener('click', () => {
