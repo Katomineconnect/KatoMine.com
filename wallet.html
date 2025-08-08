@@ -235,11 +235,10 @@
             bottom: 80px; /* Above bottom-nav */
             left: 0;
             right: 0;
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 950;
-            display: none;
         }
 
         .ad-container.active {
@@ -259,6 +258,7 @@
             height: 24px;
             background: var(--error-color);
             color: white;
+            border: 2px solid var(--secondary-color);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -266,7 +266,13 @@
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
+            transition: transform 0.2s ease, background 0.2s ease;
             z-index: 960;
+        }
+
+        .close-ad:hover {
+            transform: scale(1.1);
+            background: #e63946;
         }
 
         @media (max-width: 768px) {
@@ -342,7 +348,7 @@
     <!-- Ad Containers -->
     <div id="adContainer1" class="ad-container">
         <div class="ad-wrapper">
-            <div class="close-ad" onclick="closeAd(1)">X</div>
+            <button class="close-ad" aria-label="Close advertisement" onclick="closeAd(1)">X</button>
             <script type="text/javascript">
                 try {
                     atOptions = {
@@ -364,7 +370,7 @@
     </div>
     <div id="adContainer2" class="ad-container">
         <div class="ad-wrapper">
-            <div class="close-ad" onclick="closeAd(2)">X</div>
+            <button class="close-ad" aria-label="Close advertisement" onclick="closeAd(2)">X</button>
             <script type="text/javascript">
                 try {
                     atOptions = {
@@ -386,7 +392,7 @@
     </div>
     <div id="adContainer3" class="ad-container">
         <div class="ad-wrapper">
-            <div class="close-ad" onclick="closeAd(3)">X</div>
+            <button class="close-ad" aria-label="Close advertisement" onclick="closeAd(3)">X</button>
             <script type="text/javascript">
                 try {
                     atOptions = {
@@ -438,8 +444,6 @@
         document.addEventListener('selectstart', (e) => e.preventDefault());
 
         // Ad Management
-        let currentAdIndex = 1;
-
         function showAd(index) {
             for (let i = 1; i <= 3; i++) {
                 const adContainer = document.getElementById(`adContainer${i}`);
@@ -461,8 +465,13 @@
             }
         }
 
-        // Show first ad on page load
+        // Make functions available globally for HTML onclick
+        window.showAd = showAd;
+        window.closeAd = closeAd;
+
+        // Initialize first ad after DOM is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
+            let currentAdIndex = 1;
             showAd(currentAdIndex);
         });
 
