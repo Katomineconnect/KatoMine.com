@@ -250,31 +250,6 @@
             display: inline-block;
         }
 
-        .close-ad {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            width: 24px;
-            height: 24px;
-            background: var(--error-color);
-            color: white;
-            border: 2px solid var(--secondary-color);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: transform 0.2s ease, background 0.2s ease;
-            z-index: 960;
-        }
-
-        .close-ad:hover {
-            transform: scale(1.1);
-            background: #e63946;
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -292,13 +267,6 @@
             .nav-item i {
                 font-size: clamp(1.2em, 3vw, 1.4em);
             }
-            .close-ad {
-                top: -8px;
-                right: -8px;
-                width: 20px;
-                height: 20px;
-                font-size: 14px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -313,13 +281,6 @@
             }
             .nav-item i {
                 font-size: clamp(1.1em, 2.8vw, 1.3em);
-            }
-            .close-ad {
-                top: -6px;
-                right: -6px;
-                width: 18px;
-                height: 18px;
-                font-size: 12px;
             }
         }
     </style>
@@ -348,7 +309,6 @@
     <!-- Ad Containers -->
     <div id="adContainer1" class="ad-container">
         <div class="ad-wrapper">
-            <button class="close-ad" aria-label="Close advertisement" onclick="closeAd(1)">X</button>
             <script type="text/javascript">
                 try {
                     atOptions = {
@@ -370,7 +330,6 @@
     </div>
     <div id="adContainer2" class="ad-container">
         <div class="ad-wrapper">
-            <button class="close-ad" aria-label="Close advertisement" onclick="closeAd(2)">X</button>
             <script type="text/javascript">
                 try {
                     atOptions = {
@@ -392,7 +351,6 @@
     </div>
     <div id="adContainer3" class="ad-container">
         <div class="ad-wrapper">
-            <button class="close-ad" aria-label="Close advertisement" onclick="closeAd(3)">X</button>
             <script type="text/javascript">
                 try {
                     atOptions = {
@@ -456,18 +414,8 @@
             }
         }
 
-        function closeAd(index) {
-            const adContainer = document.getElementById(`adContainer${index}`);
-            if (adContainer) {
-                adContainer.classList.remove('active');
-                currentAdIndex = (index % 3) + 1; // Move to next ad
-                showAd(currentAdIndex);
-            }
-        }
-
-        // Make functions available globally for HTML onclick
+        // Make function available globally for HTML
         window.showAd = showAd;
-        window.closeAd = closeAd;
 
         // Initialize first ad after DOM is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
