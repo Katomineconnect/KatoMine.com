@@ -133,7 +133,7 @@
             justify-content: flex-start;
             gap: 1rem;
             align-items: center;
-            margin-bottom: 80px;
+            margin-bottom: 60px; /* Adjusted for bottom-nav */
         }
 
         .balance {
@@ -230,30 +230,10 @@
             background: var(--accent-color);
         }
 
-        .ad-container {
-            position: fixed;
-            bottom: 80px; /* Above bottom-nav */
-            left: 0;
-            right: 0;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 950;
-        }
-
-        .ad-container.active {
-            display: flex;
-        }
-
-        .ad-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
-                margin-bottom: 80px;
+                margin-bottom: 60px;
             }
             .balance {
                 font-size: clamp(2rem, 6vw, 3rem);
@@ -306,71 +286,6 @@
     <!-- Notification -->
     <div class="notification" id="notification"></div>
 
-    <!-- Ad Containers -->
-    <div id="adContainer1" class="ad-container">
-        <div class="ad-wrapper">
-            <script type="text/javascript">
-                try {
-                    atOptions = {
-                        'key': '63718988f07bc6d276f3c6a441757cae',
-                        'format': 'iframe',
-                        'height': 90,
-                        'width': 728,
-                        'params': {}
-                    };
-                    const script = document.createElement('script');
-                    script.type = 'text/javascript';
-                    script.src = '//www.highperformanceformat.com/63718988f07bc6d276f3c6a441757cae/invoke.js';
-                    document.currentScript.parentNode.appendChild(script);
-                } catch (e) {
-                    console.error('Ad 1 failed to load:', e);
-                }
-            </script>
-        </div>
-    </div>
-    <div id="adContainer2" class="ad-container">
-        <div class="ad-wrapper">
-            <script type="text/javascript">
-                try {
-                    atOptions = {
-                        'key': 'c620af328467e6de19dc04af696ee0fb',
-                        'format': 'iframe',
-                        'height': 250,
-                        'width': 300,
-                        'params': {}
-                    };
-                    const script = document.createElement('script');
-                    script.type = 'text/javascript';
-                    script.src = '//www.highperformanceformat.com/c620af328467e6de19dc04af696ee0fb/invoke.js';
-                    document.currentScript.parentNode.appendChild(script);
-                } catch (e) {
-                    console.error('Ad 2 failed to load:', e);
-                }
-            </script>
-        </div>
-    </div>
-    <div id="adContainer3" class="ad-container">
-        <div class="ad-wrapper">
-            <script type="text/javascript">
-                try {
-                    atOptions = {
-                        'key': '78ade24182729fceea8e45203dad915b',
-                        'format': 'iframe',
-                        'height': 50,
-                        'width': 320,
-                        'params': {}
-                    };
-                    const script = document.createElement('script');
-                    script.type = 'text/javascript';
-                    script.src = '//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js';
-                    document.currentScript.parentNode.appendChild(script);
-                } catch (e) {
-                    console.error('Ad 3 failed to load:', e);
-                }
-            </script>
-        </div>
-    </div>
-
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <a href="https://katomineconnect.github.io/KatoMine.com/index.html" class="nav-item">
@@ -400,28 +315,6 @@
         document.addEventListener('contextmenu', (e) => e.preventDefault());
         document.addEventListener('copy', (e) => e.preventDefault());
         document.addEventListener('selectstart', (e) => e.preventDefault());
-
-        // Ad Management
-        function showAd(index) {
-            for (let i = 1; i <= 3; i++) {
-                const adContainer = document.getElementById(`adContainer${i}`);
-                if (adContainer) {
-                    adContainer.classList.remove('active');
-                    if (i === index) {
-                        adContainer.classList.add('active');
-                    }
-                }
-            }
-        }
-
-        // Make function available globally for HTML
-        window.showAd = showAd;
-
-        // Initialize first ad after DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            let currentAdIndex = 1;
-            showAd(currentAdIndex);
-        });
 
         // Firebase config
         let firebaseConfig;
