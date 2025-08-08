@@ -158,185 +158,6 @@
             background: rgba(255, 215, 0, 0.1);
         }
 
-        .quick-actions {
-            display: flex;
-            gap: 15px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-            justify-content: center;
-            width: min(95%, 500px);
-        }
-
-        .action-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 120px;
-            justify-content: center;
-            color: var(--background-color);
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-dark);
-        }
-
-        .send-btn {
-            background: linear-gradient(45deg, #ef4444, #dc2626);
-        }
-
-        .send-btn:hover {
-            background: linear-gradient(45deg, #dc2626, #b91c1c);
-        }
-
-        .receive-btn {
-            background: linear-gradient(45deg, #10b981, #059669);
-        }
-
-        .receive-btn:hover {
-            background: linear-gradient(45deg, #059669, #047857);
-        }
-
-        .history-btn {
-            background: linear-gradient(45deg, #3b82f6, #2563eb);
-        }
-
-        .history-btn:hover {
-            background: linear-gradient(45deg, #2563eb, #1d4ed8);
-        }
-
-        .balance-breakdown {
-            width: min(95%, 500px);
-            background: var(--glass-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: var(--shadow-dark);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(10px);
-        }
-
-        .breakdown-title {
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .breakdown-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .breakdown-item:last-child {
-            border-bottom: none;
-        }
-
-        .breakdown-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
-            color: var(--secondary-color);
-        }
-
-        .breakdown-value {
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .recent-activity {
-            width: min(95%, 500px);
-            background: var(--glass-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: var(--shadow-dark);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(10px);
-        }
-
-        .activity-title {
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .activity-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--background-color);
-            font-size: clamp(1rem, 3vw, 1.2rem);
-        }
-
-        .activity-details {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .activity-type {
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .activity-date {
-            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-            color: var(--secondary-color);
-        }
-
-        .activity-amount {
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            font-weight: 600;
-        }
-
-        .positive {
-            color: var(--success-color);
-        }
-
-        .negative {
-            color: var(--error-color);
-        }
-
         .message-display {
             font-size: clamp(1rem, 3vw, 1.2rem);
             color: var(--primary-color);
@@ -436,18 +257,6 @@
                 width: min(95%, 320px);
                 padding: 15px 25px;
             }
-            .quick-actions {
-                gap: 10px;
-            }
-            .action-btn {
-                padding: 10px 20px;
-                font-size: clamp(0.8rem, 2.2vw, 0.9rem);
-                min-width: 100px;
-            }
-            .balance-breakdown, .recent-activity {
-                width: min(95%, 100%);
-                padding: 15px;
-            }
             .nav-item {
                 font-size: clamp(0.9em, 2.2vw, 1em);
                 padding: 6px 10px;
@@ -462,14 +271,6 @@
                 font-size: clamp(1.8rem, 5vw, 2.5rem);
                 width: min(95%, 280px);
                 padding: 12px 20px;
-            }
-            .action-btn {
-                padding: 8px 16px;
-                font-size: clamp(0.7rem, 2vw, 0.8rem);
-                min-width: 80px;
-            }
-            .balance-breakdown, .recent-activity {
-                padding: 12px;
             }
             .nav-item {
                 font-size: clamp(0.85em, 2vw, 0.95em);
@@ -497,50 +298,6 @@
     <!-- Main Content -->
     <main class="container">
         <span class="balance" id="balance">Balance: 0 KATO</span>
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <button class="action-btn send-btn" id="sendButton">
-                <i class="fas fa-paper-plane"></i> Send
-            </button>
-            <button class="action-btn receive-btn" id="receiveButton">
-                <i class="fas fa-arrow-down"></i> Receive
-            </button>
-            <button class="action-btn history-btn" id="historyButton">
-                <i class="fas fa-history"></i> History
-            </button>
-        </div>
-
-        <!-- Balance Breakdown -->
-        <div class="balance-breakdown">
-            <div class="breakdown-title">
-                <i class="fas fa-wallet"></i> Balance Breakdown
-            </div>
-            <div class="breakdown-item">
-                <div class="breakdown-label">
-                    <i class="fas fa-coins"></i> Available Balance
-                </div>
-                <div class="breakdown-value" id="availableBalance">0 KATO</div>
-            </div>
-            <div class="breakdown-item">
-                <div class="breakdown-label">
-                    <i class="fas fa-gift"></i> Rewards Earned
-                </div>
-                <div class="breakdown-value" id="rewardsEarned">0 KATO</div>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="recent-activity">
-            <div class="activity-title">
-                <i class="fas fa-list"></i> Recent Activity
-            </div>
-            <div id="activityList">
-                <div style="text-align: center; color: var(--secondary-color); padding: 20px;">
-                    No activity yet
-                </div>
-            </div>
-        </div>
 
         <div class="message-display" id="messageDisplay">Welcome to your wallet!</div>
     </main>
@@ -620,13 +377,7 @@
         // DOM Elements
         const balanceElement = document.getElementById('balance');
         const messageDisplay = document.getElementById('messageDisplay');
-        const availableBalanceElement = document.getElementById('availableBalance');
-        const rewardsEarnedElement = document.getElementById('rewardsEarned');
-        const activityList = document.getElementById('activityList');
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const sendButton = document.getElementById('sendButton');
-        const receiveButton = document.getElementById('receiveButton');
-        const historyButton = document.getElementById('historyButton');
 
         // Notification Function
         function showNotification(message, type = 'info') {
@@ -641,32 +392,6 @@
             }
         }
 
-        // Display Activity List
-        function displayActivityList(activities) {
-            if (!Array.isArray(activities) || !activities) {
-                activityList.innerHTML = `<div style="text-align: center; color: var(--secondary-color); padding: 20px;">No activity yet</div>`;
-                return;
-            }
-
-            activityList.innerHTML = activities.map(activity => {
-                const isPositive = activity.amount >= 0;
-                return `
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-icon" style="background: ${activity.type === 'Daily Reward' ? '#00ff88' : activity.type === 'Referral Bonus' ? '#3b82f6' : activity.type === 'Mining Reward' ? '#ffd700' : '#ef4444'};">
-                                <i class="fas fa-${activity.type === 'Daily Reward' ? 'gift' : activity.type === 'Referral Bonus' ? 'user-plus' : activity.type === 'Mining Reward' ? 'star' : 'paper-plane'}"></i>
-                            </div>
-                            <div class="activity-details">
-                                <div class="activity-type">${activity.type}</div>
-                                <div class="activity-date">${new Date(activity.date || Date.now()).toLocaleDateString()}</div>
-                            </div>
-                        </div>
-                        <div class="activity-amount ${isPositive ? 'positive' : 'negative'}">${isPositive ? '+' : ''}${activity.amount} KATO</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
         // Initialize Wallet Page
         async function initializeWalletPage() {
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
@@ -679,10 +404,7 @@
                 }
             }
 
-            const requiredElements = [
-                'balance', 'messageDisplay', 'availableBalance', 'rewardsEarned',
-                'activityList', 'sendButton', 'receiveButton', 'historyButton'
-            ];
+            const requiredElements = ['balance', 'messageDisplay'];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
                     console.error(`DOM element ${id} not found`);
@@ -767,49 +489,9 @@
         // Update UI
         function updateUI() {
             const totalBalance = userData.balance || 0;
-            const rewardsEarned = userData.rewardsEarned || 0;
-            const activities = Array.isArray(userData.activities) ? userData.activities : [];
-
             balanceElement.textContent = `Balance: ${totalBalance.toFixed(2)} KATO`;
-            availableBalanceElement.textContent = `${totalBalance.toFixed(2)} KATO`;
-            rewardsEarnedElement.textContent = `${rewardsEarned.toFixed(2)} KATO`;
-            displayActivityList(activities);
             messageDisplay.textContent = 'Welcome to your wallet!';
             if (loadingOverlay) loadingOverlay.style.display = 'none';
-        }
-
-        // Button Event Listeners
-        if (sendButton) {
-            sendButton.addEventListener('click', () => {
-                if (!userData.userID) {
-                    showNotification('Please log in to access this page.', 'warning');
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    return;
-                }
-                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/send.html';
-            });
-        }
-
-        if (receiveButton) {
-            receiveButton.addEventListener('click', () => {
-                if (!userData.userID) {
-                    showNotification('Please log in to access this page.', 'warning');
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    return;
-                }
-                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/receive.html';
-            });
-        }
-
-        if (historyButton) {
-            historyButton.addEventListener('click', () => {
-                if (!userData.userID) {
-                    showNotification('Please log in to access this page.', 'warning');
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    return;
-                }
-                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/history.html';
-            });
         }
 
         // Navigation Links
