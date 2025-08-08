@@ -29,6 +29,11 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            /* Prevent text selection */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         body {
@@ -502,21 +507,6 @@
                 </button>
             </div>
 
-            <div class="task-item" id="telegramTask">
-                <div class="task-left">
-                    <div class="task-icon"><i class="fab fa-telegram"></i></div>
-                    <div>
-                        <div class="task-text">Join Telegram Community</div>
-                        <div class="task-amount">
-                            <i class="fas fa-coins"></i> Reward: 3.0 KATO
-                        </div>
-                    </div>
-                </div>
-                <button class="task-button" data-task="telegram">
-                    <i class="fas fa-external-link-alt"></i> Go
-                </button>
-            </div>
-
             <div class="message-display" id="messageDisplay">Earn more by completing these tasks!</div>
         </div>
     </main>
@@ -548,6 +538,28 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
         import { getDatabase, ref, onValue, get, set, push } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+
+        // Prevent copy, cut, and paste events
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+            showNotification('Copying is disabled.', 'warning');
+        });
+
+        document.addEventListener('cut', (e) => {
+            e.preventDefault();
+            showNotification('Cutting is disabled.', 'warning');
+        });
+
+        document.addEventListener('paste', (e) => {
+            e.preventDefault();
+            showNotification('Pasting is disabled.', 'warning');
+        });
+
+        // Prevent context menu (right-click)
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showNotification('Right-click is disabled.', 'warning');
+        });
 
         // Firebase config
         let firebaseConfig;
@@ -592,8 +604,7 @@
 
         const taskData = {
             youtube: { url: 'https://youtube.com/@katomine-r4c?si=9aMyKZ11sBlZnkS_', amount: 3.0 },
-            twitter: { url: 'https://x.com/Katominework?t=TWMYMm_YvN_G3MDp37wrfA&s=09', amount: 2.5 },
-            telegram: { url: 'https://t.me/KatoMineCommunity', amount: 3.0 }
+            twitter: { url: 'https://x.com/Katominework?t=TWMYMm_YvN_G3MDp37wrfA&s=09', amount: 2.5 }
         };
 
         // Utility Functions
