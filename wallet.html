@@ -40,6 +40,7 @@
             flex-direction: column;
             overflow-x: hidden;
             position: relative;
+            user-select: none; /* Prevent text selection */
         }
 
         body::before {
@@ -158,19 +159,6 @@
             background: rgba(255, 215, 0, 0.1);
         }
 
-        .message-display {
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            color: var(--primary-color);
-            margin: 1rem auto;
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(10px);
-            width: min(95%, 500px);
-        }
-
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -242,9 +230,43 @@
             background: var(--accent-color);
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .ad-container {
+            position: fixed;
+            bottom: 80px; /* Above bottom-nav */
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 950;
+            display: none;
+        }
+
+        .ad-container.active {
+            display: flex;
+        }
+
+        .ad-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .close-ad {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 24px;
+            height: 24px;
+            background: var(--error-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 960;
         }
 
         @media (max-width: 768px) {
@@ -264,6 +286,13 @@
             .nav-item i {
                 font-size: clamp(1.2em, 3vw, 1.4em);
             }
+            .close-ad {
+                top: -8px;
+                right: -8px;
+                width: 20px;
+                height: 20px;
+                font-size: 14px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -278,6 +307,13 @@
             }
             .nav-item i {
                 font-size: clamp(1.1em, 2.8vw, 1.3em);
+            }
+            .close-ad {
+                top: -6px;
+                right: -6px;
+                width: 18px;
+                height: 18px;
+                font-size: 12px;
             }
         }
     </style>
@@ -298,12 +334,78 @@
     <!-- Main Content -->
     <main class="container">
         <span class="balance" id="balance">Balance: 0 KATO</span>
-
-        <div class="message-display" id="messageDisplay">Welcome to your wallet!</div>
     </main>
 
     <!-- Notification -->
     <div class="notification" id="notification"></div>
+
+    <!-- Ad Containers -->
+    <div id="adContainer1" class="ad-container">
+        <div class="ad-wrapper">
+            <div class="close-ad" onclick="closeAd(1)">X</div>
+            <script type="text/javascript">
+                try {
+                    atOptions = {
+                        'key': '63718988f07bc6d276f3c6a441757cae',
+                        'format': 'iframe',
+                        'height': 90,
+                        'width': 728,
+                        'params': {}
+                    };
+                    const script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = '//www.highperformanceformat.com/63718988f07bc6d276f3c6a441757cae/invoke.js';
+                    document.currentScript.parentNode.appendChild(script);
+                } catch (e) {
+                    console.error('Ad 1 failed to load:', e);
+                }
+            </script>
+        </div>
+    </div>
+    <div id="adContainer2" class="ad-container">
+        <div class="ad-wrapper">
+            <div class="close-ad" onclick="closeAd(2)">X</div>
+            <script type="text/javascript">
+                try {
+                    atOptions = {
+                        'key': 'c620af328467e6de19dc04af696ee0fb',
+                        'format': 'iframe',
+                        'height': 250,
+                        'width': 300,
+                        'params': {}
+                    };
+                    const script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = '//www.highperformanceformat.com/c620af328467e6de19dc04af696ee0fb/invoke.js';
+                    document.currentScript.parentNode.appendChild(script);
+                } catch (e) {
+                    console.error('Ad 2 failed to load:', e);
+                }
+            </script>
+        </div>
+    </div>
+    <div id="adContainer3" class="ad-container">
+        <div class="ad-wrapper">
+            <div class="close-ad" onclick="closeAd(3)">X</div>
+            <script type="text/javascript">
+                try {
+                    atOptions = {
+                        'key': '78ade24182729fceea8e45203dad915b',
+                        'format': 'iframe',
+                        'height': 50,
+                        'width': 320,
+                        'params': {}
+                    };
+                    const script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = '//www.highperformanceformat.com/78ade24182729fceea8e45203dad915b/invoke.js';
+                    document.currentScript.parentNode.appendChild(script);
+                } catch (e) {
+                    console.error('Ad 3 failed to load:', e);
+                }
+            </script>
+        </div>
+    </div>
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
@@ -329,6 +431,40 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
         import { getDatabase, ref, onValue, get } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+
+        // Prevent copy, right-click, and text selection
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('copy', (e) => e.preventDefault());
+        document.addEventListener('selectstart', (e) => e.preventDefault());
+
+        // Ad Management
+        let currentAdIndex = 1;
+
+        function showAd(index) {
+            for (let i = 1; i <= 3; i++) {
+                const adContainer = document.getElementById(`adContainer${i}`);
+                if (adContainer) {
+                    adContainer.classList.remove('active');
+                    if (i === index) {
+                        adContainer.classList.add('active');
+                    }
+                }
+            }
+        }
+
+        function closeAd(index) {
+            const adContainer = document.getElementById(`adContainer${index}`);
+            if (adContainer) {
+                adContainer.classList.remove('active');
+                currentAdIndex = (index % 3) + 1; // Move to next ad
+                showAd(currentAdIndex);
+            }
+        }
+
+        // Show first ad on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            showAd(currentAdIndex);
+        });
 
         // Firebase config
         let firebaseConfig;
@@ -376,7 +512,6 @@
 
         // DOM Elements
         const balanceElement = document.getElementById('balance');
-        const messageDisplay = document.getElementById('messageDisplay');
         const loadingOverlay = document.getElementById('loadingOverlay');
 
         // Notification Function
@@ -404,7 +539,7 @@
                 }
             }
 
-            const requiredElements = ['balance', 'messageDisplay'];
+            const requiredElements = ['balance'];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
                     console.error(`DOM element ${id} not found`);
@@ -440,7 +575,6 @@
                         updateUI();
                     } else {
                         showNotification('User data not found. Please return to Home page to initialize.', 'error');
-                        messageDisplay.textContent = 'User data not found.';
                         balanceElement.textContent = 'Balance: 0 KATO';
                         if (loadingOverlay) loadingOverlay.style.display = 'none';
                         return;
@@ -490,7 +624,6 @@
         function updateUI() {
             const totalBalance = userData.balance || 0;
             balanceElement.textContent = `Balance: ${totalBalance.toFixed(2)} KATO`;
-            messageDisplay.textContent = 'Welcome to your wallet!';
             if (loadingOverlay) loadingOverlay.style.display = 'none';
         }
 
