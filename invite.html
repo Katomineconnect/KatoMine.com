@@ -29,6 +29,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none; /* Prevent text selection */
         }
 
         body {
@@ -178,6 +179,7 @@
             cursor: pointer;
             width: min(90%, 200px);
             margin: 0 auto 15px;
+            user-select: text; /* Allow text selection only for referral code */
         }
 
         .referral-code:hover {
@@ -224,6 +226,10 @@
             margin: 15px auto;
         }
 
+        .referral-input.hidden {
+            display: none;
+        }
+
         .referral-input input {
             padding: 10px;
             font-size: clamp(1rem, 3vw, 1.2rem);
@@ -234,6 +240,7 @@
             background: var(--glass-bg);
             color: var(--primary-color);
             backdrop-filter: blur(5px);
+            user-select: text; /* Allow text selection in input field */
         }
 
         .referral-input input::placeholder {
@@ -632,7 +639,7 @@
         <!-- Referral Section -->
         <section class="referral-section">
             <span class="referral-code" id="referralCodeElement">Invite Code: Loading...<span class="tooltip">Copied!</span></span>
-            <div class="referral-input">
+            <div class="referral-input" id="referralInputSection">
                 <input type="text" id="referralInput" placeholder="Enter Invite Code" />
                 <button id="submitReferral">Submit Referral</button>
             </div>
@@ -717,6 +724,21 @@
         import { getDatabase, ref, set, get, onValue, update, query, orderByChild, equalTo, limitToLast, push } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
+        // Prevent copy and context menu
+        document.addEventListener('copy', (e) => {
+            if (!e.target.closest('.referral-code') && !e.target.closest('#referralInput')) {
+                e.preventDefault();
+                showNotification('Copying is disabled.', 'warning');
+            }
+        });
+
+        document.addEventListener('contextmenu', (e) => {
+            if (!e.target.closest('.referral-code') && !e.target.closest('#referralInput')) {
+                e.preventDefault();
+                showNotification('Right-click is disabled.', 'warning');
+            }
+        });
+
         // Firebase config
         let firebaseConfig;
         let database, auth;
@@ -755,7 +777,7 @@
             dailyStreak: 0,
             lastDailyReward: null,
             lastDailyTokenAward: null,
-            dailyTokenStartDate: null, // New field to track start of daily token rewards
+            dailyTokenStartDate: null,
             miningStartTime: null,
             level: 1,
             createdAt: null
@@ -765,6 +787,7 @@
         const referralCodeElement = document.getElementById('referralCodeElement');
         const referralInput = document.getElementById('referralInput');
         const submitReferralButton = document.getElementById('submitReferral');
+        const referralInputSection = document.getElementById('referralInputSection');
         const messageDisplay = document.getElementById('messageDisplay');
         const totalReferrals = document.getElementById('totalReferrals');
         const earnedTokens = document.getElementById('earnedTokens');
@@ -836,7 +859,7 @@
                     });
                 }
 
-                if (referralCount < 5) return; // No daily tokens if less than 5 referrals
+                if (referralCount < 5) return;
 
                 const userSnapshot = await get(userRef);
                 if (!userSnapshot.exists()) return;
@@ -848,13 +871,11 @@
                 const oneDay = 24 * 60 * 60 * 1000;
                 const thirtyDays = 30 * oneDay;
 
-                // Check if 30 days have passed since daily token rewards started
                 if (now - dailyTokenStart >= thirtyDays) {
                     console.log('Daily token reward period has expired for user:', userID);
                     return;
                 }
 
-                // Check if 24 hours have passed since the last award
                 if (!lastAward || now - lastAward >= oneDay) {
                     let tokensToAdd = 0;
                     if (referralCount >= 10) {
@@ -1006,33 +1027,8 @@
         // Setup Share Buttons (Dynamic)
         function setupShareButtons() {
             if (!userData.inviteCode) return;
-            const referralLink = `https://katomineconnect.github.io/KatoMine.com/index.html?ref=${userData.inviteCode}`;
-            const shareText = `Join Katomine and earn crypto! Use my invite code: ${userData.inviteCode}`;
-
-            const shareOptions = [
-                {
-                    platform: 'WhatsApp',
-                    icon: 'fab fa-whatsapp',
-                    url: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + referralLink)}`
-                },
-                {
-                    platform: 'Twitter',
-                    icon: 'fab fa-twitter',
-                    url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`
-                },
-                {
-                    platform: 'Telegram',
-                    icon: 'fab fa-telegram',
-                    url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(shareText)}`
-                }
-            ];
-
-            shareButtons.innerHTML = shareOptions.map(option => `
-                <button class="share-btn" onclick="window.open('${option.url}', '_blank')">
-                    <i class="${option.icon}"></i>
-                    ${option.platform}
-                </button>
-            `).join('');
+            // No share options defined, leaving shareButtons empty
+            shareButtons.innerHTML = '';
         }
 
         // Initialize Invite Page
@@ -1051,7 +1047,7 @@
 
             const requiredElements = [
                 'referralCodeElement', 'referralInput', 'submitReferral', 'messageDisplay',
-                'totalReferrals', 'earnedTokens', 'referralList', 'leaderboardList', 'shareButtons'
+                'totalReferrals', 'earnedTokens', 'referralList', 'leaderboardList', 'shareButtons', 'referralInputSection'
             ];
             for (const id of requiredElements) {
                 if (!document.getElementById(id)) {
@@ -1104,9 +1100,11 @@
                         if (userData.referrerID) {
                             if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
                             if (submitReferralButton) submitReferralButton.disabled = true;
+                            if (referralInputSection) referralInputSection.classList.add('hidden');
                         } else {
                             if (submitReferralButton) submitReferralButton.disabled = false;
                             if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
+                            if (referralInputSection) referralInputSection.classList.remove('hidden');
                         }
                     } else {
                         const urlParams = new URLSearchParams(window.location.search);
@@ -1142,7 +1140,7 @@
                                 dailyStreak: 0,
                                 lastDailyReward: null,
                                 lastDailyTokenAward: null,
-                                dailyTokenStartDate: null, // Initialize new field
+                                dailyTokenStartDate: null,
                                 level: 1,
                                 miningStartTime: null,
                                 createdAt: Date.now()
@@ -1180,6 +1178,8 @@
                                     date: Date.now()
                                 };
                                 await set(newReferralRef, newReferral);
+
+                                if (referralInputSection) referralInputSection.classList.add('hidden');
                             }
 
                             if (referralCodeElement) {
@@ -1193,6 +1193,7 @@
                             await checkAndAwardDailyTokens(userData.userID, userRef);
                             if (submitReferralButton) submitReferralButton.disabled = referrerID ? true : false;
                             if (messageDisplay) messageDisplay.textContent = referrerID ? 'Referral applied successfully! You earned 25 KATO.' : 'Enter an invite code to get started!';
+                            if (referralInputSection && referrerID) referralInputSection.classList.add('hidden');
                         } catch (error) {
                             console.error('Error creating user data:', error.message || error);
                             showNotification('Failed to initialize user data. Please try again.', 'error');
@@ -1222,9 +1223,11 @@
                         if (data.referrerID) {
                             if (messageDisplay) messageDisplay.textContent = 'You have already set a referrer.';
                             if (submitReferralButton) submitReferralButton.disabled = true;
+                            if (referralInputSection) referralInputSection.classList.add('hidden');
                         } else {
                             if (submitReferralButton) submitReferralButton.disabled = false;
                             if (messageDisplay) messageDisplay.textContent = 'Enter an invite code to get started!';
+                            if (referralInputSection) referralInputSection.classList.remove('hidden');
                         }
                     } else {
                         console.error('No user data found for ID:', userData.userID);
@@ -1292,6 +1295,7 @@
                     if (userSnapshot.val().referrerID) {
                         showNotification('You have already set a referrer.', 'warning');
                         submitReferralButton.disabled = true;
+                        if (referralInputSection) referralInputSection.classList.add('hidden');
                         return;
                     }
 
@@ -1341,6 +1345,7 @@
                         showNotification('Referral submitted successfully! You earned 25 KATO, and referrer earned 50 KATO.', 'success');
                         submitReferralButton.disabled = true;
                         messageDisplay.textContent = 'Referral submitted successfully! You earned 25 KATO.';
+                        if (referralInputSection) referralInputSection.classList.add('hidden');
                         await displayReferralList();
                         await checkAndAwardDailyTokens(referrerID, ref(database, `users/${referrerID}`));
                     } catch (error) {
