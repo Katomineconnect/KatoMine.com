@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="description" content="Kato Mine - User Notifications">
+    <meta name="theme-color" content="#0d1b2a">
+    <title>Kato Mine - Notifications</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" type="text/css">
+    <style>
+        :root {
+            --primary-color: #ffd700;
+            --secondary-color: #d3d3d3;
+            --background-color: #0d1b2a;
+            --accent-color: #00bfff;
+            --success-color: #00ff88;
+            --warning-color: #ff6b35;
+            --error-color: #ff4757;
+            --gradient-1: linear-gradient(135deg, #0d1b2a, #1b263b);
+            --gradient-2: linear-gradient(135deg, #ffd700, #ffed4a);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-dark: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        body {
+            background: var(--gradient-1);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--primary-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--secondary-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--shadow-dark);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            font-size: 1.5em;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .back-btn:hover {
+            color: var(--accent-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0 auto;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .notification-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-dark);
+        }
+
+        .notification-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1em;
+        }
+
+        .notification-body {
+            color: var(--secondary-color);
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            color: rgba(255, 215, 0, 0.6);
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .like-btn {
+            cursor: pointer;
+            color: var(--accent-color);
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .like-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .like-btn.liked {
+            color: var(--error-color);
+        }
+
+        .like-count {
+            font-size: 0.9em;
+            color: var(--secondary-color);
+        }
+
+        .no-notifications {
+            text-align: center;
+            color: var(--secondary-color);
+            font-size: 1.1em;
+            padding: 40px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            max-width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-dark);
+        }
+
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+
+        .notification-toast.success {
+            background: var(--success-color);
+        }
+
+        .notification-toast.error {
+            background: var(--error-color);
+        }
+
+        .notification-toast.info {
+            background: var(--accent-color);
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 1.2em;
+            cursor: pointer;
+            box-shadow: var(--shadow-dark);
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.1) rotate(180deg);
+            background: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .back-btn {
+                left: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .notification-item {
+                padding: 12px;
+            }
+            
+            .notification-toast {
+                max-width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+                transform: translateY(-100%);
+            }
+            
+            .notification-toast.show {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <header class="header">
+        <i class="fas fa-arrow-left back-btn" id="backBtn"></i>
+        <div class="logo">
+            <i class="fas fa-bell"></i>
+            Notifications
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="notification-list" id="notificationList">
+            <!-- Notifications will be loaded here -->
+        </div>
+    </main>
+
+    <button class="refresh-btn" id="refreshBtn" title="Refresh notifications">
+        <i class="fas fa-sync-alt"></i>
+    </button>
+
+    <div class="notification-toast" id="notificationToast"></div>
+
+    <script>
+        // Firebase configuration and functions
+        let firebaseConfig;
+        let database, auth;
+        let isFirebaseInitialized = false;
+        let userData = { userID: null };
+        let likedNotifications = new Set();
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notificationToast');
+            if (notification) {
+                notification.textContent = message;
+                notification.className = `notification-toast ${type}`;
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Firebase configuration and functions
+        let firebaseConfig;
+        let database, auth;
+        let isFirebaseInitialized = false;
+
+        async function initializeFirebase() {
+            try {
+                const configModule = await import('./config.js');
+                firebaseConfig = configModule.firebaseConfig;
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js');
+                const { getDatabase, ref, onValue } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js');
+                
+                const app = initializeApp(firebaseConfig);
+                database = getDatabase(app);
+                auth = getAuth(app);
+                isFirebaseInitialized = true;
+                return { onValue, ref, onAuthStateChanged };
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+                showNotification('Failed to connect to server.', 'error');
+                return null;
+            }
+        }
+
+        function formatTimeAgo(timestamp) {
+            const now = new Date();
+            const time = new Date(timestamp);
+            const diffInSeconds = Math.floor((now - time) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+            return `${Math.floor(diffInSeconds / 86400)} days ago`;
+        }
+
+        async function loadNotifications() {
+            if (!userData.userID || !isFirebaseInitialized) return;
+
+            try {
+                const { onValue, ref } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                const notificationsRef = ref(database, 'notifications');
+                
+                onValue(notificationsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    const notificationList = document.getElementById('notificationList');
+                    notificationList.innerHTML = '';
+                    
+                    if (data) {
+                        // Convert to array and sort by timestamp (newest first)
+                        const notificationsArray = Object.entries(data).map(([key, value]) => ({
+                            id: key,
+                            ...value
+                        })).sort((a, b) => new Date(b.timestamp || b.time) - new Date(a.timestamp || a.time));
+                        
+                        notificationsArray.forEach(notif => {
+                            const isLiked = likedNotifications.has(notif.id);
+                            const item = document.createElement('div');
+                            item.classList.add('notification-item');
+                            item.innerHTML = `
+                                <div class="notification-title">${notif.title || 'Notification'}</div>
+                                <div class="notification-body">${notif.body || notif.message || ''}</div>
+                                <div class="notification-time">${formatTimeAgo(notif.timestamp || notif.time || new Date().toISOString())}</div>
+                                <div class="notification-actions">
+                                    <span class="like-btn ${isLiked ? 'liked' : ''}" data-id="${notif.id}">
+                                        <i class="fas fa-heart"></i>
+                                        <span class="like-count">${(notif.likes || 0) + (isLiked ? 1 : 0)}</span>
+                                    </span>
+                                </div>
+                            `;
+                            notificationList.appendChild(item);
+                        });
+                        
+                        // Add event listeners for like buttons
+                        document.querySelectorAll('.like-btn').forEach(btn => {
+                            btn.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const notifId = btn.getAttribute('data-id');
+                                likeNotification(notifId, btn);
+                            });
+                        });
+                    } else {
+                        notificationList.innerHTML = `
+                            <div class="no-notifications">
+                                <i class="fas fa-bell-slash" style="font-size: 3em; margin-bottom: 15px; opacity: 0.5;"></i>
+                                <div>No notifications found</div>
+                                <div style="font-size: 0.9em; margin-top: 10px; opacity: 0.7;">Check back later for updates</div>
+                            </div>
+                        `;
+                    }
+                }, (error) => {
+                    console.error('Error loading notifications:', error);
+                    showNotification('Failed to load notifications', 'error');
+                });
+            } catch (error) {
+                console.error('Error in loadNotifications:', error);
+                showNotification('Failed to load notifications', 'error');
+            }
+        }
+
+        async function likeNotification(id, buttonElement) {
+            if (!isFirebaseInitialized) return;
+
+            try {
+                const isCurrentlyLiked = likedNotifications.has(id);
+                const likeCountElement = buttonElement.querySelector('.like-count');
+                let currentCount = parseInt(likeCountElement.textContent);
+                
+                if (isCurrentlyLiked) {
+                    // Unlike
+                    likedNotifications.delete(id);
+                    buttonElement.classList.remove('liked');
+                    likeCountElement.textContent = currentCount - 1;
+                    showNotification('Removed like', 'info');
+                    
+                    // Update Firebase
+                    const { ref, update } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                    const notificationRef = ref(database, `notifications/${id}`);
+                    await update(notificationRef, {
+                        likes: currentCount - 1
+                    });
+                } else {
+                    // Like
+                    likedNotifications.add(id);
+                    buttonElement.classList.add('liked');
+                    likeCountElement.textContent = currentCount + 1;
+                    showNotification('Liked!', 'success');
+                    
+                    // Add heart animation
+                    buttonElement.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        buttonElement.style.transform = 'scale(1)';
+                    }, 200);
+                    
+                    // Update Firebase
+                    const { ref, update } = await import('https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js');
+                    const notificationRef = ref(database, `notifications/${id}`);
+                    await update(notificationRef, {
+                        likes: currentCount + 1
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating like:', error);
+                showNotification('Failed to update like', 'error');
+            }
+        }
+
+        async function refreshNotifications() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            refreshBtn.style.transform = 'scale(1.1) rotate(360deg)';
+            loadingOverlay.style.display = 'flex';
+            
+            try {
+                await loadNotifications();
+                showNotification('Notifications refreshed', 'success');
+            } catch (error) {
+                console.error('Error refreshing notifications:', error);
+                showNotification('Failed to refresh notifications', 'error');
+            } finally {
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    refreshBtn.style.transform = 'scale(1) rotate(0deg)';
+                }, 500);
+            }
+        }
+
+        async function initialize() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const backBtn = document.getElementById('backBtn');
+            const refreshBtn = document.getElementById('refreshBtn');
+
+            // Show loading initially
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
+            // Initialize Firebase
+            const firebaseModules = await initializeFirebase();
+            if (!firebaseModules) {
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+                return;
+            }
+
+            // Back button functionality
+            backBtn.addEventListener('click', () => {
+                showNotification('Redirecting to home...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/index.html';
+                }, 1000);
+            });
+
+            // Refresh button functionality
+            refreshBtn.addEventListener('click', refreshNotifications);
+
+            // Authentication state listener
+            firebaseModules.onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    showNotification('Please log in to view notifications', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                    }, 2000);
+                    return;
+                }
+                
+                userData.userID = user.uid;
+                await loadNotifications();
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+                showNotification('Notifications loaded', 'success');
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+</html>
