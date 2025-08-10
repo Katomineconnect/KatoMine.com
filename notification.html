@@ -270,6 +270,12 @@
             background: var(--accent-color);
         }
 
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: scale(1) rotate(0deg);
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 padding: 15px;
@@ -329,7 +335,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-        import { getDatabase, ref, onValue, update } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+        import { getDatabase, ref, onValue, update, get } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
         let firebaseConfig;
@@ -380,6 +386,15 @@
             return `${Math.floor(diffInSeconds / 86400)} days ago`;
         }
 
+        async function loadUserLikes() {
+            if (!userData.userID) return;
+            const userLikesRef = ref(database, `users/${userData.userID}/likedNotifications`);
+            const snapshot = await get(userLikesRef);
+            if (snapshot.exists()) {
+                likedNotifications = new Set(Object.values(snapshot.val()));
+            }
+        }
+
         async function loadNotifications() {
             if (!userData.userID || !isFirebaseInitialized) return;
 
@@ -415,10 +430,9 @@
                         notificationList.appendChild(item);
                     });
 
-                    // Add event listeners for like buttons only once
                     const likeButtons = document.querySelectorAll('.like-btn');
                     likeButtons.forEach(btn => {
-                        btn.removeEventListener('click', handleLikeClick); // Remove previous listeners
+                        btn.removeEventListener('click', handleLikeClick);
                         btn.addEventListener('click', handleLikeClick);
                     });
                 } else {
@@ -458,6 +472,9 @@
                     await update(ref(database, `notifications/${notifId}`), {
                         likes: currentCount - 1
                     });
+                    await update(ref(database, `users/${userData.userID}/likedNotifications`), {
+                        [notifId]: null
+                    });
                 } else {
                     likedNotifications.add(notifId);
                     buttonElement.classList.add('liked');
@@ -470,6 +487,9 @@
 
                     await update(ref(database, `notifications/${notifId}`), {
                         likes: currentCount + 1
+                    });
+                    await update(ref(database, `users/${userData.userID}/likedNotifications`), {
+                        [notifId]: true
                     });
                 }
             } catch (error) {
@@ -485,6 +505,7 @@
             refreshBtn.style.opacity = '0.5';
             refreshBtn.style.transform = 'scale(1.1) rotate(360deg)';
             loadingOverlay.style.display = 'flex';
+
             try {
                 await loadNotifications();
                 showNotification('Notifications refreshed', 'success');
@@ -534,6 +555,7 @@
                 }
                 
                 userData.userID = user.uid;
+                await loadUserLikes();
                 await loadNotifications();
                 if (loadingOverlay) loadingOverlay.style.display = 'none';
                 showNotification('Notifications loaded', 'success');
