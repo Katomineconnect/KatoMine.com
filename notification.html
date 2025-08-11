@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <meta name="description" content="Kato Mine - User Notifications">
-    <meta name="theme-color" content="#0d1b2a">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kato Mine - Notifications</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" type="text/css">
-    <link rel="manifest" href="manifest.json">
     <style>
         :root {
             --primary-color: #ffd700;
@@ -15,8 +12,8 @@
             --background-color: #0d1b2a;
             --accent-color: #00bfff;
             --success-color: #00ff88;
-            --warning-color: #ff6b35;
             --error-color: #ff4757;
+            --warning-color: #ff9f43;
             --gradient-1: linear-gradient(135deg, #0d1b2a, #1b263b);
             --gradient-2: linear-gradient(135deg, #ffd700, #ffed4a);
             --glass-bg: rgba(255, 255, 255, 0.1);
@@ -29,209 +26,584 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
         }
 
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--gradient-1);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--primary-color);
+            color: var(--secondary-color);
+            line-height: 1.4;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            padding: 15px;
+            border-right: 2px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            margin: 4px 0;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 15px;
+            color: var(--secondary-color);
+            touch-action: manipulation;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            width: 22px;
+            height: 22px;
+            margin-right: 14px;
+        }
+
+        .main-content {
+            border-right: 2px solid var(--glass-border);
+            min-height: 100vh;
+            padding-bottom: 15px;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary-color);
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 900;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+            font-size: 15px;
+            touch-action: manipulation;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 191, 255, 0.1);
+        }
+
+        .header-title {
+            font-weight: bold;
+            font-size: 18px;
+            flex: 1;
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--background-color);
+            font-weight: bold;
+            font-size: 16px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .user-details h3 {
+            font-size: 15px;
+            margin-bottom: 2px;
+            color: var(--primary-color);
+        }
+
+        .user-details p {
+            color: var(--secondary-color);
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 2px solid var(--glass-border);
+            color: var(--secondary-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-left: auto;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .logout-btn:hover {
+            background: var(--error-color);
+            border-color: var(--error-color);
+            color: var(--background-color);
+        }
+
+        .compose-section {
+            border-bottom: 2px solid var(--glass-border);
+            padding: 12px 15px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+        }
+
+        .compose-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--background-color);
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .compose-input {
+            flex: 1;
+        }
+
+        .compose-textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--secondary-color);
+            font-size: 18px;
+            resize: none;
+            outline: none;
+            min-height: 45px;
+            font-family: inherit;
+        }
+
+        .compose-textarea::placeholder {
+            color: var(--secondary-color);
+        }
+
+        .compose-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-left: 46px;
+        }
+
+        .compose-buttons {
+            display: flex;
+            gap: 14px;
+        }
+
+        .action-btn {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+            color: var(--accent-color);
+        }
+
+        .action-btn:hover {
+            opacity: 1;
+        }
+
+        .tweet-btn {
+            background: var(--gradient-2);
+            color: var(--background-color);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .tweet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .tweet-btn:disabled {
+            background: rgba(255, 215, 0, 0.3);
+            cursor: not-allowed;
+        }
+
+        .feed {
+            overflow-y: auto;
+        }
+
+        .notification-card {
+            border-bottom: 2px solid var(--glass-border);
+            padding: 15px;
+            background: var(--glass-bg);
+            margin-bottom: 8px;
+            border-radius: 12px;
+            margin: 8px 15px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
             position: relative;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+        .notification-card:hover {
+            background: rgba(255, 215, 0, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
         }
 
-        .loading-overlay {
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .notification-icon.like {
+            background: linear-gradient(135deg, #ff4757, #ff6b7d);
+            color: white;
+        }
+
+        .notification-icon.comment {
+            background: linear-gradient(135deg, #00bfff, #4dd0e1);
+            color: white;
+        }
+
+        .notification-icon.retweet {
+            background: linear-gradient(135deg, #00ba7c, #26de81);
+            color: white;
+        }
+
+        .notification-icon.new-post {
+            background: linear-gradient(135deg, #ffd700, #ffed4a);
+            color: var(--background-color);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-text {
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .notification-text strong {
+            color: var(--primary-color);
+        }
+
+        .notification-time {
+            color: var(--secondary-color);
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .post-preview {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 8px;
+            border-left: 3px solid var(--primary-color);
+            font-style: italic;
+            color: var(--secondary-color);
+        }
+
+        .my-posts-section {
+            padding: 20px 15px;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .my-post {
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .my-post:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-light);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-meta {
+            font-size: 12px;
+            color: var(--secondary-color);
+            opacity: 0.7;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .edit-btn, .delete-btn {
+            background: none;
+            border: 2px solid var(--glass-border);
+            color: var(--secondary-color);
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .edit-btn:hover {
+            background: var(--warning-color);
+            border-color: var(--warning-color);
+            color: var(--background-color);
+        }
+
+        .delete-btn:hover {
+            background: var(--error-color);
+            border-color: var(--error-color);
+            color: var(--background-color);
+        }
+
+        .post-content {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: var(--secondary-color);
+            opacity: 0.7;
+        }
+
+        .login-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.8);
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
-            transition: opacity 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
         }
 
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid var(--secondary-color);
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 0 0 20px 20px;
-            box-shadow: var(--shadow-dark);
-            text-align: center;
-            border-bottom: 2px solid var(--primary-color);
-            position: relative;
+        .login-modal.show {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .back-btn {
-            font-size: 1.5em;
-            color: var(--primary-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .modal-content {
+            background: var(--background-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: var(--shadow-dark);
+            margin: 20px 0;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--secondary-color);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--glass-border);
+            border-radius: 8px;
+            background: var(--background-color);
+            color: var(--secondary-color);
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .input-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .close-modal {
             position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .back-btn:hover {
-            color: var(--accent-color);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .logo {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .notification-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .notification-item {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            border-radius: 15px;
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-light);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .notification-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-dark);
-        }
-
-        .notification-title {
-            font-weight: bold;
-            color: var(--primary-color);
-            font-size: 1.1em;
-        }
-
-        .notification-body {
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
             color: var(--secondary-color);
-            line-height: 1.4;
-        }
-
-        .notification-time {
-            color: rgba(255, 215, 0, 0.6);
-            font-size: 0.9em;
-            font-style: italic;
-        }
-
-        .notification-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .like-btn {
+            font-size: 22px;
             cursor: pointer;
-            color: var(--accent-color);
-            transition: all 0.3s ease;
-            font-size: 1.2em;
-            display: flex;
+            padding: 4px;
+            touch-action: manipulation;
+        }
+
+        .close-modal:hover {
+            color: var(--primary-color);
+        }
+
+        .floating-compose {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 55px;
+            height: 55px;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            border: none;
+            color: var(--background-color);
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: var(--shadow-dark);
+            display: none;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            transition: transform 0.2s;
+            touch-action: manipulation;
         }
 
-        .like-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .like-btn.liked {
-            color: var(--error-color);
-        }
-
-        .like-count {
-            font-size: 0.9em;
-            color: var(--secondary-color);
-        }
-
-        .no-notifications {
-            text-align: center;
-            color: var(--secondary-color);
-            font-size: 1.1em;
-            padding: 40px 20px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border: 1px solid var(--glass-border);
+        .floating-compose:hover {
+            transform: scale(1.05);
         }
 
         .notification-toast {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
+            top: 15px;
+            right: 15px;
+            background: var(--accent-color);
+            color: var(--background-color);
+            padding: 10px 18px;
             border-radius: 10px;
-            color: white;
-            font-weight: 500;
-            z-index: 1000;
-            max-width: 300px;
-            transform: translateX(100%);
+            transform: translateX(400px);
             transition: transform 0.3s ease;
-            box-shadow: var(--shadow-dark);
+            z-index: 1000;
+            max-width: 280px;
+            font-size: 14px;
         }
 
         .notification-toast.show {
@@ -246,323 +618,503 @@
             background: var(--error-color);
         }
 
-        .notification-toast.info {
-            background: var(--accent-color);
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--secondary-color);
         }
 
-        .refresh-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary-color);
+        .empty-state i {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .login-btn, .register-btn {
+            background: var(--gradient-2);
             color: var(--background-color);
             border: none;
-            padding: 15px;
-            border-radius: 50%;
-            font-size: 1.2em;
+            padding: 10px 28px;
+            border-radius: 24px;
+            font-weight: bold;
             cursor: pointer;
-            box-shadow: var(--shadow-dark);
+            font-size: 15px;
+            margin: 6px;
             transition: all 0.3s ease;
+            touch-action: manipulation;
         }
 
-        .refresh-btn:hover {
-            transform: scale(1.1) rotate(180deg);
-            background: var(--accent-color);
+        .login-btn:hover, .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
         }
 
-        .refresh-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: scale(1) rotate(0deg);
+        .register-btn {
+            background: none;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
         }
 
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 15px;
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 70px 1fr;
             }
             
-            .header {
-                padding: 15px;
+            .right-sidebar {
+                display: none;
             }
             
-            .back-btn {
-                left: 15px;
+            .nav-text {
+                display: none;
+            }
+            
+            .floating-compose {
+                display: flex;
+            }
+            
+            .sidebar {
+                padding: 10px;
+            }
+            
+            .logo {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .nav-item {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            
+            .nav-icon {
+                margin-right: 0;
             }
         }
 
-        @media (max-width: 480px) {
-            .notification-item {
+        @media (max-width: 600px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .notification-card {
+                margin: 8px 10px;
                 padding: 12px;
             }
             
-            .notification-toast {
-                max-width: calc(100% - 40px);
-                right: 20px;
-                left: 20px;
-                transform: translateY(-100%);
+            .my-posts-section {
+                padding: 15px 10px;
             }
             
-            .notification-toast.show {
-                transform: translateY(0);
+            .modal-content {
+                padding: 20px;
+                max-width: 90%;
             }
         }
     </style>
 </head>
 <body>
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner"></div>
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar" role="navigation">
+            <div class="logo">Kato Mine</div>
+            <div class="nav-item" onclick="goToHome()" aria-label="Home">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-text">Home</span>
+            </div>
+            <div class="nav-item" onclick="goToExplore()" aria-label="Explore">
+                <i class="fas fa-search nav-icon"></i>
+                <span class="nav-text">Explore</span>
+            </div>
+            <div class="nav-item active" onclick="goToNotifications()" aria-label="Notifications">
+                <i class="fas fa-bell nav-icon"></i>
+                <span class="nav-text">Notifications</span>
+            </div>
+            <div class="nav-item" onclick="goToMessages()" aria-label="Messages">
+                <i class="fas fa-envelope nav-icon"></i>
+                <span class="nav-text">Messages</span>
+            </div>
+            <div class="nav-item" onclick="goToProfile()" aria-label="Profile">
+                <i class="fas fa-user nav-icon"></i>
+                <span class="nav-text">Profile</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" role="main">
+            <div class="header">
+                <button class="back-btn" id="backBtn" onclick="goToHome()" title="Back" aria-label="Back">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="header-title">Notifications</div>
+            </div>
+
+            <!-- User Info -->
+            <div class="user-info" id="userInfo">
+                <div class="user-avatar" id="userAvatar" aria-hidden="true">U</div>
+                <div class="user-details">
+                    <h3 id="userName">User</h3>
+                    <p id="userHandle">@user</p>
+                </div>
+                <button class="logout-btn" onclick="logout()" aria-label="Logout">Logout</button>
+            </div>
+            
+            <!-- Compose Section -->
+            <div class="compose-section" id="composeSection">
+                <div class="compose-area">
+                    <div class="avatar" id="composeAvatar" aria-hidden="true">U</div>
+                    <div class="compose-input">
+                        <textarea 
+                            class="compose-textarea" 
+                            placeholder="Share your thoughts..."
+                            id="composeText"
+                            aria-label="Compose a post"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="compose-actions">
+                    <div class="compose-buttons">
+                        <i class="fas fa-image action-btn" aria-label="Add image"></i>
+                        <i class="fas fa-poll action-btn" aria-label="Add poll"></i>
+                        <i class="fas fa-smile action-btn" aria-label="Add emoji"></i>
+                    </div>
+                    <button class="tweet-btn" id="postBtn" disabled aria-label="Post">Post</button>
+                </div>
+            </div>
+
+            <!-- Content for logged in users -->
+            <div id="loggedInContent">
+                <!-- Recent Notifications -->
+                <div class="feed" id="notificationsFeed" role="feed">
+                    <!-- Notifications will be loaded here -->
+                </div>
+
+                <!-- My Posts Section -->
+                <div class="my-posts-section">
+                    <div class="section-title">
+                        <i class="fas fa-edit"></i>
+                        আমার পোস্টসমূহ
+                    </div>
+                    <div id="myPostsContainer">
+                        <!-- User's posts will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar (hidden on smaller screens) -->
+        <div class="right-sidebar" role="complementary" style="display: none;">
+            <!-- Empty for now -->
+        </div>
     </div>
 
-    <header class="header">
-        <i class="fas fa-arrow-left back-btn" id="backBtn"></i>
-        <div class="logo">
-            <i class="fas fa-bell"></i>
-            Notifications
+    <!-- Edit Post Modal -->
+    <div class="login-modal" id="editModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeEditModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <div class="modal-logo">Kato Mine</div>
+                <h2>Edit Post</h2>
+            </div>
+            <form id="editForm">
+                <div class="input-group">
+                    <label for="editText">Post Content</label>
+                    <textarea id="editText" required aria-label="Post content"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="login-btn" aria-label="Update post">Update</button>
+                    <button type="button" class="register-btn" onclick="closeEditModal()" aria-label="Cancel">Cancel</button>
+                </div>
+            </form>
         </div>
-    </header>
+    </div>
 
-    <main class="main-content">
-        <div class="notification-list" id="notificationList">
-            <!-- Notifications will be loaded here -->
-        </div>
-    </main>
+    <!-- Floating Compose Button -->
+    <button class="floating-compose" onclick="focusCompose()" id="floatingCompose" style="display: none;" aria-label="Compose new post">+</button>
 
-    <button class="refresh-btn" id="refreshBtn" title="Refresh notifications">
-        <i class="fas fa-sync-alt"></i>
-    </button>
+    <!-- Notification Toast -->
+    <div class="notification-toast" id="notificationToast" role="alert"></div>
 
-    <div class="notification-toast" id="notificationToast"></div>
+    <script>
+        let userPosts = JSON.parse(localStorage.getItem('userPosts')) || [];
+        let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+        let postIdCounter = Math.max(...userPosts.map(p => p.id), 0) + 1;
+        let isLoggedIn = false;
+        let currentUser = null;
+        let editingPostId = null;
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-        import { getDatabase, ref, onValue, update, get } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+        // DOM elements
+        const composeText = document.getElementById('composeText');
+        const postBtn = document.getElementById('postBtn');
+        const notificationToast = document.getElementById('notificationToast');
+        const editModal = document.getElementById('editModal');
+        const editForm = document.getElementById('editForm');
+        const userInfo = document.getElementById('userInfo');
+        const composeSection = document.getElementById('composeSection');
+        const loggedInContent = document.getElementById('loggedInContent');
+        const notificationsFeed = document.getElementById('notificationsFeed');
+        const myPostsContainer = document.getElementById('myPostsContainer');
+        const floatingCompose = document.getElementById('floatingCompose');
+        const editText = document.getElementById('editText');
 
-        let firebaseConfig;
-        let database, auth;
-        let isFirebaseInitialized = false;
-        let userData = { userID: null };
-        let likedNotifications = new Set();
+        // Initialize
+        function init() {
+            checkLoginStatus();
+            if (!isLoggedIn) {
+                window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+                return;
+            }
+            setupEventListeners();
+            updateUI();
+            loadNotifications();
+            loadUserPosts();
+        }
 
-        async function initializeFirebase() {
-            try {
-                const configModule = await import('./config.js');
-                firebaseConfig = configModule.firebaseConfig;
-                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
-                    throw new Error('Firebase configuration is missing or invalid');
-                }
-                const app = initializeApp(firebaseConfig);
-                database = getDatabase(app);
-                auth = getAuth(app);
-                isFirebaseInitialized = true;
-                return true;
-            } catch (error) {
-                console.error('Error initializing Firebase:', error);
-                showNotification('Failed to connect to server.', 'error');
-                return false;
+        function checkLoginStatus() {
+            const storedUser = localStorage.getItem('currentUser');
+            if (storedUser) {
+                currentUser = JSON.parse(storedUser);
+                isLoggedIn = true;
             }
         }
 
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notificationToast');
-            if (notification) {
-                notification.textContent = message;
-                notification.className = `notification-toast ${type}`;
-                notification.classList.add('show');
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            }
-        }
+        function setupEventListeners() {
+            composeText?.addEventListener('input', () => {
+                postBtn.disabled = !composeText.value.trim();
+            });
 
-        function formatTimeAgo(timestamp) {
-            const now = new Date();
-            const time = new Date(timestamp);
-            const diffInSeconds = Math.floor((now - time) / 1000);
-            
-            if (diffInSeconds < 60) return 'Just now';
-            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-            return `${Math.floor(diffInSeconds / 86400)} days ago`;
-        }
+            editForm?.addEventListener('submit', handleEditPost);
 
-        async function loadUserLikes() {
-            if (!userData.userID) return;
-            const userLikesRef = ref(database, `users/${userData.userID}/likedNotifications`);
-            const snapshot = await get(userLikesRef);
-            if (snapshot.exists()) {
-                likedNotifications = new Set(Object.values(snapshot.val()));
-            }
-        }
-
-        async function loadNotifications() {
-            if (!userData.userID || !isFirebaseInitialized) return;
-
-            const notificationsRef = ref(database, 'notifications');
-            onValue(notificationsRef, (snapshot) => {
-                const data = snapshot.val();
-                const notificationList = document.getElementById('notificationList');
-                notificationList.innerHTML = '';
-                
-                if (data) {
-                    const notificationsArray = Object.entries(data)
-                        .map(([key, value]) => ({
-                            id: key,
-                            ...value
-                        }))
-                        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                    
-                    notificationsArray.forEach(notif => {
-                        const isLiked = likedNotifications.has(notif.id);
-                        const item = document.createElement('div');
-                        item.classList.add('notification-item');
-                        item.innerHTML = `
-                            <div class="notification-title">${notif.title || 'Notification'}</div>
-                            <div class="notification-body">${notif.body || ''}</div>
-                            <div class="notification-time">${formatTimeAgo(notif.timestamp || new Date().toISOString())}</div>
-                            <div class="notification-actions">
-                                <span class="like-btn ${isLiked ? 'liked' : ''}" data-id="${notif.id}">
-                                    <i class="fas fa-heart"></i>
-                                    <span class="like-count">${notif.likes || 0}</span>
-                                </span>
-                            </div>
-                        `;
-                        notificationList.appendChild(item);
-                    });
-
-                    const likeButtons = document.querySelectorAll('.like-btn');
-                    likeButtons.forEach(btn => {
-                        btn.removeEventListener('click', handleLikeClick);
-                        btn.addEventListener('click', handleLikeClick);
-                    });
-                } else {
-                    notificationList.innerHTML = `
-                        <div class="no-notifications">
-                            <i class="fas fa-bell-slash" style="font-size: 3em; margin-bottom: 15px; opacity: 0.5;"></i>
-                            <div>No notifications found</div>
-                            <div style="font-size: 0.9em; margin-top: 10px; opacity: 0.7;">Check back later for updates</div>
-                        </div>
-                    `;
-                }
-            }, (error) => {
-                console.error('Error loading notifications:', error);
-                showNotification('Failed to load notifications', 'error');
+            // Debounce the compose input to prevent excessive updates
+            let typingTimer;
+            composeText?.addEventListener('input', () => {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
+                    postBtn.disabled = !composeText.value.trim();
+                }, 300);
             });
         }
 
-        async function handleLikeClick(e) {
-            e.preventDefault();
-            const notifId = e.currentTarget.getAttribute('data-id');
-            const buttonElement = e.currentTarget;
-            const isCurrentlyLiked = likedNotifications.has(notifId);
-            const likeCountElement = buttonElement.querySelector('.like-count');
-            let currentCount = parseInt(likeCountElement.textContent) || 0;
-
-            try {
-                if (isCurrentlyLiked) {
-                    likedNotifications.delete(notifId);
-                    buttonElement.classList.remove('liked');
-                    likeCountElement.textContent = currentCount - 1;
-                    showNotification('Removed like', 'info');
-                    buttonElement.style.transform = 'scale(0.9)';
-                    setTimeout(() => {
-                        buttonElement.style.transform = 'scale(1)';
-                    }, 200);
-
-                    await update(ref(database, `notifications/${notifId}`), {
-                        likes: currentCount - 1
-                    });
-                    await update(ref(database, `users/${userData.userID}/likedNotifications`), {
-                        [notifId]: null
-                    });
-                } else {
-                    likedNotifications.add(notifId);
-                    buttonElement.classList.add('liked');
-                    likeCountElement.textContent = currentCount + 1;
-                    showNotification('Liked!', 'success');
-                    buttonElement.style.transform = 'scale(1.2)';
-                    setTimeout(() => {
-                        buttonElement.style.transform = 'scale(1)';
-                    }, 200);
-
-                    await update(ref(database, `notifications/${notifId}`), {
-                        likes: currentCount + 1
-                    });
-                    await update(ref(database, `users/${userData.userID}/likedNotifications`), {
-                        [notifId]: true
-                    });
-                }
-            } catch (error) {
-                console.error('Error updating like:', error);
-                showNotification('Failed to update like', 'error');
+        function updateUI() {
+            if (isLoggedIn) {
+                userInfo.style.display = 'flex';
+                composeSection.style.display = 'block';
+                loggedInContent.style.display = 'block';
+                floatingCompose.style.display = 'flex';
+                
+                document.getElementById('userName').textContent = currentUser.username;
+                document.getElementById('userHandle').textContent = `@${currentUser.username.toLowerCase()}`;
+                document.getElementById('userAvatar').textContent = currentUser.username[0].toUpperCase();
+                document.getElementById('composeAvatar').textContent = currentUser.username[0].toUpperCase();
             }
         }
 
-        async function refreshNotifications() {
-            const refreshBtn = document.getElementById('refreshBtn');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            refreshBtn.disabled = true;
-            refreshBtn.style.opacity = '0.5';
-            refreshBtn.style.transform = 'scale(1.1) rotate(360deg)';
-            loadingOverlay.style.display = 'flex';
-
-            try {
-                await loadNotifications();
-                showNotification('Notifications refreshed', 'success');
-            } catch (error) {
-                console.error('Error refreshing notifications:', error);
-                showNotification('Failed to refresh notifications', 'error');
-            } finally {
-                setTimeout(() => {
-                    loadingOverlay.style.display = 'none';
-                    refreshBtn.disabled = false;
-                    refreshBtn.style.opacity = '1';
-                    refreshBtn.style.transform = 'scale(1) rotate(0deg)';
-                }, 500);
-            }
+        function showNotification(message, type = 'success') {
+            notificationToast.textContent = message;
+            notificationToast.className = `notification-toast ${type} show`;
+            setTimeout(() => {
+                notificationToast.className = 'notification-toast';
+            }, 3000);
         }
 
-        async function initialize() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const backBtn = document.getElementById('backBtn');
-            const refreshBtn = document.getElementById('refreshBtn');
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
+        }
 
-            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+        function focusCompose() {
+            composeText.focus();
+        }
 
-            const success = await initializeFirebase();
-            if (!success) {
-                if (loadingOverlay) loadingOverlay.style.display = 'none';
+        function loadNotifications() {
+            notificationsFeed.innerHTML = '';
+            if (!isLoggedIn) return;
+
+            if (notifications.length === 0) {
+                notificationsFeed.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bell"></i>
+                        <h3>No Notifications</h3>
+                        <p>You don't have any notifications yet.</p>
+                    </div>
+                `;
                 return;
             }
 
-            backBtn.addEventListener('click', () => {
-                showNotification('Redirecting to home...', 'info');
-                setTimeout(() => {
-                    window.location.href = 'https://katomineconnect.github.io/KatoMine.com/index.html';
-                }, 1000);
-            });
-
-            refreshBtn.addEventListener('click', refreshNotifications);
-
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    showNotification('Please log in to view notifications', 'error');
-                    setTimeout(() => {
-                        window.location.href = 'https://katomineconnect.github.io/KatoMine.com/login.html';
-                    }, 2000);
-                    if (loadingOverlay) loadingOverlay.style.display = 'none';
-                    return;
-                }
-                
-                userData.userID = user.uid;
-                await loadUserLikes();
-                await loadNotifications();
-                if (loadingOverlay) loadingOverlay.style.display = 'none';
-                showNotification('Notifications loaded', 'success');
+            notifications.forEach(notification => {
+                const notificationElement = document.createElement('div');
+                notificationElement.className = 'notification-card';
+                notificationElement.innerHTML = `
+                    <div class="notification-header">
+                        <div class="notification-icon ${notification.type}">
+                            <i class="fas fa-${notification.type === 'like' ? 'heart' : 
+                                        notification.type === 'comment' ? 'comment' : 
+                                        notification.type === 'retweet' ? 'retweet' : 'plus'}"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-text">
+                                <strong>${notification.user}</strong> ${notification.message}
+                            </div>
+                            <div class="notification-time">${new Date(notification.time).toLocaleString()}</div>
+                            ${notification.postContent ? `<div class="post-preview">${notification.postContent}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+                notificationsFeed.appendChild(notificationElement);
             });
         }
 
-        document.addEventListener('DOMContentLoaded', initialize);
+        function loadUserPosts() {
+            myPostsContainer.innerHTML = '';
+            if (!isLoggedIn) return;
+
+            const userPostsFiltered = userPosts.filter(post => post.userId === currentUser.email);
+            
+            if (userPostsFiltered.length === 0) {
+                myPostsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-edit"></i>
+                        <h3>No Posts</h3>
+                        <p>You haven't posted anything yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            userPostsFiltered.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'my-post';
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-meta">${new Date(post.time).toLocaleString()}</div>
+                        <div class="post-actions">
+                            <button class="edit-btn" onclick="editPost(${post.id})">Edit</button>
+                            <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-stats">
+                        <span><i class="fas fa-heart"></i> ${post.likes || 0}</span>
+                        <span><i class="fas fa-comment"></i> ${post.comments || 0}</span>
+                        <span><i class="fas fa-retweet"></i> ${post.retweets || 0}</span>
+                    </div>
+                `;
+                myPostsContainer.appendChild(postElement);
+            });
+        }
+
+        function createPost() {
+            if (!isLoggedIn || !composeText.value.trim()) return;
+
+            const newPost = {
+                id: postIdCounter++,
+                userId: currentUser.email,
+                content: composeText.value.trim(),
+                time: new Date().toISOString(),
+                likes: 0,
+                comments: 0,
+                retweets: 0
+            };
+
+            userPosts.unshift(newPost);
+            localStorage.setItem('userPosts', JSON.stringify(userPosts));
+            
+            // Create notification
+            const notification = {
+                type: 'new-post',
+                user: currentUser.username,
+                message: 'posted a new update',
+                time: new Date().toISOString(),
+                postContent: composeText.value.trim()
+            };
+            notifications.unshift(notification);
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+
+            composeText.value = '';
+            postBtn.disabled = true;
+            loadUserPosts();
+            loadNotifications();
+            showNotification('Post created successfully!');
+        }
+
+        function editPost(postId) {
+            const post = userPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            editingPostId = postId;
+            editText.value = post.content;
+            editModal.classList.add('show');
+        }
+
+        function handleEditPost(e) {
+            e.preventDefault();
+            if (!editText.value.trim()) {
+                showNotification('Post content cannot be empty', 'error');
+                return;
+            }
+
+            const postIndex = userPosts.findIndex(p => p.id === editingPostId);
+            if (postIndex !== -1) {
+                userPosts[postIndex].content = editText.value.trim();
+                localStorage.setItem('userPosts', JSON.stringify(userPosts));
+                loadUserPosts();
+                closeEditModal();
+                showNotification('Post updated successfully!');
+            }
+        }
+
+        function deletePost(postId) {
+            if (confirm('Are you sure you want to delete this post?')) {
+                userPosts = userPosts.filter(p => p.id !== postId);
+                localStorage.setItem('userPosts', JSON.stringify(userPosts));
+                loadUserPosts();
+                showNotification('Post deleted successfully!');
+            }
+        }
+
+        function closeEditModal() {
+            editModal.classList.remove('show');
+            editForm.reset();
+            editingPostId = null;
+        }
+
+        // Navigation functions
+        function goToHome() {
+            window.location.href = '/home'; // Update with actual home page URL if needed
+        }
+
+        function goToExplore() {
+            window.location.href = '/explore';
+        }
+
+        function goToNotifications() {
+            window.location.href = '/notifications';
+        }
+
+        function goToMessages() {
+            window.location.href = '/messages';
+        }
+
+        function goToProfile() {
+            window.location.href = '/profile';
+        }
+
+        // Event listener for post button
+        postBtn?.addEventListener('click', createPost);
+
+        // Initialize on page load
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
